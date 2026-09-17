@@ -28,8 +28,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    namespace = "com.example.englishteacher"
 }
 
 dependencies {
