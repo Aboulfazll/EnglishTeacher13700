@@ -38,9 +38,12 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.7.8")
     implementation("androidx.compose.material3:material3:1.3.1")
 
-    // Navigation بین صفحات
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.5")
 
-    // آیکون‌های اضافه
+    // Icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+    // Coil - لود عکس از اینترنت
+    implementation("io.coil-kt:coil-compose:2.7.0")
 }
