@@ -1,6 +1,7 @@
 package com.example.englishteacher.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -152,7 +153,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
     }
 }
 
-// ==================== تب لغات ====================
+// ==================== تب لغات (با کلیک روی کارت = تلفظ) ====================
 @Composable
 private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
     LazyColumn(
@@ -160,18 +161,30 @@ private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper, accent:
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            Text(
-                "📖 ${words.size} لغت این درس",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = accent,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 6.dp)
-            )
+            ) {
+                Text(
+                    "📖 ${words.size} لغت این درس",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = accent
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    "👆 روی کارت بزن",
+                    fontSize = 10.sp,
+                    color = Color.Gray
+                )
+            }
         }
 
         items(words) { word ->
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { speechHelper.speak(word.english) },
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -282,7 +295,9 @@ private fun SpellingTab(spellingList: List<SpellingExercise>, speechHelper: Spee
 
         items(spellingList) { item ->
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { speechHelper.speak(item.name) },
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -473,7 +488,9 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
                     )
                     Spacer(Modifier.height(4.dp))
                     Card(
-                        modifier = Modifier.widthIn(max = 290.dp),
+                        modifier = Modifier
+                            .widthIn(max = 290.dp)
+                            .clickable { speechHelper.speak(line.english) },
                         shape = RoundedCornerShape(
                             topStart = 18.dp,
                             topEnd = 18.dp,
@@ -545,6 +562,9 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
         Spacer(Modifier.height(16.dp))
 
         Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { speechHelper.speak(text) },
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = RoundedCornerShape(18.dp),
             elevation = CardDefaults.cardElevation(4.dp)
@@ -557,6 +577,15 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
                 color = Color(0xFF424242)
             )
         }
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            "👆 روی متن بزن تا پخش بشه",
+            fontSize = 11.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(start = 4.dp)
+        )
 
         Spacer(Modifier.height(20.dp))
 
