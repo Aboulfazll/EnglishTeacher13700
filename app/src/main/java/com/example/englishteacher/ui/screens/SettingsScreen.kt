@@ -48,14 +48,12 @@ fun SettingsScreen() {
     var totalStars by remember { mutableIntStateOf(0) }
     var notificationsEnabled by remember { mutableStateOf(false) }
     var notificationHour by remember { mutableIntStateOf(20) }
-    var notificationMinute by remember { mutableIntStateOf(0) }
 
     var showResetDialog by remember { mutableStateOf(false) }
     var showApiDialog by remember { mutableStateOf(false) }
     var showTimeDialog by remember { mutableStateOf(false) }
     var tempApiKey by remember { mutableStateOf("") }
 
-    // Permission Launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -63,7 +61,7 @@ fun SettingsScreen() {
             notificationsEnabled = true
             scope.launch {
                 SettingsManager.setNotificationsEnabled(context, true)
-                NotificationScheduler.scheduleDailyNotification(context, notificationHour, notificationMinute)
+                NotificationScheduler.scheduleDailyNotification(context, notificationHour, 0)
             }
         }
     }
@@ -93,9 +91,6 @@ fun SettingsScreen() {
     LaunchedEffect(Unit) {
         SettingsManager.getNotificationHour(context).collectLatest { notificationHour = it }
     }
-    LaunchedEffect(Unit) {
-        SettingsManager.getNotificationMinute(context).collectLatest { notificationMinute = it }
-    }
 
     Scaffold(
         topBar = {
@@ -124,7 +119,7 @@ fun SettingsScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ==================== کارت امتیاز ====================
+            // کارت امتیاز
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -175,7 +170,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== ظاهر ====================
             SectionTitle("🎨 ظاهر و نمایش")
 
             SettingsSliderCard(
@@ -211,7 +205,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== صدا ====================
             SectionTitle("🔊 صدا و تلفظ")
 
             SettingsSliderCard(
@@ -235,7 +228,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== اعلان ====================
             SectionTitle("🔔 اعلان‌ها")
 
             SettingsSwitchCard(
@@ -243,7 +235,7 @@ fun SettingsScreen() {
                 iconColor = Color(0xFFE91E63),
                 title = "اعلان روزانه",
                 subtitle = if (notificationsEnabled)
-                    "فعال - ساعت ${String.format("%02d:%02d", notificationHour, notificationMinute)}"
+                    "فعال - ساعت $notificationHour:00"
                 else "غیرفعال",
                 checked = notificationsEnabled,
                 onCheckedChange = { enabled ->
@@ -254,7 +246,7 @@ fun SettingsScreen() {
                             notificationsEnabled = true
                             scope.launch {
                                 SettingsManager.setNotificationsEnabled(context, true)
-                                NotificationScheduler.scheduleDailyNotification(context, notificationHour, notificationMinute)
+                                NotificationScheduler.scheduleDailyNotification(context, notificationHour, 0)
                             }
                         }
                     } else {
@@ -297,11 +289,7 @@ fun SettingsScreen() {
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1A237E)
                             )
-                            Text(
-                                String.format("%02d:%02d", notificationHour, notificationMinute),
-                                fontSize = 12.sp,
-                                color = Color.Gray
-                            )
+                            Text("$notificationHour:00", fontSize = 12.sp, color = Color.Gray)
                         }
                         Icon(Icons.Filled.ChevronLeft, contentDescription = null, tint = Color.Gray)
                     }
@@ -310,7 +298,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== یادگیری ====================
             SectionTitle("📚 یادگیری")
 
             Card(
@@ -373,7 +360,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== هوش مصنوعی ====================
             SectionTitle("🤖 هوش مصنوعی")
 
             Card(
@@ -420,7 +406,6 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== مدیریت داده ====================
             SectionTitle("⚠️ مدیریت داده")
 
             Card(
@@ -457,44 +442,11 @@ fun SettingsScreen() {
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
-
-            // ==================== درباره ====================
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Filled.Info, contentDescription = null, tint = Color(0xFF1A237E))
-                        Spacer(Modifier.width(10.dp))
-                        Text(
-                            "درباره اپلیکیشن",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A237E)
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    Text("English Teacher", fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text("نسخه ۱.۰", fontSize = 12.sp, color = Color.Gray)
-                    Spacer(Modifier.height(10.dp))
-                    Text(
-                        "اپلیکیشن جامع آموزش زبان انگلیسی\n۳۴ درس، ۳ سطح، بانک لغات، کتاب داستان، گرامر، پادکست و AI",
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        lineHeight = 18.sp
-                    )
-                }
-            }
-
             Spacer(Modifier.height(20.dp))
         }
     }
 
-    // ==================== دیالوگ ریست ====================
+    // دیالوگ ریست
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
@@ -517,7 +469,7 @@ fun SettingsScreen() {
         )
     }
 
-    // ==================== دیالوگ API ====================
+    // دیالوگ API
     if (showApiDialog) {
         AlertDialog(
             onDismissRequest = { showApiDialog = false },
@@ -536,8 +488,6 @@ fun SettingsScreen() {
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation()
                     )
-                    Spacer(Modifier.height(8.dp))
-                    Text("console.groq.com", fontSize = 11.sp, color = Color(0xFF00838F), fontWeight = FontWeight.SemiBold)
                 }
             },
             confirmButton = {
@@ -556,81 +506,65 @@ fun SettingsScreen() {
         )
     }
 
-    // ==================== دیالوگ ساعت ====================
+    // دیالوگ ساعت
     if (showTimeDialog) {
         val hours = (0..23).toList()
+        var tempHour by remember { mutableIntStateOf(notificationHour) }
         AlertDialog(
             onDismissRequest = { showTimeDialog = false },
             title = { Text("ساعت یادآوری") },
             text = {
                 Column(
-                    modifier = Modifier.height(300.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 300.dp)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    Text("ساعت مناسب برای یادآوری روزانه:", fontSize = 13.sp, color = Color.Gray)
-                    Spacer(Modifier.height(12.dp))
-                    androidx.compose.foundation.lazy.LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        androidx.compose.foundation.lazy.items(hours) { h ->
-                            val isSelected = notificationHour == h
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        notificationHour = h
-                                        scope.launch {
-                                            SettingsManager.setNotificationHour(context, h)
-                                            if (notificationsEnabled) {
-                                                NotificationScheduler.cancelDailyNotification(context)
-                                                NotificationScheduler.scheduleDailyNotification(context, h, notificationMinute)
-                                            }
-                                        }
-                                    },
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (isSelected) Color(0xFFE91E63).copy(alpha = 0.15f)
-                                    else Color.White
-                                ),
-                                shape = RoundedCornerShape(10.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(12.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = isSelected,
-                                        onClick = {
-                                            notificationHour = h
-                                            scope.launch {
-                                                SettingsManager.setNotificationHour(context, h)
-                                                if (notificationsEnabled) {
-                                                    NotificationScheduler.cancelDailyNotification(context)
-                                                    NotificationScheduler.scheduleDailyNotification(context, h, notificationMinute)
-                                                }
-                                            }
-                                        },
-                                        colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFE91E63))
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        String.format("%02d:00", h),
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                }
-                            }
+                    hours.forEach { h ->
+                        val isSelected = tempHour == h
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { tempHour = h }
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = isSelected,
+                                onClick = { tempHour = h },
+                                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFE91E63))
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                String.format("%02d:00", h),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
                         }
                     }
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showTimeDialog = false }) {
+                TextButton(onClick = {
+                    notificationHour = tempHour
+                    scope.launch {
+                        SettingsManager.setNotificationHour(context, tempHour)
+                        if (notificationsEnabled) {
+                            NotificationScheduler.cancelDailyNotification(context)
+                            NotificationScheduler.scheduleDailyNotification(context, tempHour, 0)
+                        }
+                    }
+                    showTimeDialog = false
+                }) {
                     Text("تأیید", color = Color(0xFF1A237E), fontWeight = FontWeight.Bold)
                 }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimeDialog = false }) { Text("لغو") }
             }
         )
     }
 }
 
-// ==================== عنوان بخش ====================
 @Composable
 private fun SectionTitle(text: String) {
     Row(
