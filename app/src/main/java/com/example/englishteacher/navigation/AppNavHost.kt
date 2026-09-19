@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.ui.screens.AIChatScreen
+import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
 import com.example.englishteacher.ui.screens.HomeScreen
 import com.example.englishteacher.ui.screens.LessonDetailScreen
@@ -38,6 +39,7 @@ object Routes {
     const val VOCABULARY_BANK = "vocabulary_bank"
     const val LEVEL_TEST = "level_test"
     const val PROFILE = "profile"
+    const val BOOKMARKED_WORDS = "bookmarked_words"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -138,6 +140,10 @@ fun AppNavHost(
 
         composable(Routes.PROFILE) {
             ProfileScreen()
+        }
+
+        composable(Routes.BOOKMARKED_WORDS) {
+            BookmarkedWordsScreen()
         }
 
         composable(Routes.AI_CHAT) {
