@@ -78,6 +78,9 @@ fun AppNavHost(
                 },
                 onBookmarkedWordsClick = {
                     navController.navigate(Routes.BOOKMARKED_WORDS)
+                },
+                onVideoClick = {
+                    navController.navigate(Routes.VIDEOS)
                 }
             )
         }
