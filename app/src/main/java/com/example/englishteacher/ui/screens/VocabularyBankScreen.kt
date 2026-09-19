@@ -1,7 +1,6 @@
 package com.example.englishteacher.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,35 +8,46 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.SpeechHelper
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.LessonRepository
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VocabularyBankScreen() {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val speechHelper = remember { SpeechHelper(context) }
 
     DisposableEffect(Unit) {
         onDispose { speechHelper.close() }
     }
 
+    var bookmarkedWords by remember { mutableStateOf<Set<String>>(emptySet()) }
+
+    LaunchedEffect(Unit) {
+        BookmarkManager.getBookmarkedWords(context).collectLatest { bookmarkedWords = it }
+    }
+
     // گرفتن همه لغات از همه دروس
     val allWords = remember {
-        val list = mutableListOf<Pair<String, String>>() // (english, level)
+        val list = mutableListOf<Pair<String, String>>()
         Level.values().forEach { level ->
             val lessons = LessonRepository.getLessonsByLevel(level)
             lessons.forEach { lesson ->
@@ -51,11 +61,13 @@ fun VocabularyBankScreen() {
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedLevel by remember { mutableStateOf<String?>(null) }
+    var showOnlyBookmarked by remember { mutableStateOf(false) }
 
     val filteredWords = allWords.filter { (english, level) ->
         val matchesSearch = searchQuery.isEmpty() || english.contains(searchQuery, ignoreCase = true)
         val matchesLevel = selectedLevel == null || level == selectedLevel
-        matchesSearch && matchesLevel
+        val matchesBookmark = !showOnlyBookmarked || bookmarkedWords.contains(english)
+        matchesSearch && matchesLevel && matchesBookmark
     }
 
     Scaffold(
@@ -82,11 +94,9 @@ fun VocabularyBankScreen() {
                 .padding(padding)
         ) {
 
-            // ==================== نوار جستجو ====================
+            // نوار جستجو
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -108,17 +118,26 @@ fun VocabularyBankScreen() {
                 )
             }
 
-            // ==================== فیلتر سطح ====================
+            // فیلتر سطح + Bookmark
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                FilterChip(
+                    selected = showOnlyBookmarked,
+                    onClick = { showOnlyBookmarked = !showOnlyBookmarked },
+                    label = {
+                        Text("🔖 ذخیره‌شده", fontSize = 11.sp)
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color(0xFFFFA000),
+                        selectedLabelColor = Color.White
+                    )
+                )
                 FilterChip(
                     selected = selectedLevel == null,
                     onClick = { selectedLevel = null },
-                    label = { Text("همه", fontSize = 12.sp) },
+                    label = { Text("همه", fontSize = 11.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF00695C),
                         selectedLabelColor = Color.White
@@ -127,7 +146,7 @@ fun VocabularyBankScreen() {
                 FilterChip(
                     selected = selectedLevel == "مبتدی",
                     onClick = { selectedLevel = if (selectedLevel == "مبتدی") null else "مبتدی" },
-                    label = { Text("مبتدی", fontSize = 12.sp) },
+                    label = { Text("مبتدی", fontSize = 11.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF11998E),
                         selectedLabelColor = Color.White
@@ -136,7 +155,7 @@ fun VocabularyBankScreen() {
                 FilterChip(
                     selected = selectedLevel == "متوسط",
                     onClick = { selectedLevel = if (selectedLevel == "متوسط") null else "متوسط" },
-                    label = { Text("متوسط", fontSize = 12.sp) },
+                    label = { Text("متوسط", fontSize = 11.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF8E2DE2),
                         selectedLabelColor = Color.White
@@ -145,7 +164,7 @@ fun VocabularyBankScreen() {
                 FilterChip(
                     selected = selectedLevel == "پیشرفته",
                     onClick = { selectedLevel = if (selectedLevel == "پیشرفته") null else "پیشرفته" },
-                    label = { Text("پیشرفته", fontSize = 12.sp) },
+                    label = { Text("پیشرفته", fontSize = 11.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFFF12711),
                         selectedLabelColor = Color.White
@@ -155,7 +174,6 @@ fun VocabularyBankScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== نتیجه ====================
             Text(
                 text = "${filteredWords.size} لغت پیدا شد",
                 fontSize = 12.sp,
@@ -165,13 +183,15 @@ fun VocabularyBankScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== لیست لغات ====================
+            // لیست لغات
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredWords) { (english, level) ->
+                    val isBookmarked = bookmarkedWords.contains(english)
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -182,7 +202,6 @@ fun VocabularyBankScreen() {
                             modifier = Modifier.fillMaxWidth().padding(14.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // آیکون حرف اول
                             Box(
                                 modifier = Modifier
                                     .size(42.dp)
@@ -223,10 +242,28 @@ fun VocabularyBankScreen() {
                                 }
                             }
 
+                            // دکمه Bookmark
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        BookmarkManager.toggleBookmark(context, english)
+                                    }
+                                },
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
+                                    contentDescription = "Bookmark",
+                                    tint = if (isBookmarked) Color(0xFFFFA000) else Color.Gray,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
+                            // دکمه پخش
                             IconButton(
                                 onClick = { speechHelper.speak(english) },
                                 modifier = Modifier
-                                    .size(42.dp)
+                                    .size(40.dp)
                                     .clip(CircleShape)
                                     .background(Color(0xFF00695C).copy(alpha = 0.12f))
                             ) {
@@ -234,7 +271,7 @@ fun VocabularyBankScreen() {
                                     Icons.AutoMirrored.Filled.VolumeUp,
                                     contentDescription = "Play",
                                     tint = Color(0xFF00695C),
-                                    modifier = Modifier.size(22.dp)
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                         }
