@@ -41,26 +41,9 @@ object LessonRepository {
             storyTitle = "A New Friend",
             storyText = "Tom is a new student at school. He is shy, but he wants to make friends. One day, he meets a girl named Lily. They talk, and soon they become friends.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "What does \"Hello\" mean?",
-                    options = listOf("سلام", "خداحافظ", "نام", "ممنون"),
-                    correctIndex = 0
-                ),
-                QuizQuestion(
-                    question = "\"Nice to meet you\" یعنی چه؟",
-                    options = listOf("حالت چطوره؟", "از آشنایی با شما خوشحالم", "اسمت چیه؟", "کجایی؟"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "She work in a school.",
-                        "She works in a school.",
-                        "She working in a school.",
-                        "She worked in a school."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("What does \"Hello\" mean?", listOf("سلام", "خداحافظ", "نام", "ممنون"), 0),
+                QuizQuestion("\"Nice to meet you\" یعنی چه؟", listOf("حالت چطوره؟", "از آشنایی با شما خوشحالم", "اسمت چیه؟", "کجایی؟"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("She work in a school.", "She works in a school.", "She working in a school.", "She worked in a school."), 1)
             )
         ),
 
@@ -79,7 +62,7 @@ object LessonRepository {
                 Word("Expensive", "گران", "ɪkˈspɛnsɪv")
             ),
             grammarTitle = "This / That / These / Those",
-            grammarExplanation = "برای اشاره به اشیا استفاده می‌شود.\n\nThis = این (نزدیک، مفرد)\nThat = آن (دور، مفرد)\nThese = این‌ها (نزدیک، جمع)\nThose = آن‌ها (دور، جمع)",
+            grammarExplanation = "برای اشاره به اشیا:\n\nThis = این (نزدیک، مفرد)\nThat = آن (دور، مفرد)\nThese = این‌ها (نزدیک، جمع)\nThose = آن‌ها (دور، جمع)",
             grammarExamples = listOf(
                 "This book is cheap. — این کتاب ارزان است.",
                 "That car is expensive. — آن ماشین گران است.",
@@ -100,21 +83,8 @@ object LessonRepository {
             storyTitle = "Shopping with Mom",
             storyText = "Sara goes shopping with her mom. She wants to buy a new dress. The dress is blue and pretty. It is not expensive. Sara is very happy.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Expensive\" چیست؟",
-                    options = listOf("ارزان", "گران", "زیبا", "جدید"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "This books are new.",
-                        "This book is new.",
-                        "These book is new.",
-                        "This book are new."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Expensive\" چیست؟", listOf("ارزان", "گران", "زیبا", "جدید"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("This books are new.", "This book is new.", "These book is new.", "This book are new."), 1)
             )
         ),
 
@@ -132,10 +102,10 @@ object LessonRepository {
                 Word("Dinner", "شام", "ˈdɪnər"),
                 Word("Sleep", "خوابیدن", "slip"),
                 Word("Morning", "صبح", "ˈmɔrnɪŋ"),
-                Word("Evening", "عصر/شب", "ˈivnɪŋ")
+                Word("Evening", "عصر", "ˈivnɪŋ")
             ),
             grammarTitle = "Adverbs of Frequency - قیدهای تکرار",
-            grammarExplanation = "قیدهای تکرار نشان می‌دهند یک کار چند وقت یک بار انجام می‌شود.\n\nAlways (همیشه) - Usually (معمولاً) - Often (غالباً) - Sometimes (بعضی وقت‌ها) - Never (هرگز)\n\nجای قید: قبل از فعل اصلی، بعد از فعل to be",
+            grammarExplanation = "قیدهای تکرار: Always (همیشه) - Usually (معمولاً) - Often (غالباً) - Sometimes (بعضی وقت‌ها) - Never (هرگز)\n\nجای قید: قبل از فعل اصلی، بعد از فعل to be",
             grammarExamples = listOf(
                 "I always wake up at 7 AM. — من همیشه ساعت ۷ بیدار می‌شوم.",
                 "She usually has breakfast at home. — او معمولاً صبحانه در خانه می‌خورد.",
@@ -156,26 +126,8 @@ object LessonRepository {
             storyTitle = "A Busy Day",
             storyText = "Anna is a teacher. She always wakes up at six o'clock. She has breakfast with her family. She goes to school at seven thirty. She teaches English to children. In the evening, she reads books and goes to bed at ten.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Breakfast\" چیست؟",
-                    options = listOf("ناهار", "شام", "صبحانه", "میان‌وعده"),
-                    correctIndex = 2
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "I always am happy.",
-                        "I am always happy.",
-                        "Always I am happy.",
-                        "I happy always am."
-                    ),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "معنی \"Never\" چیست؟",
-                    options = listOf("همیشه", "هرگز", "معمولاً", "گاهی"),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Breakfast\" چیست؟", listOf("ناهار", "شام", "صبحانه", "میان‌وعده"), 2),
+                QuizQuestion("کدام جمله درست است؟", listOf("I always am happy.", "I am always happy.", "Always I am happy.", "I happy always am."), 1)
             )
         ),
 
@@ -196,7 +148,7 @@ object LessonRepository {
                 Word("Delicious", "خوشمزه", "dɪˈlɪʃəs")
             ),
             grammarTitle = "Countable & Uncountable Nouns",
-            grammarExplanation = "اسم‌های قابل شمارش (Countable): می‌شه شمردشون (apple, book, car)\nاسم‌های غیرقابل شمارش (Uncountable): نمی‌شه شمردشون (water, rice, bread)\n\nبرای قابل شمارش: a/an + اسم\nبرای غیرقابل شمارش: some + اسم",
+            grammarExplanation = "قابل شمارش: apple, book, car (a/an + اسم)\nغیرقابل شمارش: water, rice, bread (some + اسم)",
             grammarExamples = listOf(
                 "I want an apple. — یک سیب می‌خواهم.",
                 "Can I have some water? — می‌تونم کمی آب داشته باشم؟",
@@ -217,16 +169,8 @@ object LessonRepository {
             storyTitle = "Lunch with Friends",
             storyText = "It is lunch time. Sara and her friends are in a restaurant. Sara orders chicken and rice. Her friend orders pizza. They share an apple for dessert. The food is delicious and they are very happy.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "کدام کلمه غیرقابل شمارش است؟",
-                    options = listOf("Apple", "Water", "Book", "Car"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "معنی \"Delicious\" چیست؟",
-                    options = listOf("بد", "تند", "خوشمزه", "سرد"),
-                    correctIndex = 2
-                )
+                QuizQuestion("کدام کلمه غیرقابل شمارش است؟", listOf("Apple", "Water", "Book", "Car"), 1),
+                QuizQuestion("معنی \"Delicious\" چیست؟", listOf("بد", "تند", "خوشمزه", "سرد"), 2)
             )
         ),
 
@@ -247,7 +191,7 @@ object LessonRepository {
                 Word("Library", "کتابخانه", "ˈlaɪbrɛri")
             ),
             grammarTitle = "There is / There are",
-            grammarExplanation = "برای گفتن اینکه چیزی وجود دارد:\n\nThere is + اسم مفرد\nThere are + اسم جمع\n\nمنفی:\nThere isn't / There aren't\nسوال:\nIs there...? / Are there...?",
+            grammarExplanation = "There is + اسم مفرد\nThere are + اسم جمع\n\nمنفی: There isn't / There aren't\nسوال: Is there...? / Are there...?",
             grammarExamples = listOf(
                 "There is a book on the desk. — یک کتاب روی میز هست.",
                 "There are twenty students in the classroom. — بیست دانش‌آموز در کلاس هستند.",
@@ -268,21 +212,8 @@ object LessonRepository {
             storyTitle = "The First Day of School",
             storyText = "It is Ali's first day of school. There are many students in his classroom. His teacher is very kind. There is a big library near his class. Ali is a little nervous, but he is also excited.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "There is twenty students.",
-                        "There are twenty students.",
-                        "There have twenty students.",
-                        "There has twenty students."
-                    ),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "معنی \"Homework\" چیست؟",
-                    options = listOf("امتحان", "کتاب", "تکلیف", "معلم"),
-                    correctIndex = 2
-                )
+                QuizQuestion("کدام جمله درست است؟", listOf("There is twenty students.", "There are twenty students.", "There have twenty students.", "There has twenty students."), 1),
+                QuizQuestion("معنی \"Homework\" چیست؟", listOf("امتحان", "کتاب", "تکلیف", "معلم"), 2)
             )
         ),
 
@@ -303,11 +234,11 @@ object LessonRepository {
                 Word("Enjoy", "لذت بردن", "ɪnˈdʒɔɪ")
             ),
             grammarTitle = "Like + Verb-ing",
-            grammarExplanation = "برای بیان علاقه از like + فعل با ing استفاده می‌کنیم:\n\nI like swimming. (شنا کردن رو دوست دارم)\nI love reading. (کتاب خواندن رو عاشقانه دوست دارم)\nI don't like cooking. (آشپزی رو دوست ندارم)\n\nافعال علاقه: like, love, enjoy, hate",
+            grammarExplanation = "برای بیان علاقه:\n\nI like swimming.\nI love reading.\nI don't like cooking.\n\nافعال علاقه: like, love, enjoy, hate",
             grammarExamples = listOf(
                 "I like playing football. — فوتبال بازی کردن رو دوست دارم.",
-                "She loves drawing pictures. — او کشیدن نقاشی رو عاشقانه دوست داره.",
-                "They enjoy listening to music. — آن‌ها گوش دادن به موسیقی رو لذت می‌برند."
+                "She loves drawing pictures. — او کشیدن نقاشی رو دوست داره.",
+                "They enjoy listening to music. — آن‌ها موسیقی گوش دادن رو لذت می‌برند."
             ),
             conversation = Conversation(
                 title = "Talking about hobbies",
@@ -324,21 +255,8 @@ object LessonRepository {
             storyTitle = "A Weekend Full of Fun",
             storyText = "On weekends, Reza loves doing his hobbies. He likes reading books in the morning. In the afternoon, he enjoys swimming with his friends. In the evening, he listens to music. His hobbies make him very happy.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "I like swim.",
-                        "I like swimming.",
-                        "I like to swiming.",
-                        "I like swiming."
-                    ),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "معنی \"Enjoy\" چیست؟",
-                    options = listOf("متنفر بودن", "لذت بردن", "خسته شدن", "ترسیدن"),
-                    correctIndex = 1
-                )
+                QuizQuestion("کدام جمله درست است؟", listOf("I like swim.", "I like swimming.", "I like to swiming.", "I like swiming."), 1),
+                QuizQuestion("معنی \"Enjoy\" چیست؟", listOf("متنفر بودن", "لذت بردن", "خسته شدن", "ترسیدن"), 1)
             )
         ),
 
@@ -352,14 +270,14 @@ object LessonRepository {
                 Word("Neighborhood", "محله", "ˈneɪbərhʊd"),
                 Word("Street", "خیابان", "strit"),
                 Word("Park", "پارک", "pɑrk"),
-                Word("Market", "بازار/فروشگاه", "ˈmɑrkɪt"),
+                Word("Market", "بازار", "ˈmɑrkɪt"),
                 Word("Hospital", "بیمارستان", "ˈhɑspɪtl"),
                 Word("Restaurant", "رستوران", "ˈrɛstərɑnt"),
                 Word("Bank", "بانک", "bæŋk"),
                 Word("Near", "نزدیک", "nɪr")
             ),
             grammarTitle = "Prepositions of Place",
-            grammarExplanation = "حروف اضافه مکان:\n\nIn = در (داخل چیزی)\nOn = روی\nNext to = کنارِ\nNear = نزدیکِ\nBetween = بینِ\nAcross from = مقابلِ",
+            grammarExplanation = "In = در\nOn = روی\nNext to = کنارِ\nNear = نزدیکِ\nBetween = بینِ\nAcross from = مقابلِ",
             grammarExamples = listOf(
                 "The bank is next to the market. — بانک کنار بازار است.",
                 "There is a park across from my house. — پارکی مقابل خانه من است.",
@@ -380,21 +298,8 @@ object LessonRepository {
             storyTitle = "My New Neighborhood",
             storyText = "Maryam moved to a new neighborhood last week. Her new house is near a big park. There is a market next to her building. The bank is across from the hospital. She likes her new neighborhood very much.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Next to\" چیست؟",
-                    options = listOf("دور از", "روی", "کنارِ", "زیرِ"),
-                    correctIndex = 2
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "The bank is on the market.",
-                        "The bank is next to the market.",
-                        "The bank is between the market.",
-                        "The bank is near of the market."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Next to\" چیست؟", listOf("دور از", "روی", "کنارِ", "زیرِ"), 2),
+                QuizQuestion("کدام جمله درست است؟", listOf("The bank is on the market.", "The bank is next to the market.", "The bank is between the market.", "The bank is near of the market."), 1)
             )
         ),
 
@@ -415,7 +320,7 @@ object LessonRepository {
                 Word("Winter", "زمستان", "ˈwɪntər")
             ),
             grammarTitle = "Present Continuous - حال استمراری",
-            grammarExplanation = "زمان حال استمراری برای کارهایی که الان در حال انجام شدن هستند.\n\nفرمول: am/is/are + verb-ing\n\nمثال:\nI am reading (دارم می‌خوانم)\nHe is playing (دارد بازی می‌کند)\nWe are studying (داریم درس می‌خوانیم)",
+            grammarExplanation = "برای کارهایی که الان در حال انجام هستن.\n\nفرمول: am/is/are + verb-ing",
             grammarExamples = listOf(
                 "It is raining right now. — الان داره بارون میاد.",
                 "The sun is shining today. — امروز خورشید داره می‌تابه.",
@@ -436,21 +341,8 @@ object LessonRepository {
             storyTitle = "A Rainy Day",
             storyText = "Today is a rainy day. Tom is looking out the window. The rain is falling softly. He is drinking hot tea and reading a book. His cat is sleeping on the sofa. Tom likes rainy days because they are calm and peaceful.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Sunny\" چیست؟",
-                    options = listOf("بارانی", "برفی", "آفتابی", "بادی"),
-                    correctIndex = 2
-                ),
-                QuizQuestion(
-                    question = "کدام جمله در زمان حال استمراری درست است؟",
-                    options = listOf(
-                        "It is rain now.",
-                        "It is raining now.",
-                        "It raining now.",
-                        "It rains now."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Sunny\" چیست؟", listOf("بارانی", "برفی", "آفتابی", "بادی"), 2),
+                QuizQuestion("کدام جمله درست است؟", listOf("It is rain now.", "It is raining now.", "It raining now.", "It rains now."), 1)
             )
         ),
 
@@ -470,8 +362,8 @@ object LessonRepository {
                 Word("Wear", "پوشیدن", "wɛr"),
                 Word("Beautiful", "زیبا", "ˈbjutəfəl")
             ),
-            grammarTitle = "Possessive Adjectives - صفات ملکی",
-            grammarExplanation = "صفات ملکی نشان می‌دهند چیزی مال کیه:\n\nMy (مال من)\nYour (مال تو)\nHis (مال او - مذکر)\nHer (مال او - مؤنث)\nOur (مال ما)\nTheir (مال آن‌ها)",
+            grammarTitle = "Possessive Adjectives",
+            grammarExplanation = "My (مال من)\nYour (مال تو)\nHis (مال او)\nHer (مال او)\nOur (مال ما)\nTheir (مال آن‌ها)",
             grammarExamples = listOf(
                 "This is my jacket. — این کاپشن منه.",
                 "Her dress is very beautiful. — لباسش خیلی زیباست.",
@@ -492,21 +384,8 @@ object LessonRepository {
             storyTitle = "Sara's New Dress",
             storyText = "Sara is going to a party. She wants a new dress. Her mother takes her to a shop. Sara tries on a red dress. It fits her very well. She looks beautiful. She is very happy with her new dress.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Jacket\" چیست؟",
-                    options = listOf("پیراهن", "کاپشن", "شلوار", "کفش"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "This is me jacket.",
-                        "This is my jacket.",
-                        "This is I jacket.",
-                        "This is mine jacket."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Jacket\" چیست؟", listOf("پیراهن", "کاپشن", "شلوار", "کفش"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("This is me jacket.", "This is my jacket.", "This is I jacket.", "This is mine jacket."), 1)
             )
         ),
 
@@ -527,7 +406,7 @@ object LessonRepository {
                 Word("Healthy", "سالم", "ˈhɛlθi")
             ),
             grammarTitle = "Should / Shouldn't",
-            grammarExplanation = "Should برای توصیه و پیشنهاد استفاده می‌شود:\n\nYou should + verb (باید / بهتره)\nYou shouldn't + verb (نباید / بهتره نکنی)\n\nبرای گفتن کارهای خوب و بد:",
+            grammarExplanation = "You should + verb (باید / بهتره)\nYou shouldn't + verb (نباید / بهتره نکنی)",
             grammarExamples = listOf(
                 "You should see a doctor. — بهتره یه دکتر ببینی.",
                 "You shouldn't eat too much sugar. — نباید زیاد شکر بخوری.",
@@ -548,21 +427,8 @@ object LessonRepository {
             storyTitle = "Feeling Sick",
             storyText = "Ali feels sick today. He has a stomachache and a headache. His mother takes him to the doctor. The doctor says he should rest and drink a lot of water. Ali stays in bed all day. The next morning, he feels much better.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Healthy\" چیست؟",
-                    options = listOf("بیمار", "خسته", "سالم", "دردناک"),
-                    correctIndex = 2
-                ),
-                QuizQuestion(
-                    question = "کدام جمله درست است؟",
-                    options = listOf(
-                        "You should to rest.",
-                        "You should rest.",
-                        "You should resting.",
-                        "You should rests."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Healthy\" چیست؟", listOf("بیمار", "خسته", "سالم", "دردناک"), 2),
+                QuizQuestion("کدام جمله درست است؟", listOf("You should to rest.", "You should rest.", "You should resting.", "You should rests."), 1)
             )
         ),
 
@@ -581,7 +447,7 @@ object LessonRepository {
                 Word("Diversity", "تنوع", "dɪˈvɜrsəti")
             ),
             grammarTitle = "Present Perfect - حال کامل",
-            grammarExplanation = "زمان حال کامل برای بیان کارهایی که در گذشته شروع شده و تا حالا ادامه دارند یا اثرشان باقی است.\n\nفرمول: have/has + past participle",
+            grammarExplanation = "فرمول: have/has + past participle",
             grammarExamples = listOf(
                 "I have lived here for ten years. — من ده سال است اینجا زندگی می‌کنم.",
                 "She has visited many countries. — او کشورهای زیادی را دیده است.",
@@ -602,21 +468,395 @@ object LessonRepository {
             storyTitle = "A Trip to Remember",
             storyText = "Last summer, Emma traveled to Japan. She has never seen such a beautiful culture before. She learned about tea ceremonies, traditional clothing, and the kindness of the people. It has been the best trip of her life.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Diversity\" چیست؟",
-                    options = listOf("یکنواختی", "تنوع", "فرهنگ", "جامعه"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "کدام جمله در زمان حال کامل درست است؟",
-                    options = listOf(
-                        "I have went to Paris.",
-                        "I have been to Paris.",
-                        "I has been to Paris.",
-                        "I have go to Paris."
-                    ),
-                    correctIndex = 1
+                QuizQuestion("معنی \"Diversity\" چیست؟", listOf("یکنواختی", "تنوع", "فرهنگ", "جامعه"), 1),
+                QuizQuestion("کدام جمله در حال کامل درست است؟", listOf("I have went to Paris.", "I have been to Paris.", "I has been to Paris.", "I have go to Paris."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i2",
+            unitNumber = 2,
+            title = "Modern Technology",
+            titlePersian = "تکنولوژی مدرن",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Technology", "تکنولوژی", "tɛkˈnɑlədʒi"),
+                Word("Device", "دستگاه", "dɪˈvaɪs"),
+                Word("Smartphone", "گوشی هوشمند", "ˈsmɑrtfoʊn"),
+                Word("App", "اپلیکیشن", "æp"),
+                Word("Download", "دانلود کردن", "ˈdaʊnloʊd"),
+                Word("Software", "نرم‌افزار", "ˈsɔftwɛr"),
+                Word("Update", "به‌روزرسانی", "ˈʌpdeɪt"),
+                Word("Innovation", "نوآوری", "ˌɪnəˈveɪʃən")
+            ),
+            grammarTitle = "Present Perfect Continuous",
+            grammarExplanation = "فرمول: have/has been + verb-ing",
+            grammarExamples = listOf(
+                "I have been using this app for a year. — یک سال است که از این اپ استفاده می‌کنم.",
+                "She has been working on this project all morning. — او تمام صبح روی این پروژه کار کرده است.",
+                "They have been developing new software. — آن‌ها در حال توسعه نرم‌افزار جدید بوده‌اند."
+            ),
+            conversation = Conversation(
+                title = "Discussing technology",
+                titlePersian = "بحث درباره تکنولوژی",
+                lines = listOf(
+                    ConversationLine("A", "Have you tried the new app for learning English?", "اپ جدید یادگیری انگلیسی رو امتحان کردی؟"),
+                    ConversationLine("B", "Yes, I've been using it for a month now.", "بله، یک ماهه که دارم ازش استفاده می‌کنم."),
+                    ConversationLine("A", "How is it? Is it useful?", "چطوره؟ مفیده؟"),
+                    ConversationLine("B", "It's amazing! Technology has changed the way we learn.", "عالیه! تکنولوژی روش یادگیری ما رو تغییر داده."),
+                    ConversationLine("A", "I agree. But sometimes we spend too much time on our devices.", "موافقم. ولی بعضی وقت‌ها وقت زیادی روی دستگاه‌هامون می‌گذرونیم."),
+                    ConversationLine("B", "That's true. We need a healthy balance.", "درسته. ما به تعادل سالم نیاز داریم.")
                 )
+            ),
+            storyTitle = "The Digital Age",
+            storyText = "Technology has transformed every aspect of our lives. We have been communicating through smartphones and computers for many years. New innovations appear every day. However, we must remember that technology should serve us, not control us.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Innovation\" چیست؟", listOf("تکرار", "نوآوری", "تخریب", "سکون"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("I have using this app.", "I have been using this app.", "I has been using this app.", "I have be using this app."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i3",
+            unitNumber = 3,
+            title = "Healthy Lifestyle",
+            titlePersian = "سبک زندگی سالم",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Exercise", "ورزش", "ˈɛksərsaɪz"),
+                Word("Nutrition", "تغذیه", "nuˈtrɪʃən"),
+                Word("Stress", "استرس", "strɛs"),
+                Word("Balance", "تعادل", "ˈbæləns"),
+                Word("Habit", "عادت", "ˈhæbɪt"),
+                Word("Wellness", "سلامتی", "ˈwɛlnəs"),
+                Word("Meditation", "مدیتیشن", "ˌmɛdɪˈteɪʃən"),
+                Word("Lifestyle", "سبک زندگی", "ˈlaɪfstaɪl")
+            ),
+            grammarTitle = "Modal Verbs: Must, Have to, Should",
+            grammarExplanation = "Must = باید\nHave to = مجبور بودن\nShould = بهتره",
+            grammarExamples = listOf(
+                "You must drink enough water every day. — باید هر روز آب کافی بنوشی.",
+                "I have to wake up early for work. — مجبورم برای کار زود بیدار شم.",
+                "She should reduce her stress levels. — بهتره سطح استرسش رو کم کنه."
+            ),
+            conversation = Conversation(
+                title = "Talking about healthy habits",
+                titlePersian = "صحبت درباره عادات سالم",
+                lines = listOf(
+                    ConversationLine("A", "I've been trying to live a healthier lifestyle.", "سعی می‌کنم سبک زندگی سالم‌تری داشته باشم."),
+                    ConversationLine("B", "That's great! What changes have you made?", "عالیه! چه تغییراتی دادی؟"),
+                    ConversationLine("A", "I exercise three times a week and I eat more vegetables.", "هفته‌ای سه بار ورزش می‌کنم و سبزیجات بیشتری می‌خورم."),
+                    ConversationLine("B", "Good for you! How do you manage stress?", "آفرین به تو! استرس رو چطور مدیریت می‌کنی؟"),
+                    ConversationLine("A", "I practice meditation every morning. It really helps.", "هر صبح مدیتیشن تمرین می‌کنم. واقعاً کمک می‌کنه."),
+                    ConversationLine("B", "I should try that too. Balance is so important.", "من هم باید امتحان کنم. تعادل خیلی مهمه.")
+                )
+            ),
+            storyTitle = "A Journey to Wellness",
+            storyText = "Sarah used to have unhealthy habits. She never exercised and ate fast food every day. One day, she decided to change. She started to exercise regularly and cook healthy meals. Now she feels more energetic and happier than ever before.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Wellness\" چیست؟", listOf("بیماری", "سلامتی", "خستگی", "استرس"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("You must to exercise daily.", "You must exercise daily.", "You must exercising daily.", "You must exercises daily."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i4",
+            unitNumber = 4,
+            title = "Travel and Adventure",
+            titlePersian = "سفر و ماجراجویی",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Adventure", "ماجراجویی", "ædˈvɛntʃər"),
+                Word("Destination", "مقصد", "ˌdɛstɪˈneɪʃən"),
+                Word("Journey", "سفر", "ˈdʒɜrni"),
+                Word("Explore", "کاوش کردن", "ɪkˈsplɔr"),
+                Word("Landscape", "منظره", "ˈlændskeɪp"),
+                Word("Culture", "فرهنگ", "ˈkʌltʃər"),
+                Word("Souvenir", "سوغات", "ˌsuvəˈnɪr"),
+                Word("Itinerary", "برنامه سفر", "aɪˈtɪnərɛri")
+            ),
+            grammarTitle = "Past Perfect",
+            grammarExplanation = "فرمول: had + past participle",
+            grammarExamples = listOf(
+                "By the time we arrived, the tour had started. — تا ما رسیدیم، تور شروع شده بود.",
+                "She had never seen such beautiful landscapes before. — او قبلاً هرگز چنین مناظر زیبایی ندیده بود.",
+                "They had booked the hotel before the trip. — آن‌ها قبل از سفر هتل را رزرو کرده بودند."
+            ),
+            conversation = Conversation(
+                title = "Planning a trip",
+                titlePersian = "برنامه‌ریزی سفر",
+                lines = listOf(
+                    ConversationLine("A", "I'm planning an adventure trip to South America.", "دارم یه سفر ماجراجویانه به آمریکای جنوبی برنامه‌ریزی می‌کنم."),
+                    ConversationLine("B", "Wow! Have you decided on your destination?", "واو! مقصدت رو مشخص کردی؟"),
+                    ConversationLine("A", "Yes, I've chosen Peru. I want to explore Machu Picchu.", "بله، پرو رو انتخاب کردم. می‌خوام ماچو پیچو رو ببینم."),
+                    ConversationLine("B", "That sounds amazing! Have you made an itinerary?", "عالی به نظر میاد! برنامه سفر نوشتی؟"),
+                    ConversationLine("A", "Not yet, but I had researched it before I booked the flight.", "نه هنوز، ولی قبل از اینکه بلیط بگیرم تحقیق کرده بودم."),
+                    ConversationLine("B", "You should definitely try the local food and buy some souvenirs.", "حتماً باید غذای محلی امتحان کنی و سوغات بخری.")
+                )
+            ),
+            storyTitle = "The Adventure of a Lifetime",
+            storyText = "James had dreamed of traveling to Nepal since childhood. When he finally arrived in Kathmandu, he felt like his dream had come true. He had prepared for this journey for years. The landscapes were breathtaking, and the local culture amazed him. It was truly the adventure of a lifetime.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Destination\" چیست؟", listOf("مسیر", "مقصد", "وسیله", "بلیط"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("She had see the pyramids.", "She had seen the pyramids.", "She has seen the pyramids.", "She had saw the pyramids."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i5",
+            unitNumber = 5,
+            title = "Work and Career",
+            titlePersian = "کار و حرفه",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Career", "حرفه", "kəˈrɪr"),
+                Word("Interview", "مصاحبه", "ˈɪntərvju"),
+                Word("Resume", "رزومه", "ˈrɛzəmeɪ"),
+                Word("Salary", "حقوق", "ˈsæləri"),
+                Word("Promotion", "ترفیع", "prəˈmoʊʃən"),
+                Word("Colleague", "همکار", "ˈkɑliɡ"),
+                Word("Experience", "تجربه", "ɪkˈspɪriəns"),
+                Word("Skill", "مهارت", "skɪl")
+            ),
+            grammarTitle = "Reported Speech",
+            grammarExplanation = "گفتار غیرمستقیم:\n\nمستقیم: She said, \"I am busy.\"\nغیرمستقیم: She said (that) she was busy.",
+            grammarExamples = listOf(
+                "He said he was looking for a new job. — او گفت که دنبال شغل جدیدی می‌گردد.",
+                "She told me she had applied for the position. — او به من گفت که برای آن موقعیت درخواست داده است.",
+                "They said they would call me back. — آن‌ها گفتند که به من زنگ می‌زنند."
+            ),
+            conversation = Conversation(
+                title = "Job interview",
+                titlePersian = "مصاحبه شغلی",
+                lines = listOf(
+                    ConversationLine("A", "Tell me about your previous experience.", "از تجربه قبلی‌ت بگو."),
+                    ConversationLine("B", "I worked as a marketing manager for three years.", "سه سال به‌عنوان مدیر بازاریابی کار کردم."),
+                    ConversationLine("A", "What skills do you think are important for this role?", "چه مهارت‌هایی فکر می‌کنی برای این نقش مهمه؟"),
+                    ConversationLine("B", "Communication, teamwork, and problem-solving.", "ارتباطات، کار تیمی، و حل مسئله."),
+                    ConversationLine("A", "Why do you want to leave your current job?", "چرا می‌خوای شغل فعلی‌ت رو ترک کنی؟"),
+                    ConversationLine("B", "I'm looking for new challenges and a better salary.", "دنبال چالش‌های جدید و حقوق بهتر هستم.")
+                )
+            ),
+            storyTitle = "The Promotion",
+            storyText = "Daniel had been working at the company for five years. He had always been hardworking and dedicated. When the manager position opened, he applied immediately. After a difficult interview, he was offered the promotion. His colleagues congratulated him warmly.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Promotion\" چیست؟", listOf("اخراج", "ترفیع", "استعفا", "استخدام"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("He said he is busy.", "He said he was busy.", "He said he will be busy.", "He said he be busy."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i6",
+            unitNumber = 6,
+            title = "Environmental Issues",
+            titlePersian = "مسائل زیست‌محیطی",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Environment", "محیط زیست", "ɪnˈvaɪrənmənt"),
+                Word("Pollution", "آلودگی", "pəˈluʃən"),
+                Word("Recycle", "بازیافت کردن", "riˈsaɪkəl"),
+                Word("Climate", "آب و هوا", "ˈklaɪmət"),
+                Word("Energy", "انرژی", "ˈɛnərdʒi"),
+                Word("Waste", "زباله", "weɪst"),
+                Word("Sustainable", "پایدار", "səˈsteɪnəbəl"),
+                Word("Protect", "محافظت کردن", "prəˈtɛkt")
+            ),
+            grammarTitle = "First Conditional",
+            grammarExplanation = "فرمول: If + present simple, will + verb",
+            grammarExamples = listOf(
+                "If we don't recycle, pollution will increase. — اگر بازیافت نکنیم، آلودگی افزایش می‌یابد.",
+                "If you use less energy, you will save money. — اگر انرژی کمتری مصرف کنی، پول صرفه‌جویی می‌کنی.",
+                "If everyone helps, we will protect the environment. — اگر همه کمک کنند، محیط زیست را محافظت خواهیم کرد."
+            ),
+            conversation = Conversation(
+                title = "Discussing climate change",
+                titlePersian = "بحث درباره تغییرات اقلیمی",
+                lines = listOf(
+                    ConversationLine("A", "Do you think climate change is a serious problem?", "فکر می‌کنی تغییرات اقلیمی مشکل جدی‌ایه؟"),
+                    ConversationLine("B", "Absolutely. If we don't act now, it will get worse.", "قطعاً. اگر الان اقدام نکنیم، بدتر می‌شه."),
+                    ConversationLine("A", "What can we do as individuals?", "ما به‌عنوان افراد چی می‌تونیم بکنیم؟"),
+                    ConversationLine("B", "We should recycle more and use less energy.", "باید بیشتر بازیافت کنیم و انرژی کمتری مصرف کنیم."),
+                    ConversationLine("A", "I've started using public transportation.", "من شروع کردم به استفاده از حمل و نقل عمومی."),
+                    ConversationLine("B", "That's great! Every small action matters.", "عالیه! هر اقدام کوچیکی مهمه.")
+                )
+            ),
+            storyTitle = "Our Planet, Our Responsibility",
+            storyText = "The Earth is facing serious environmental challenges. Pollution has increased dramatically over the past decades. Many species have become endangered. If we continue this path, future generations will suffer. However, we still have time to make a difference.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Sustainable\" چیست؟", listOf("موقت", "پایدار", "خطرناک", "آلوده"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("If it rains, I would stay home.", "If it rains, I will stay home.", "If it will rain, I stay home.", "If it rained, I will stay home."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i7",
+            unitNumber = 7,
+            title = "Education and Learning",
+            titlePersian = "آموزش و یادگیری",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Education", "آموزش", "ˌɛdʒuˈkeɪʃən"),
+                Word("Knowledge", "دانش", "ˈnɑlɪdʒ"),
+                Word("Degree", "مدرک", "dɪˈɡri"),
+                Word("Scholarship", "بورسیه", "ˈskɑlərʃɪp"),
+                Word("Research", "تحقیق", "rɪˈsɜrtʃ"),
+                Word("Graduate", "فارغ‌التحصیل شدن", "ˈɡrædʒuˌeɪt"),
+                Word("University", "دانشگاه", "ˌjunəˈvɜrsəti"),
+                Word("Skill", "مهارت", "skɪl")
+            ),
+            grammarTitle = "Used to / Be used to",
+            grammarExplanation = "Used to: عادت در گذشته\nBe used to: عادت داشتن به چیزی",
+            grammarExamples = listOf(
+                "I used to study at the library. — قبلاً در کتابخانه درس می‌خواندم.",
+                "She is used to taking online classes. — او به شرکت در کلاس‌های آنلاین عادت دارد.",
+                "They used to live in London. — آن‌ها قبلاً در لندن زندگی می‌کردند."
+            ),
+            conversation = Conversation(
+                title = "Talking about studies",
+                titlePersian = "صحبت درباره تحصیلات",
+                lines = listOf(
+                    ConversationLine("A", "What are you studying at university?", "چی در دانشگاه می‌خونی؟"),
+                    ConversationLine("B", "I'm studying computer science. I love it!", "علوم کامپیوتر می‌خونم. عاشقشم!"),
+                    ConversationLine("A", "That's a great field. Why did you choose it?", "رشته عالیه. چرا انتخابش کردی؟"),
+                    ConversationLine("B", "I used to play video games a lot, so I got interested in programming.", "قبلاً زیاد بازی می‌کردم، برای همین به برنامه‌نویسی علاقه‌مند شدم."),
+                    ConversationLine("A", "Have you applied for any scholarships?", "برای بورسیه‌ای درخواست دادی؟"),
+                    ConversationLine("B", "Yes, I have. I hope I'll graduate with honors.", "بله، دادم. امیدوارم با افتخار فارغ‌التحصیل بشم.")
+                )
+            ),
+            storyTitle = "The Power of Education",
+            storyText = "Maria grew up in a small village where education was rare. She used to walk two hours to school every day. Her family couldn't afford books, so she borrowed them from the library. Years later, she graduated from a top university. Now she helps other children get an education.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Scholarship\" چیست؟", listOf("شهریه", "بورسیه", "امتحان", "مدرک"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("I used to playing football.", "I used to play football.", "I use to play football.", "I used playing football."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i8",
+            unitNumber = 8,
+            title = "Media and News",
+            titlePersian = "رسانه و اخبار",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Media", "رسانه", "ˈmidiə"),
+                Word("News", "اخبار", "nuz"),
+                Word("Article", "مقاله", "ˈɑrtɪkəl"),
+                Word("Journalist", "روزنامه‌نگار", "ˈdʒɜrnəlɪst"),
+                Word("Report", "گزارش", "rɪˈpɔrt"),
+                Word("Source", "منبع", "sɔrs"),
+                Word("Headline", "تیتر", "ˈhɛdlaɪn"),
+                Word("Broadcast", "پخش کردن", "ˈbrɔdkæst")
+            ),
+            grammarTitle = "Gerunds and Infinitives",
+            grammarExplanation = "بعضی افعال با ing و بعضی با to:\n\nEnjoy + ing\nWant + to\nDecide + to\nAvoid + ing",
+            grammarExamples = listOf(
+                "I enjoy reading the news online. — از خواندن اخبار آنلاین لذت می‌برم.",
+                "She decided to become a journalist. — او تصمیم گرفت روزنامه‌نگار شود.",
+                "They avoid watching too much TV. — آن‌ها از تماشای زیاد تلویزیون پرهیز می‌کنند."
+            ),
+            conversation = Conversation(
+                title = "Discussing news sources",
+                titlePersian = "بحث درباره منابع خبری",
+                lines = listOf(
+                    ConversationLine("A", "Where do you usually get your news from?", "معمولاً اخبار رو از کجا می‌گیری؟"),
+                    ConversationLine("B", "I prefer reading articles from reliable sources.", "ترجیح می‌دم مقالات رو از منابع معتبر بخونم."),
+                    ConversationLine("A", "Do you think all news is accurate?", "فکر می‌کنی همه اخبار دقیقن؟"),
+                    ConversationLine("B", "Not always. We should always check the source.", "نه همیشه. باید همیشه منبع رو چک کنیم."),
+                    ConversationLine("A", "I agree. Fake news is a big problem today.", "موافقم. اخبار جعلی امروز مشکل بزرگیه."),
+                    ConversationLine("B", "Journalists should be more responsible.", "روزنامه‌نگارها باید مسئول‌تر باشن.")
+                )
+            ),
+            storyTitle = "The Truth Behind the Story",
+            storyText = "A young journalist was assigned to report on a local event. She decided to research thoroughly before writing. She interviewed many witnesses and checked every fact. Her article became famous because of its accuracy. She had proven that good journalism still exists.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Source\" چیست؟", listOf("خبر", "منبع", "تیتر", "گزارش"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("I enjoy to read books.", "I enjoy reading books.", "I enjoy read books.", "I enjoy reads books."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i9",
+            unitNumber = 9,
+            title = "Money and Banking",
+            titlePersian = "پول و بانکداری",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Account", "حساب", "əˈkaʊnt"),
+                Word("Deposit", "واریز", "dɪˈpɑzɪt"),
+                Word("Withdraw", "برداشت", "wɪðˈdrɔ"),
+                Word("Currency", "ارز", "ˈkɜrənsi"),
+                Word("Budget", "بودجه", "ˈbʌdʒɪt"),
+                Word("Loan", "وام", "loʊn"),
+                Word("Interest", "سود", "ˈɪntrəst"),
+                Word("Investment", "سرمایه‌گذاری", "ɪnˈvɛstmənt")
+            ),
+            grammarTitle = "Second Conditional",
+            grammarExplanation = "فرمول: If + past simple, would + verb",
+            grammarExamples = listOf(
+                "If I saved more, I would buy a house. — اگر بیشتر پس‌انداز کنم، خانه می‌خرم.",
+                "If I were rich, I would invest in stocks. — اگر ثروتمند بودم، در سهام سرمایه‌گذاری می‌کردم.",
+                "She would open a bank account if she had an ID. — اگر کارت شناسایی داشت، حساب بانکی باز می‌کرد."
+            ),
+            conversation = Conversation(
+                title = "Talking about finances",
+                titlePersian = "صحبت درباره امور مالی",
+                lines = listOf(
+                    ConversationLine("A", "Do you have a savings account?", "حساب پس‌انداز داری؟"),
+                    ConversationLine("B", "Yes, I try to deposit money every month.", "بله، سعی می‌کنم هر ماه پول واریز کنم."),
+                    ConversationLine("A", "That's smart. Do you have a budget?", "هوشمندانه‌ست. بودجه داری؟"),
+                    ConversationLine("B", "Yes, I use an app to track my expenses.", "بله، از یه اپ برای پیگیری هزینه‌هام استفاده می‌کنم."),
+                    ConversationLine("A", "What would you do if you won the lottery?", "اگه لاتاری برنده می‌شدی چی می‌کردی؟"),
+                    ConversationLine("B", "If I won, I would invest in real estate.", "اگه برنده می‌شدم، در املاک سرمایه‌گذاری می‌کردم.")
+                )
+            ),
+            storyTitle = "Smart Financial Decisions",
+            storyText = "Michael used to spend all his salary every month. He had no savings and no budget. One day, he realized he needed to change. He opened a savings account and started investing. Five years later, he bought his first apartment. It was the best decision of his life.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Investment\" چیست؟", listOf("هزینه", "سرمایه‌گذاری", "وام", "سود"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("If I have money, I would travel.", "If I had money, I would travel.", "If I had money, I will travel.", "If I have money, I will would travel."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i10",
+            unitNumber = 10,
+            title = "Relationships and Communication",
+            titlePersian = "روابط و ارتباطات",
+            level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Relationship", "رابطه", "rɪˈleɪʃənʃɪp"),
+                Word("Communication", "ارتباط", "kəˌmjunɪˈkeɪʃən"),
+                Word("Trust", "اعتماد", "trʌst"),
+                Word("Argument", "بحث", "ˈɑrɡjəmənt"),
+                Word("Apologize", "عذرخواهی کردن", "əˈpɑlədʒaɪz"),
+                Word("Forgive", "بخشیدن", "fərˈɡɪv"),
+                Word("Honest", "صادق", "ˈɑnɪst"),
+                Word("Understanding", "تفاهم", "ˌʌndərˈstændɪŋ")
+            ),
+            grammarTitle = "Reflexive Pronouns",
+            grammarExplanation = "Myself, Yourself, Himself, Herself, Ourselves, Themselves",
+            grammarExamples = listOf(
+                "I taught myself English. — خودم انگلیسی یاد گرفتم.",
+                "She blamed herself for the mistake. — او خودش را برای اشتباه سرزنش کرد.",
+                "We should respect ourselves and others. — ما باید به خودمون و دیگران احترام بگذاریم."
+            ),
+            conversation = Conversation(
+                title = "Resolving a conflict",
+                titlePersian = "حل کردن یک تعارض",
+                lines = listOf(
+                    ConversationLine("A", "I'm sorry for what I said yesterday.", "برای چیزی که دیروز گفتم متأسفم."),
+                    ConversationLine("B", "Thank you for apologizing. I was really hurt.", "ممنون که عذرخواهی کردی. واقعاً ناراحت شدم."),
+                    ConversationLine("A", "I know, and I feel terrible about it.", "می‌دونم، و واقعاً احساس بدی دارم."),
+                    ConversationLine("B", "Communication is key in any relationship.", "ارتباط در هر رابطه‌ای کلیدیه."),
+                    ConversationLine("A", "You're right. From now on, I'll be more honest.", "حق داری. از این به بعد صادق‌تر خواهم بود."),
+                    ConversationLine("B", "And I'll try to understand your side too.", "من هم سعی می‌کنم طرف تو رو بفهمم.")
+                )
+            ),
+            storyTitle = "The Art of Understanding",
+            storyText = "Every relationship has its challenges. Misunderstandings can create distance between people. However, honest communication can heal any wound. When we learn to forgive ourselves and others, we build stronger bonds. Trust is the foundation of every meaningful relationship.",
+            quiz = listOf(
+                QuizQuestion("معنی \"Apologize\" چیست؟", listOf("تشکر کردن", "عذرخواهی کردن", "جواب دادن", "بحث کردن"), 1),
+                QuizQuestion("کدام جمله درست است؟", listOf("She hurt sheself.", "She hurt herself.", "She hurt hisself.", "She hurt therself."), 1)
             )
         ),
 
@@ -635,7 +875,7 @@ object LessonRepository {
                 Word("Loyalty", "وفاداری", "ˈlɔɪəlti")
             ),
             grammarTitle = "Passive Voice - مجهول",
-            grammarExplanation = "مجهول برای زمانی که فاعل مهم نیست یا نمی‌خواهیم ذکر کنیم.\n\nفرمول: be + past participle",
+            grammarExplanation = "فرمول: be + past participle",
             grammarExamples = listOf(
                 "The book was written by a famous author. — کتاب توسط یک نویسنده معروف نوشته شد.",
                 "English is spoken all over the world. — انگلیسی در سراسر جهان صحبت می‌شود.",
@@ -656,21 +896,8 @@ object LessonRepository {
             storyTitle = "The Value of Friendship",
             storyText = "True friendship is built on trust and loyalty. It is not measured by the time spent together, but by the depth of the connection. A supportive friend can be found in the darkest moments, and such bonds are never broken.",
             quiz = listOf(
-                QuizQuestion(
-                    question = "معنی \"Supportive\" چیست؟",
-                    options = listOf("بی‌تفاوت", "حمایت‌گر", "خشن", "تنها"),
-                    correctIndex = 1
-                ),
-                QuizQuestion(
-                    question = "کدام جمله مجهول درست است؟",
-                    options = listOf(
-                        "The book wrote by Shakespeare.",
-                        "The book was written by Shakespeare.",
-                        "The book is wrote by Shakespeare.",
-                        "The book written by Shakespeare."
-                    ),
-                    correctIndex = 1
-                )
+                QuizQuestion("معنی \"Supportive\" چیست؟", listOf("بی‌تفاوت", "حمایت‌گر", "خشن", "تنها"), 1),
+                QuizQuestion("کدام جمله مجهول درست است؟", listOf("The book wrote by Shakespeare.", "The book was written by Shakespeare.", "The book is wrote by Shakespeare.", "The book written by Shakespeare."), 1)
             )
         )
     )
