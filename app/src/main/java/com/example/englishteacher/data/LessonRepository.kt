@@ -203,6 +203,105 @@ object LessonRepository {
             )
         ),
 
+        Lesson(
+            id = "b7", unitNumber = 7, title = "My Neighborhood", titlePersian = "محله من", level = Level.BEGINNER,
+            vocabulary = listOf(
+                Word("Neighborhood", "محله", "ˈneɪbərhʊd"),
+                Word("Street", "خیابان", "strit"),
+                Word("Park", "پارک", "pɑrk"),
+                Word("Market", "بازار", "ˈmɑrkɪt"),
+                Word("Hospital", "بیمارستان", "ˈhɑspɪtl"),
+                Word("Bank", "بانک", "bæŋk")
+            ),
+            grammarTitle = "Prepositions of Place",
+            grammarExplanation = "In, On, Next to, Near, Between, Across from",
+            grammarExamples = listOf(
+                "The bank is next to the market. — بانک کنار بازار است.",
+                "A park across from my house. — پارکی مقابل خانه‌ام.",
+                "Between school and restaurant. — بین مدرسه و رستوران."
+            ),
+            conversation = Conversation("Asking for directions", "پرسیدن آدرس", listOf(
+                ConversationLine("A", "Is there a bank near here?", "بانکی این نزدیکی هست؟"),
+                ConversationLine("B", "Yes, next to the market.", "بله، کنار بازار."),
+                ConversationLine("A", "Is it far?", "دوره؟"),
+                ConversationLine("B", "No, 5 minutes on foot.", "نه، ۵ دقیقه پیاده."),
+                ConversationLine("A", "Is there a park?", "پارکی هست؟"),
+                ConversationLine("B", "Yes, across from the hospital.", "بله، مقابل بیمارستان.")
+            )),
+            storyTitle = "My New Neighborhood",
+            storyText = "Maryam moved to a new neighborhood. Her house is near a big park. There is a market next to her building. The bank is across from the hospital.",
+            quiz = listOf(
+                QuizQuestion("معنی Next to چیست؟", listOf("دور از", "روی", "کنارِ", "زیرِ"), 2),
+                QuizQuestion("کدام درست است؟", listOf("Bank is on market.", "Bank is next to market.", "Bank is between market.", "Bank is near of market."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "b8", unitNumber = 8, title = "Weather and Seasons", titlePersian = "آب و هوا", level = Level.BEGINNER,
+            vocabulary = listOf(
+                Word("Weather", "آب و هوا", "ˈwɛðər"),
+                Word("Sunny", "آفتابی", "ˈsʌni"),
+                Word("Rainy", "بارانی", "ˈreɪni"),
+                Word("Snowy", "برفی", "ˈsnoʊi"),
+                Word("Spring", "بهار", "sprɪŋ"),
+                Word("Winter", "زمستان", "ˈwɪntər")
+            ),
+            grammarTitle = "Present Continuous",
+            grammarExplanation = "am/is/are + verb-ing",
+            grammarExamples = listOf(
+                "It is raining now. — داره بارون میاد.",
+                "The sun is shining. — خورشید می‌تابه.",
+                "We are wearing coats. — کاپشن پوشیدیم."
+            ),
+            conversation = Conversation("Weather talk", "صحبت درباره هوا", listOf(
+                ConversationLine("A", "What's the weather like?", "هوا چطوره؟"),
+                ConversationLine("B", "Sunny and warm.", "آفتابی و گرم."),
+                ConversationLine("A", "Favorite season?", "فصل مورد علاقه؟"),
+                ConversationLine("B", "Spring. Flowers are beautiful.", "بهار. گل‌ها زیبا هستن."),
+                ConversationLine("A", "I prefer winter.", "من زمستان را ترجیح می‌دهم."),
+                ConversationLine("B", "But it's too cold!", "ولی خیلی سرده!")
+            )),
+            storyTitle = "A Rainy Day",
+            storyText = "Today is a rainy day. Tom is looking out the window. The rain is falling softly. He is drinking hot tea. His cat is sleeping on the sofa.",
+            quiz = listOf(
+                QuizQuestion("معنی Sunny چیست؟", listOf("بارانی", "برفی", "آفتابی", "بادی"), 2),
+                QuizQuestion("کدام درست است؟", listOf("It is rain.", "It is raining.", "It raining.", "It rains."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "b9", unitNumber = 9, title = "Clothes and Fashion", titlePersian = "لباس و مد", level = Level.BEGINNER,
+            vocabulary = listOf(
+                Word("Shirt", "پیراهن", "ʃɜrt"),
+                Word("Pants", "شلوار", "pænts"),
+                Word("Shoes", "کفش", "ʃuz"),
+                Word("Jacket", "کاپشن", "ˈdʒækɪt"),
+                Word("Size", "اندازه", "saɪz"),
+                Word("Beautiful", "زیبا", "ˈbjutəfəl")
+            ),
+            grammarTitle = "Possessive Adjectives",
+            grammarExplanation = "My, Your, His, Her, Our, Their",
+            grammarExamples = listOf(
+                "This is my jacket. — کاپشن من.",
+                "Her dress is beautiful. — لباسش زیباست.",
+                "Their shoes are new. — کفش‌هاشون نو هستن."
+            ),
+            conversation = Conversation("Shopping for clothes", "خرید لباس", listOf(
+                ConversationLine("A", "Can I help you?", "کمک کنم؟"),
+                ConversationLine("B", "I'm looking for a jacket.", "دنبال کاپشنم."),
+                ConversationLine("A", "What size?", "چه سایزی؟"),
+                ConversationLine("B", "Medium. In blue?", "متوسط. آبی؟"),
+                ConversationLine("A", "Yes. Try it on?", "بله. پرو می‌کنی؟"),
+                ConversationLine("B", "Yes, please.", "بله، لطفاً.")
+            )),
+            storyTitle = "Sara's New Dress",
+            storyText = "Sara is going to a party. She wants a new dress. Her mother takes her to a shop. Sara tries on a red dress. It fits her very well. She looks beautiful.",
+            quiz = listOf(
+                QuizQuestion("معنی Jacket چیست؟", listOf("پیراهن", "کاپشن", "شلوار", "کفش"), 1),
+                QuizQuestion("کدام درست است؟", listOf("This is me jacket.", "This is my jacket.", "This is I jacket.", "This is mine jacket."), 1)
+            )
+        ),
+
         // ==================== INTERMEDIATE ====================
         Lesson(
             id = "i1", unitNumber = 1, title = "Cultural Literacy", titlePersian = "آگاهی فرهنگی", level = Level.INTERMEDIATE,
