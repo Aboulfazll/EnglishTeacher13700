@@ -456,6 +456,156 @@ object LessonRepository {
             )
         ),
 
+        Lesson(
+            id = "i6", unitNumber = 6, title = "Environmental Issues", titlePersian = "محیط زیست", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Environment", "محیط زیست", "ɪnˈvaɪrənmənt"), Word("Pollution", "آلودگی", "pəˈluʃən"),
+                Word("Recycle", "بازیافت", "riˈsaɪkəl"), Word("Climate", "آب و هوا", "ˈklaɪmət"),
+                Word("Energy", "انرژی", "ˈɛnərdʒi"), Word("Sustainable", "پایدار", "səˈsteɪnəbəl")
+            ),
+            grammarTitle = "First Conditional",
+            grammarExplanation = "If + present simple, will + verb",
+            grammarExamples = listOf(
+                "If we don't recycle, pollution will increase. — اگر بازیافت نکنیم، آلودگی زیاد می‌شود.",
+                "If you save energy, you will help. — اگر انرژی ذخیره کنی، کمک می‌کنی.",
+                "If everyone helps, we will succeed. — اگر همه کمک کنند، موفق می‌شویم."
+            ),
+            conversation = Conversation("Climate change", "تغییرات اقلیمی", listOf(
+                ConversationLine("A", "Is climate change serious?", "تغییرات اقلیمی جدیه؟"),
+                ConversationLine("B", "If we don't act, it will get worse.", "اگر اقدام نکنیم، بدتر می‌شه."),
+                ConversationLine("A", "What can we do?", "چی می‌تونیم بکنیم؟"),
+                ConversationLine("B", "Recycle and use less energy.", "بازیافت و انرژی کمتر."),
+                ConversationLine("A", "I use public transport.", "من حمل و نقل عمومی استفاده می‌کنم."),
+                ConversationLine("B", "Every action matters.", "هر اقدامی مهمه.")
+            )),
+            storyTitle = "Our Planet",
+            storyText = "The Earth faces serious challenges. Pollution has increased. Many species are endangered. If we continue this path, future generations will suffer. But we still have time to make a difference.",
+            quiz = listOf(
+                QuizQuestion("معنی Sustainable چیست؟", listOf("موقت", "پایدار", "خطرناک", "آلوده"), 1),
+                QuizQuestion("کدام درست است؟", listOf("If it rains, I would stay.", "If it rains, I will stay.", "If it will rain, I stay.", "If it rained, I will stay."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i7", unitNumber = 7, title = "Education and Learning", titlePersian = "آموزش", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Education", "آموزش", "ˌɛdʒuˈkeɪʃən"), Word("Knowledge", "دانش", "ˈnɑlɪdʒ"),
+                Word("Degree", "مدرک", "dɪˈɡri"), Word("Scholarship", "بورسیه", "ˈskɑlərʃɪp"),
+                Word("Research", "تحقیق", "rɪˈsɜrtʃ"), Word("Graduate", "فارغ‌التحصیل", "ˈɡrædʒuˌeɪt")
+            ),
+            grammarTitle = "Used to / Be used to",
+            grammarExplanation = "Used to: عادت گذشته\nBe used to: عادت فعلی",
+            grammarExamples = listOf(
+                "I used to study at the library. — قبلاً کتابخانه درس می‌خواندم.",
+                "She is used to online classes. — به کلاس آنلاین عادت دارد.",
+                "They used to live in London. — قبلاً لندن زندگی می‌کردند."
+            ),
+            conversation = Conversation("Studies", "تحصیلات", listOf(
+                ConversationLine("A", "What are you studying?", "چی می‌خونی؟"),
+                ConversationLine("B", "Computer science.", "علوم کامپیوتر."),
+                ConversationLine("A", "Why did you choose it?", "چرا انتخابش کردی؟"),
+                ConversationLine("B", "I used to play games, got interested.", "قبلاً بازی می‌کردم، علاقه‌مند شدم."),
+                ConversationLine("A", "Scholarship?", "بورسیه؟"),
+                ConversationLine("B", "Yes, hope to graduate with honors.", "بله، امیدوارم با افتخار فارغ‌التحصیل شم.")
+            )),
+            storyTitle = "Power of Education",
+            storyText = "Maria grew up in a small village. She used to walk two hours to school. Her family couldn't afford books. Years later, she graduated from a top university. Now she helps other children.",
+            quiz = listOf(
+                QuizQuestion("معنی Scholarship چیست؟", listOf("شهریه", "بورسیه", "امتحان", "مدرک"), 1),
+                QuizQuestion("کدام درست است؟", listOf("I used to playing.", "I used to play.", "I use to play.", "I used playing."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i8", unitNumber = 8, title = "Media and News", titlePersian = "رسانه", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Media", "رسانه", "ˈmidiə"), Word("News", "اخبار", "nuz"),
+                Word("Article", "مقاله", "ˈɑrtɪkəl"), Word("Journalist", "روزنامه‌نگار", "ˈdʒɜrnəlɪst"),
+                Word("Source", "منبع", "sɔrs"), Word("Headline", "تیتر", "ˈhɛdlaɪn")
+            ),
+            grammarTitle = "Gerunds and Infinitives",
+            grammarExplanation = "Enjoy + ing, Want + to, Decide + to, Avoid + ing",
+            grammarExamples = listOf(
+                "I enjoy reading news. — از خواندن اخبار لذت می‌برم.",
+                "She decided to become a journalist. — تصمیم گرفت روزنامه‌نگار شود.",
+                "They avoid watching too much TV. — از تماشای زیاد پرهیز می‌کنند."
+            ),
+            conversation = Conversation("News sources", "منابع خبری", listOf(
+                ConversationLine("A", "Where do you get news?", "اخبار رو از کجا می‌گیری؟"),
+                ConversationLine("B", "Reliable sources.", "منابع معتبر."),
+                ConversationLine("A", "Is all news accurate?", "همه اخبار دقیقن؟"),
+                ConversationLine("B", "Not always. Check the source.", "نه همیشه. منبع رو چک کن."),
+                ConversationLine("A", "Fake news is a problem.", "اخبار جعلی مشکله."),
+                ConversationLine("B", "Journalists should be responsible.", "روزنامه‌نگارها باید مسئول باشن.")
+            )),
+            storyTitle = "Behind the Story",
+            storyText = "A young journalist was assigned to report on an event. She decided to research thoroughly. She interviewed witnesses and checked facts. Her article became famous for its accuracy.",
+            quiz = listOf(
+                QuizQuestion("معنی Source چیست؟", listOf("خبر", "منبع", "تیتر", "گزارش"), 1),
+                QuizQuestion("کدام درست است؟", listOf("I enjoy to read.", "I enjoy reading.", "I enjoy read.", "I enjoy reads."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i9", unitNumber = 9, title = "Money and Banking", titlePersian = "پول و بانک", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Account", "حساب", "əˈkaʊnt"), Word("Deposit", "واریز", "dɪˈpɑzɪt"),
+                Word("Withdraw", "برداشت", "wɪðˈdrɔ"), Word("Budget", "بودجه", "ˈbʌdʒɪt"),
+                Word("Loan", "وام", "loʊn"), Word("Investment", "سرمایه‌گذاری", "ɪnˈvɛstmənt")
+            ),
+            grammarTitle = "Second Conditional",
+            grammarExplanation = "If + past simple, would + verb",
+            grammarExamples = listOf(
+                "If I saved more, I would buy a house. — اگر بیشتر پس‌انداز کنم، خانه می‌خرم.",
+                "If I were rich, I would invest. — اگر ثروتمند بودم، سرمایه‌گذاری می‌کردم.",
+                "She would open an account if she had ID. — اگر کارت داشت، حساب باز می‌کرد."
+            ),
+            conversation = Conversation("Finances", "امور مالی", listOf(
+                ConversationLine("A", "Do you have savings?", "پس‌انداز داری؟"),
+                ConversationLine("B", "Yes, I deposit monthly.", "بله، ماهانه واریز می‌کنم."),
+                ConversationLine("A", "Budget?", "بودجه؟"),
+                ConversationLine("B", "Yes, I track expenses.", "بله، هزینه‌ها رو پیگیری می‌کنم."),
+                ConversationLine("A", "If you won the lottery?", "اگه لاتاری برنده می‌شدی؟"),
+                ConversationLine("B", "I would invest in real estate.", "در املاک سرمایه‌گذاری می‌کردم.")
+            )),
+            storyTitle = "Smart Decisions",
+            storyText = "Michael used to spend his entire salary. He had no savings. One day, he changed. He opened a savings account and started investing. Five years later, he bought his first apartment.",
+            quiz = listOf(
+                QuizQuestion("معنی Investment چیست؟", listOf("هزینه", "سرمایه‌گذاری", "وام", "سود"), 1),
+                QuizQuestion("کدام درست است؟", listOf("If I have money, I would travel.", "If I had money, I would travel.", "If I had money, I will travel.", "If I have, I would."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i10", unitNumber = 10, title = "Relationships and Communication", titlePersian = "روابط و ارتباطات", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Relationship", "رابطه", "rɪˈleɪʃənʃɪp"), Word("Communication", "ارتباط", "kəˌmjunɪˈkeɪʃən"),
+                Word("Trust", "اعتماد", "trʌst"), Word("Argument", "بحث", "ˈɑrɡjəmənt"),
+                Word("Apologize", "عذرخواهی", "əˈpɑlədʒaɪz"), Word("Forgive", "بخشیدن", "fərˈɡɪv")
+            ),
+            grammarTitle = "Reflexive Pronouns",
+            grammarExplanation = "Myself, Yourself, Himself, Herself, Ourselves, Themselves",
+            grammarExamples = listOf(
+                "I taught myself English. — خودم انگلیسی یاد گرفتم.",
+                "She blamed herself. — خودش را سرزنش کرد.",
+                "We should respect ourselves. — باید به خودمان احترام بگذاریم."
+            ),
+            conversation = Conversation("Resolving conflict", "حل تعارض", listOf(
+                ConversationLine("A", "I'm sorry for yesterday.", "برای دیروز متأسفم."),
+                ConversationLine("B", "Thank you for apologizing.", "ممنون که عذرخواهی کردی."),
+                ConversationLine("A", "I feel terrible.", "احساس بدی دارم."),
+                ConversationLine("B", "Communication is key.", "ارتباط کلیدیه."),
+                ConversationLine("A", "I'll be more honest.", "صادق‌تر خواهم بود."),
+                ConversationLine("B", "I'll try to understand.", "سعی می‌کنم بفهمم.")
+            )),
+            storyTitle = "Art of Understanding",
+            storyText = "Every relationship has challenges. Misunderstandings create distance. But honest communication can heal. When we forgive ourselves and others, we build stronger bonds.",
+            quiz = listOf(
+                QuizQuestion("معنی Apologize چیست؟", listOf("تشکر", "عذرخواهی", "جواب", "بحث"), 1),
+                QuizQuestion("کدام درست است؟", listOf("She hurt sheself.", "She hurt herself.", "She hurt hisself.", "She hurt therself."), 1)
+            )
+        ),
+
         // ==================== ADVANCED ====================
         Lesson(
             id = "a1", unitNumber = 1, title = "Friends and Family", titlePersian = "دوستان و خانواده", level = Level.ADVANCED,
