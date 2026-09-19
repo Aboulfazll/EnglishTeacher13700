@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -30,7 +31,8 @@ fun HomeScreen(
     onGrammarClick: () -> Unit = {},
     onStoryBookClick: () -> Unit = {},
     onVocabularyBankClick: () -> Unit = {},
-    onLevelTestClick: () -> Unit = {}
+    onLevelTestClick: () -> Unit = {},
+    onBookmarkedWordsClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -224,6 +226,7 @@ fun HomeScreen(
                 )
             }
 
+            // ردیف اول
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -248,6 +251,60 @@ fun HomeScreen(
                     title = "بانک لغات",
                     gradient = listOf(Color(0xFF00695C), Color(0xFF26A69A))
                 ) { onVocabularyBankClick() }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            // ردیف دوم - لغات ذخیره‌شده
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .clickable { onBookmarkedWordsClick() },
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFFFA000), Color(0xFFFFC107))
+                            )
+                        )
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Bookmark,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column {
+                            Text(
+                                "لغات ذخیره‌شده",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "کلمات مهمی که ذخیره کردی",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(Modifier.height(30.dp))
