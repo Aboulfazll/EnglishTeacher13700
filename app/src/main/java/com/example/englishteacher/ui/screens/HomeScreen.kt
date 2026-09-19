@@ -8,11 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoStories
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,7 +29,8 @@ fun HomeScreen(
     onLevelClick: (Level) -> Unit,
     onGrammarClick: () -> Unit = {},
     onStoryBookClick: () -> Unit = {},
-    onVocabularyBankClick: () -> Unit = {}
+    onVocabularyBankClick: () -> Unit = {},
+    onLevelTestClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -102,6 +100,60 @@ fun HomeScreen(
 
         Column(modifier = Modifier.padding(20.dp)) {
 
+            // ==================== تست تعیین سطح ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .clickable { onLevelTestClick() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                            )
+                        )
+                        .padding(18.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Quiz,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "تست تعیین سطح",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "سطح خودت رو بسنج",
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(20.dp))
+
             // ==================== عنوان سطوح ====================
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -152,7 +204,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ==================== عنوان بخش ویژه ====================
+            // ==================== بخش ویژه ====================
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -172,7 +224,6 @@ fun HomeScreen(
                 )
             }
 
-            // سه دکمه ویژه
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
