@@ -44,7 +44,6 @@ fun AppNavHost(
         startDestination = Routes.HOME,
         modifier = modifier
     ) {
-        // صفحه اصلی
         composable(Routes.HOME) {
             HomeScreen(
                 onLevelClick = { level ->
@@ -56,7 +55,6 @@ fun AppNavHost(
             )
         }
 
-        // لیست دروس
         composable(
             route = Routes.LESSON_LIST,
             arguments = listOf(navArgument("level") { type = NavType.StringType })
@@ -72,7 +70,6 @@ fun AppNavHost(
             )
         }
 
-        // جزئیات درس
         composable(
             route = Routes.LESSON_DETAIL,
             arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
@@ -84,27 +81,22 @@ fun AppNavHost(
             )
         }
 
-        // کتابخانه گرامر
         composable(Routes.GRAMMAR) {
             GrammarScreen()
         }
 
-        // صفحه پیشرفت
         composable(Routes.PROGRESS) {
             ProgressScreen()
         }
 
-        // صفحه چت هوش مصنوعی
         composable(Routes.AI_CHAT) {
             AIChatScreen()
         }
 
-        // صفحه تنظیمات
         composable(Routes.SETTINGS) {
             SettingsScreen()
         }
 
-        // صفحه پادکست
         composable(Routes.PODCAST) {
             PodcastScreen(
                 onPodcastClick = { url, title ->
@@ -115,7 +107,6 @@ fun AppNavHost(
             )
         }
 
-        // پخش پادکست
         composable(
             route = Routes.PODCAST_PLAYER,
             arguments = listOf(
