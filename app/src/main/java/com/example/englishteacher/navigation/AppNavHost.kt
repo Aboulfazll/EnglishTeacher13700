@@ -17,6 +17,8 @@ import com.example.englishteacher.ui.screens.PodcastPlayerScreen
 import com.example.englishteacher.ui.screens.PodcastScreen
 import com.example.englishteacher.ui.screens.ProgressScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
+import com.example.englishteacher.ui.screens.StoryBookScreen
+import com.example.englishteacher.ui.screens.StoryDetailScreen
 
 object Routes {
     const val HOME = "home"
@@ -28,10 +30,13 @@ object Routes {
     const val PODCAST = "podcast"
     const val PODCAST_PLAYER = "podcast_player/{url}/{title}"
     const val GRAMMAR = "grammar"
+    const val STORY_BOOK = "story_book"
+    const val STORY_DETAIL = "story_detail/{storyId}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
     fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
+    fun storyDetail(storyId: String) = "story_detail/$storyId"
 }
 
 @Composable
@@ -51,6 +56,9 @@ fun AppNavHost(
                 },
                 onGrammarClick = {
                     navController.navigate(Routes.GRAMMAR)
+                },
+                onStoryBookClick = {
+                    navController.navigate(Routes.STORY_BOOK)
                 }
             )
         }
@@ -83,6 +91,25 @@ fun AppNavHost(
 
         composable(Routes.GRAMMAR) {
             GrammarScreen()
+        }
+
+        composable(Routes.STORY_BOOK) {
+            StoryBookScreen(
+                onStoryClick = { storyId ->
+                    navController.navigate(Routes.storyDetail(storyId))
+                }
+            )
+        }
+
+        composable(
+            route = Routes.STORY_DETAIL,
+            arguments = listOf(navArgument("storyId") { type = NavType.StringType })
+        ) { entry ->
+            val storyId = entry.arguments?.getString("storyId") ?: ""
+            StoryDetailScreen(
+                storyId = storyId,
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.PROGRESS) {
