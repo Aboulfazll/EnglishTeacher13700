@@ -19,6 +19,7 @@ import com.example.englishteacher.ui.screens.ProgressScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
 import com.example.englishteacher.ui.screens.StoryBookScreen
 import com.example.englishteacher.ui.screens.StoryDetailScreen
+import com.example.englishteacher.ui.screens.VocabularyBankScreen
 
 object Routes {
     const val HOME = "home"
@@ -32,6 +33,7 @@ object Routes {
     const val GRAMMAR = "grammar"
     const val STORY_BOOK = "story_book"
     const val STORY_DETAIL = "story_detail/{storyId}"
+    const val VOCABULARY_BANK = "vocabulary_bank"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -59,6 +61,9 @@ fun AppNavHost(
                 },
                 onStoryBookClick = {
                     navController.navigate(Routes.STORY_BOOK)
+                },
+                onVocabularyBankClick = {
+                    navController.navigate(Routes.VOCABULARY_BANK)
                 }
             )
         }
@@ -91,6 +96,10 @@ fun AppNavHost(
 
         composable(Routes.GRAMMAR) {
             GrammarScreen()
+        }
+
+        composable(Routes.VOCABULARY_BANK) {
+            VocabularyBankScreen()
         }
 
         composable(Routes.STORY_BOOK) {
