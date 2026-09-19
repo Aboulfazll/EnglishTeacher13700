@@ -8,12 +8,9 @@ object LessonRepository {
         Lesson(
             id = "b1", unitNumber = 1, title = "Getting Acquainted", titlePersian = "آشنایی", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Hello", "سلام", "həˈloʊ"),
-                Word("Hi", "سلام (خودمانی)", "haɪ"),
-                Word("Name", "نام", "neɪm"),
-                Word("Nice to meet you", "از آشنایی خوشحالم", "naɪs tə mit ju"),
-                Word("Friend", "دوست", "frɛnd"),
-                Word("How are you?", "حالت چطوره؟", "haʊ ɑr ju")
+                Word("Hello", "سلام", "həˈloʊ"), Word("Hi", "سلام (خودمانی)", "haɪ"),
+                Word("Name", "نام", "neɪm"), Word("Nice to meet you", "از آشنایی خوشحالم", "naɪs tə mit ju"),
+                Word("Friend", "دوست", "frɛnd"), Word("How are you?", "حالت چطوره؟", "haʊ ɑr ju")
             ),
             grammarTitle = "Present Simple - حال ساده",
             grammarExplanation = "زمان حال ساده برای کارهای روزمره، عادت‌ها و حقایق کلی.\n\nفرمول: فاعل + فعل ساده",
@@ -41,12 +38,9 @@ object LessonRepository {
         Lesson(
             id = "b2", unitNumber = 2, title = "Going Shopping", titlePersian = "خرید کردن", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Shop", "مغازه", "ʃɑp"),
-                Word("Buy", "خریدن", "baɪ"),
-                Word("Price", "قیمت", "praɪs"),
-                Word("Money", "پول", "ˈmʌni"),
-                Word("Cheap", "ارزان", "tʃip"),
-                Word("Expensive", "گران", "ɪkˈspɛnsɪv")
+                Word("Shop", "مغازه", "ʃɑp"), Word("Buy", "خریدن", "baɪ"),
+                Word("Price", "قیمت", "praɪs"), Word("Money", "پول", "ˈmʌni"),
+                Word("Cheap", "ارزان", "tʃip"), Word("Expensive", "گران", "ɪkˈspɛnsɪv")
             ),
             grammarTitle = "This / That / These / Those",
             grammarExplanation = "This = این (نزدیک)\nThat = آن (دور)\nThese = این‌ها\nThose = آن‌ها",
@@ -74,12 +68,9 @@ object LessonRepository {
         Lesson(
             id = "b3", unitNumber = 3, title = "Daily Routine", titlePersian = "برنامه روزانه", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Wake up", "بیدار شدن", "weɪk ʌp"),
-                Word("Breakfast", "صبحانه", "ˈbrɛkfəst"),
-                Word("Work", "کار", "wɜrk"),
-                Word("Lunch", "ناهار", "lʌntʃ"),
-                Word("Dinner", "شام", "ˈdɪnər"),
-                Word("Sleep", "خوابیدن", "slip")
+                Word("Wake up", "بیدار شدن", "weɪk ʌp"), Word("Breakfast", "صبحانه", "ˈbrɛkfəst"),
+                Word("Work", "کار", "wɜrk"), Word("Lunch", "ناهار", "lʌntʃ"),
+                Word("Dinner", "شام", "ˈdɪnər"), Word("Sleep", "خوابیدن", "slip")
             ),
             grammarTitle = "Adverbs of Frequency",
             grammarExplanation = "Always, Usually, Often, Sometimes, Never\n\nجای قید: قبل از فعل اصلی",
@@ -107,12 +98,9 @@ object LessonRepository {
         Lesson(
             id = "b4", unitNumber = 4, title = "Food and Drinks", titlePersian = "غذا و نوشیدنی", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Water", "آب", "ˈwɔtər"),
-                Word("Bread", "نان", "brɛd"),
-                Word("Rice", "برنج", "raɪs"),
-                Word("Chicken", "مرغ", "ˈtʃɪkɪn"),
-                Word("Apple", "سیب", "ˈæpəl"),
-                Word("Delicious", "خوشمزه", "dɪˈlɪʃəs")
+                Word("Water", "آب", "ˈwɔtər"), Word("Bread", "نان", "brɛd"),
+                Word("Rice", "برنج", "raɪs"), Word("Chicken", "مرغ", "ˈtʃɪkɪn"),
+                Word("Apple", "سیب", "ˈæpəl"), Word("Delicious", "خوشمزه", "dɪˈlɪʃəs")
             ),
             grammarTitle = "Countable & Uncountable Nouns",
             grammarExplanation = "قابل شمارش: a/an + اسم (apple, book)\nغیرقابل شمارش: some + اسم (water, rice)",
@@ -140,12 +128,9 @@ object LessonRepository {
         Lesson(
             id = "b5", unitNumber = 5, title = "At School", titlePersian = "در مدرسه", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Teacher", "معلم", "ˈtitʃər"),
-                Word("Student", "دانش‌آموز", "ˈstudənt"),
-                Word("Classroom", "کلاس", "ˈklæsrum"),
-                Word("Book", "کتاب", "bʊk"),
-                Word("Homework", "تکلیف", "ˈhoʊmwɜrk"),
-                Word("Library", "کتابخانه", "ˈlaɪbrɛri")
+                Word("Teacher", "معلم", "ˈtitʃər"), Word("Student", "دانش‌آموز", "ˈstudənt"),
+                Word("Classroom", "کلاس", "ˈklæsrum"), Word("Book", "کتاب", "bʊk"),
+                Word("Homework", "تکلیف", "ˈhoʊmwɜrk"), Word("Library", "کتابخانه", "ˈlaɪbrɛri")
             ),
             grammarTitle = "There is / There are",
             grammarExplanation = "There is + مفرد\nThere are + جمع",
@@ -173,12 +158,9 @@ object LessonRepository {
         Lesson(
             id = "b6", unitNumber = 6, title = "Hobbies", titlePersian = "سرگرمی‌ها", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Reading", "کتاب خواندن", "ˈridɪŋ"),
-                Word("Swimming", "شنا کردن", "ˈswɪmɪŋ"),
-                Word("Drawing", "نقاشی", "ˈdrɔɪŋ"),
-                Word("Cooking", "آشپزی", "ˈkʊkɪŋ"),
-                Word("Music", "موسیقی", "ˈmjuzɪk"),
-                Word("Enjoy", "لذت بردن", "ɪnˈdʒɔɪ")
+                Word("Reading", "کتاب خواندن", "ˈridɪŋ"), Word("Swimming", "شنا کردن", "ˈswɪmɪŋ"),
+                Word("Drawing", "نقاشی", "ˈdrɔɪŋ"), Word("Cooking", "آشپزی", "ˈkʊkɪŋ"),
+                Word("Music", "موسیقی", "ˈmjuzɪk"), Word("Enjoy", "لذت بردن", "ɪnˈdʒɔɪ")
             ),
             grammarTitle = "Like + Verb-ing",
             grammarExplanation = "I like swimming. — شنا دوست دارم.\nI love reading. — عاشق خواندنم.",
@@ -206,12 +188,9 @@ object LessonRepository {
         Lesson(
             id = "b7", unitNumber = 7, title = "My Neighborhood", titlePersian = "محله من", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Neighborhood", "محله", "ˈneɪbərhʊd"),
-                Word("Street", "خیابان", "strit"),
-                Word("Park", "پارک", "pɑrk"),
-                Word("Market", "بازار", "ˈmɑrkɪt"),
-                Word("Hospital", "بیمارستان", "ˈhɑspɪtl"),
-                Word("Bank", "بانک", "bæŋk")
+                Word("Neighborhood", "محله", "ˈneɪbərhʊd"), Word("Street", "خیابان", "strit"),
+                Word("Park", "پارک", "pɑrk"), Word("Market", "بازار", "ˈmɑrkɪt"),
+                Word("Hospital", "بیمارستان", "ˈhɑspɪtl"), Word("Bank", "بانک", "bæŋk")
             ),
             grammarTitle = "Prepositions of Place",
             grammarExplanation = "In, On, Next to, Near, Between, Across from",
@@ -239,12 +218,9 @@ object LessonRepository {
         Lesson(
             id = "b8", unitNumber = 8, title = "Weather and Seasons", titlePersian = "آب و هوا", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Weather", "آب و هوا", "ˈwɛðər"),
-                Word("Sunny", "آفتابی", "ˈsʌni"),
-                Word("Rainy", "بارانی", "ˈreɪni"),
-                Word("Snowy", "برفی", "ˈsnoʊi"),
-                Word("Spring", "بهار", "sprɪŋ"),
-                Word("Winter", "زمستان", "ˈwɪntər")
+                Word("Weather", "آب و هوا", "ˈwɛðər"), Word("Sunny", "آفتابی", "ˈsʌni"),
+                Word("Rainy", "بارانی", "ˈreɪni"), Word("Snowy", "برفی", "ˈsnoʊi"),
+                Word("Spring", "بهار", "sprɪŋ"), Word("Winter", "زمستان", "ˈwɪntər")
             ),
             grammarTitle = "Present Continuous",
             grammarExplanation = "am/is/are + verb-ing",
@@ -272,12 +248,9 @@ object LessonRepository {
         Lesson(
             id = "b9", unitNumber = 9, title = "Clothes and Fashion", titlePersian = "لباس و مد", level = Level.BEGINNER,
             vocabulary = listOf(
-                Word("Shirt", "پیراهن", "ʃɜrt"),
-                Word("Pants", "شلوار", "pænts"),
-                Word("Shoes", "کفش", "ʃuz"),
-                Word("Jacket", "کاپشن", "ˈdʒækɪt"),
-                Word("Size", "اندازه", "saɪz"),
-                Word("Beautiful", "زیبا", "ˈbjutəfəl")
+                Word("Shirt", "پیراهن", "ʃɜrt"), Word("Pants", "شلوار", "pænts"),
+                Word("Shoes", "کفش", "ʃuz"), Word("Jacket", "کاپشن", "ˈdʒækɪt"),
+                Word("Size", "اندازه", "saɪz"), Word("Beautiful", "زیبا", "ˈbjutəfəl")
             ),
             grammarTitle = "Possessive Adjectives",
             grammarExplanation = "My, Your, His, Her, Our, Their",
@@ -302,14 +275,42 @@ object LessonRepository {
             )
         ),
 
+        Lesson(
+            id = "b10", unitNumber = 10, title = "Health and Body", titlePersian = "سلامتی", level = Level.BEGINNER,
+            vocabulary = listOf(
+                Word("Head", "سر", "hɛd"), Word("Stomach", "شکم", "ˈstʌmək"),
+                Word("Doctor", "دکتر", "ˈdɑktər"), Word("Medicine", "دارو", "ˈmɛdəsɪn"),
+                Word("Sick", "بیمار", "sɪk"), Word("Healthy", "سالم", "ˈhɛlθi")
+            ),
+            grammarTitle = "Should / Shouldn't",
+            grammarExplanation = "You should + verb (باید)\nYou shouldn't + verb (نباید)",
+            grammarExamples = listOf(
+                "You should see a doctor. — باید دکتر ببینی.",
+                "You shouldn't eat sugar. — نباید شکر بخوری.",
+                "You should sleep more. — باید بیشتر بخوابی."
+            ),
+            conversation = Conversation("At the doctor's office", "مطب دکتر", listOf(
+                ConversationLine("A", "What's the matter?", "چی شده؟"),
+                ConversationLine("B", "I have a headache.", "سردرد دارم."),
+                ConversationLine("A", "How long?", "چقدره؟"),
+                ConversationLine("B", "Since yesterday.", "از دیروز."),
+                ConversationLine("A", "Rest and take this medicine.", "استراحت کن و این دارو رو بخور."),
+                ConversationLine("B", "Thank you, doctor.", "ممنون دکتر.")
+            )),
+            storyTitle = "Feeling Sick",
+            storyText = "Ali feels sick today. He has a stomachache and a headache. His mother takes him to the doctor. The doctor says he should rest. The next morning, he feels better.",
+            quiz = listOf(
+                QuizQuestion("معنی Healthy چیست؟", listOf("بیمار", "خسته", "سالم", "دردناک"), 2),
+                QuizQuestion("کدام درست است؟", listOf("You should to rest.", "You should rest.", "You should resting.", "You should rests."), 1)
+            )
+        ),
+
         // ==================== INTERMEDIATE ====================
         Lesson(
             id = "i1", unitNumber = 1, title = "Cultural Literacy", titlePersian = "آگاهی فرهنگی", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Culture", "فرهنگ", "ˈkʌltʃər"),
-                Word("Tradition", "سنت", "trəˈdɪʃən"),
-                Word("Custom", "رسم", "ˈkʌstəm"),
-                Word("Society", "جامعه", "səˈsaɪəti"),
+                Word("Culture", "فرهنگ", "ˈkʌltʃər"), Word("Tradition", "سنت", "trəˈdɪʃən"),
+                Word("Custom", "رسم", "ˈkʌstəm"), Word("Society", "جامعه", "səˈsaɪəti"),
                 Word("Diversity", "تنوع", "dɪˈvɜrsəti")
             ),
             grammarTitle = "Present Perfect",
@@ -338,12 +339,9 @@ object LessonRepository {
         Lesson(
             id = "i2", unitNumber = 2, title = "Modern Technology", titlePersian = "تکنولوژی", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Technology", "تکنولوژی", "tɛkˈnɑlədʒi"),
-                Word("Device", "دستگاه", "dɪˈvaɪs"),
-                Word("App", "اپلیکیشن", "æp"),
-                Word("Download", "دانلود", "ˈdaʊnloʊd"),
-                Word("Software", "نرم‌افزار", "ˈsɔftwɛr"),
-                Word("Innovation", "نوآوری", "ˌɪnəˈveɪʃən")
+                Word("Technology", "تکنولوژی", "tɛkˈnɑlədʒi"), Word("Device", "دستگاه", "dɪˈvaɪs"),
+                Word("App", "اپلیکیشن", "æp"), Word("Download", "دانلود", "ˈdaʊnloʊd"),
+                Word("Software", "نرم‌افزار", "ˈsɔftwɛr"), Word("Innovation", "نوآوری", "ˌɪnəˈveɪʃən")
             ),
             grammarTitle = "Present Perfect Continuous",
             grammarExplanation = "have/has been + verb-ing",
@@ -368,14 +366,102 @@ object LessonRepository {
             )
         ),
 
+        Lesson(
+            id = "i3", unitNumber = 3, title = "Healthy Lifestyle", titlePersian = "زندگی سالم", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Exercise", "ورزش", "ˈɛksərsaɪz"), Word("Nutrition", "تغذیه", "nuˈtrɪʃən"),
+                Word("Stress", "استرس", "strɛs"), Word("Balance", "تعادل", "ˈbæləns"),
+                Word("Habit", "عادت", "ˈhæbɪt"), Word("Lifestyle", "سبک زندگی", "ˈlaɪfstaɪl")
+            ),
+            grammarTitle = "Modal Verbs",
+            grammarExplanation = "Must = باید\nHave to = مجبور بودن\nShould = بهتره",
+            grammarExamples = listOf(
+                "You must drink water. — باید آب بنوشی.",
+                "I have to wake up early. — مجبورم زود بیدار شم.",
+                "She should reduce stress. — بهتره استرس را کم کنه."
+            ),
+            conversation = Conversation("Healthy habits", "عادات سالم", listOf(
+                ConversationLine("A", "I've been trying to live healthier.", "سعی می‌کنم سالم‌تر زندگی کنم."),
+                ConversationLine("B", "What changes did you make?", "چه تغییراتی دادی؟"),
+                ConversationLine("A", "I exercise 3 times a week.", "هفته‌ای ۳ بار ورزش می‌کنم."),
+                ConversationLine("B", "How do you manage stress?", "استرس رو چطور مدیریت می‌کنی؟"),
+                ConversationLine("A", "I practice meditation.", "مدیتیشن تمرین می‌کنم."),
+                ConversationLine("B", "Balance is important.", "تعادل مهمه.")
+            )),
+            storyTitle = "A Journey to Wellness",
+            storyText = "Sarah used to have unhealthy habits. She never exercised and ate fast food. One day, she decided to change. Now she feels more energetic and happier than ever.",
+            quiz = listOf(
+                QuizQuestion("معنی Wellness چیست؟", listOf("بیماری", "سلامتی", "خستگی", "استرس"), 1),
+                QuizQuestion("کدام درست است؟", listOf("You must to exercise.", "You must exercise.", "You must exercising.", "You must exercises."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i4", unitNumber = 4, title = "Travel and Adventure", titlePersian = "سفر و ماجراجویی", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Adventure", "ماجراجویی", "ædˈvɛntʃər"), Word("Destination", "مقصد", "ˌdɛstɪˈneɪʃən"),
+                Word("Journey", "سفر", "ˈdʒɜrni"), Word("Explore", "کاوش کردن", "ɪkˈsplɔr"),
+                Word("Landscape", "منظره", "ˈlændskeɪp"), Word("Souvenir", "سوغات", "ˌsuvəˈnɪr")
+            ),
+            grammarTitle = "Past Perfect",
+            grammarExplanation = "had + past participle",
+            grammarExamples = listOf(
+                "The tour had started when we arrived. — تور شروع شده بود.",
+                "She had never seen such views. — هرگز چنین منظره‌هایی ندیده بود.",
+                "They had booked the hotel. — هتل را رزرو کرده بودند."
+            ),
+            conversation = Conversation("Planning a trip", "برنامه سفر", listOf(
+                ConversationLine("A", "I'm planning an adventure trip.", "دارم سفر ماجراجویی برنامه‌ریزی می‌کنم."),
+                ConversationLine("B", "Have you decided the destination?", "مقصد رو مشخص کردی؟"),
+                ConversationLine("A", "Yes, Peru. I want to explore Machu Picchu.", "بله، پرو. ماچو پیچو رو ببینم."),
+                ConversationLine("B", "Have you made an itinerary?", "برنامه سفر نوشتی؟"),
+                ConversationLine("A", "I had researched it before booking.", "قبل از بلیط تحقیق کرده بودم."),
+                ConversationLine("B", "Try the local food!", "غذای محلی رو امتحان کن!")
+            )),
+            storyTitle = "Adventure of a Lifetime",
+            storyText = "James had dreamed of traveling to Nepal. When he arrived in Kathmandu, his dream had come true. He had prepared for years. The landscapes were breathtaking. It was the adventure of a lifetime.",
+            quiz = listOf(
+                QuizQuestion("معنی Destination چیست؟", listOf("مسیر", "مقصد", "وسیله", "بلیط"), 1),
+                QuizQuestion("کدام درست است؟", listOf("She had see it.", "She had seen it.", "She has seen it.", "She had saw it."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "i5", unitNumber = 5, title = "Work and Career", titlePersian = "کار و حرفه", level = Level.INTERMEDIATE,
+            vocabulary = listOf(
+                Word("Career", "حرفه", "kəˈrɪr"), Word("Interview", "مصاحبه", "ˈɪntərvju"),
+                Word("Resume", "رزومه", "ˈrɛzəmeɪ"), Word("Salary", "حقوق", "ˈsæləri"),
+                Word("Promotion", "ترفیع", "prəˈmoʊʃən"), Word("Colleague", "همکار", "ˈkɑliɡ")
+            ),
+            grammarTitle = "Reported Speech",
+            grammarExplanation = "She said, \"I am busy.\" → She said she was busy.",
+            grammarExamples = listOf(
+                "He said he was looking for a job. — گفت دنبال کار می‌گردد.",
+                "She told me she had applied. — گفت درخواست داده.",
+                "They said they would call. — گفتند زنگ می‌زنند."
+            ),
+            conversation = Conversation("Job interview", "مصاحبه شغلی", listOf(
+                ConversationLine("A", "Tell me about your experience.", "از تجربه‌ت بگو."),
+                ConversationLine("B", "I worked as a manager for 3 years.", "۳ سال مدیر بودم."),
+                ConversationLine("A", "What skills are important?", "چه مهارت‌هایی مهمه؟"),
+                ConversationLine("B", "Communication and teamwork.", "ارتباطات و کار تیمی."),
+                ConversationLine("A", "Why leave your job?", "چرا ترک می‌کنی؟"),
+                ConversationLine("B", "New challenges and better salary.", "چالش‌های جدید و حقوق بهتر.")
+            )),
+            storyTitle = "The Promotion",
+            storyText = "Daniel had been working at the company for five years. When the manager position opened, he applied. After a difficult interview, he was offered the promotion. His colleagues congratulated him.",
+            quiz = listOf(
+                QuizQuestion("معنی Promotion چیست؟", listOf("اخراج", "ترفیع", "استعفا", "استخدام"), 1),
+                QuizQuestion("کدام درست است؟", listOf("He said he is busy.", "He said he was busy.", "He said he will be busy.", "He said he be busy."), 1)
+            )
+        ),
+
         // ==================== ADVANCED ====================
         Lesson(
             id = "a1", unitNumber = 1, title = "Friends and Family", titlePersian = "دوستان و خانواده", level = Level.ADVANCED,
             vocabulary = listOf(
-                Word("Relationship", "رابطه", "rɪˈleɪʃənʃɪp"),
-                Word("Supportive", "حمایت‌گر", "səˈpɔrtɪv"),
-                Word("Trust", "اعتماد", "trʌst"),
-                Word("Bond", "پیوند", "bɑnd"),
+                Word("Relationship", "رابطه", "rɪˈleɪʃənʃɪp"), Word("Supportive", "حمایت‌گر", "səˈpɔrtɪv"),
+                Word("Trust", "اعتماد", "trʌst"), Word("Bond", "پیوند", "bɑnd"),
                 Word("Loyalty", "وفاداری", "ˈlɔɪəlti")
             ),
             grammarTitle = "Passive Voice",
