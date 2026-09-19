@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.SpeechHelper
+import com.example.englishteacher.data.Conversation
 import com.example.englishteacher.data.LessonRepository
 import com.example.englishteacher.data.QuizQuestion
 import com.example.englishteacher.data.Word
@@ -45,7 +46,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
     }
 
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("لغات", "گرامر", "داستان", "کوییز")
+    val tabs = listOf("لغات", "گرامر", "مکالمه", "داستان", "کوییز")
 
     Scaffold(
         topBar = {
@@ -85,17 +86,18 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 .background(Color(0xFFF8F9FA))
                 .padding(padding)
         ) {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.White,
-                contentColor = Color(0xFF1A237E)
+                contentColor = Color(0xFF1A237E),
+                edgePadding = 8.dp
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
                         text = {
-                            Text(title, fontWeight = FontWeight.SemiBold)
+                            Text(title, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         }
                     )
                 }
@@ -108,13 +110,15 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                     lesson.grammarExplanation,
                     lesson.grammarExamples
                 )
-                2 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper)
-                3 -> QuizTab(lesson.quiz)
+                2 -> ConversationTab(lesson.conversation, speechHelper)
+                3 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper)
+                4 -> QuizTab(lesson.quiz)
             }
         }
     }
 }
 
+// ==================== تب لغات ====================
 @Composable
 private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper) {
     LazyColumn(
@@ -169,6 +173,7 @@ private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper) {
     }
 }
 
+// ==================== تب گرامر ====================
 @Composable
 private fun GrammarTab(
     title: String,
@@ -224,6 +229,95 @@ private fun GrammarTab(
     }
 }
 
+// ==================== تب مکالمه ====================
+@Composable
+private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelper) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp)
+    ) {
+        Text(
+            text = conversation.title,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1A237E)
+        )
+        Text(
+            text = conversation.titlePersian,
+            fontSize = 13.sp,
+            color = Color.Gray
+        )
+        Spacer(Modifier.height(16.dp))
+
+        conversation.lines.forEach { line ->
+            val isA = line.speaker == "A"
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp),
+                horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
+            ) {
+                Column(
+                    horizontalAlignment = if (isA) Alignment.Start else Alignment.End
+                ) {
+                    Text(
+                        text = line.speaker,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isA) Color(0xFF1A237E) else Color(0xFF7B1FA2)
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Card(
+                        modifier = Modifier.widthIn(max = 280.dp),
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = if (isA) 4.dp else 16.dp,
+                            bottomEnd = if (isA) 16.dp else 4.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isA) Color(0xFFE8EAF6) else Color(0xFFF3E5F5)
+                        ),
+                        elevation = CardDefaults.cardElevation(2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = line.english,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.weight(1f),
+                                    lineHeight = 20.sp
+                                )
+                                IconButton(
+                                    onClick = { speechHelper.speak(line.english) },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Play",
+                                        tint = if (isA) Color(0xFF1A237E) else Color(0xFF7B1FA2),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = line.persian,
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                lineHeight = 18.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ==================== تب داستان ====================
 @Composable
 private fun StoryTab(
     title: String,
@@ -291,6 +385,7 @@ private fun StoryTab(
     }
 }
 
+// ==================== تب کوییز ====================
 @Composable
 private fun QuizTab(quiz: List<QuizQuestion>) {
     var currentQuestion by remember { mutableIntStateOf(0) }
