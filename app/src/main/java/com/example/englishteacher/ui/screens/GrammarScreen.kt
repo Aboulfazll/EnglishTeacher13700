@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.englishteacher.ShareHelper
 import com.example.englishteacher.SpeechHelper
 import com.example.englishteacher.data.GrammarRepository
 import com.example.englishteacher.data.GrammarTopic
@@ -95,7 +97,7 @@ private fun GrammarListView(
                 .padding(padding)
         ) {
 
-            // ==================== نوار جستجو ====================
+            // نوار جستجو
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -121,7 +123,7 @@ private fun GrammarListView(
                 )
             }
 
-            // ==================== لیست گرامرها ====================
+            // لیست گرامرها
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -244,6 +246,8 @@ private fun GrammarDetailView(
     speechHelper: SpeechHelper,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -266,6 +270,23 @@ private fun GrammarDetailView(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = {
+                        ShareHelper.shareGrammar(
+                            context = context,
+                            title = topic.title,
+                            titlePersian = topic.titlePersian,
+                            explanation = topic.explanation,
+                            examples = topic.examples.map { it.english + " — " + it.persian }
+                        )
+                    }) {
+                        Icon(
+                            Icons.Filled.Share,
+                            contentDescription = "Share",
+                            tint = Color.White
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF00695C))
             )
         }
@@ -279,7 +300,34 @@ private fun GrammarDetailView(
                 .padding(20.dp)
         ) {
 
-            // ==================== توضیح ====================
+            // دکمه اشتراک‌گذاری
+            OutlinedButton(
+                onClick = {
+                    ShareHelper.shareGrammar(
+                        context = context,
+                        title = topic.title,
+                        titlePersian = topic.titlePersian,
+                        explanation = topic.explanation,
+                        examples = topic.examples.map { it.english + " — " + it.persian }
+                    )
+                },
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF00695C))
+            ) {
+                Icon(
+                    Icons.Filled.Share,
+                    contentDescription = "Share",
+                    tint = Color(0xFF00695C),
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("اشتراک‌گذاری این گرامر", fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // توضیح
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
@@ -324,7 +372,7 @@ private fun GrammarDetailView(
 
             Spacer(Modifier.height(16.dp))
 
-            // ==================== فرمول ====================
+            // فرمول
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
@@ -370,7 +418,7 @@ private fun GrammarDetailView(
 
             Spacer(Modifier.height(16.dp))
 
-            // ==================== مثال‌ها ====================
+            // مثال‌ها
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("✏️", fontSize = 22.sp)
                 Spacer(Modifier.width(8.dp))
