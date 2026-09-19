@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Icon
@@ -19,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -46,8 +49,10 @@ fun MainApp() {
 
     val items = listOf(
         BottomNavItem(Routes.HOME, "خانه", Icons.Filled.Home),
+        BottomNavItem(Routes.PODCAST, "پادکست", Icons.Filled.Headphones),
         BottomNavItem(Routes.PROGRESS, "پیشرفت", Icons.Filled.BarChart),
-        BottomNavItem(Routes.AI_CHAT, "هوش مصنوعی", Icons.Filled.SmartToy),
+        BottomNavItem(Routes.AI_CHAT, "AI", Icons.Filled.SmartToy),
+        BottomNavItem(Routes.PROFILE, "من", Icons.Filled.Person),
         BottomNavItem(Routes.SETTINGS, "تنظیمات", Icons.Filled.Settings)
     )
 
@@ -56,8 +61,10 @@ fun MainApp() {
 
     val showBottomBar = currentRoute in listOf(
         Routes.HOME,
+        Routes.PODCAST,
         Routes.PROGRESS,
         Routes.AI_CHAT,
+        Routes.PROFILE,
         Routes.SETTINGS
     )
 
@@ -80,7 +87,7 @@ fun MainApp() {
                             icon = {
                                 Icon(item.icon, contentDescription = item.title)
                             },
-                            label = { Text(item.title) }
+                            label = { Text(item.title, maxLines = 1) }
                         )
                     }
                 }
@@ -97,5 +104,5 @@ fun MainApp() {
 data class BottomNavItem(
     val route: String,
     val title: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
+    val icon: ImageVector
 )
