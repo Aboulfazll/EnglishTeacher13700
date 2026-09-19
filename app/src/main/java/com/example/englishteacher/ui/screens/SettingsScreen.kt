@@ -1,23 +1,26 @@
 package com.example.englishteacher.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.data.ProgressManager
@@ -33,15 +36,29 @@ fun SettingsScreen() {
 
     var textScale by remember { mutableFloatStateOf(1.0f) }
     var ttsSpeed by remember { mutableFloatStateOf(0.85f) }
+    var darkMode by remember { mutableStateOf(false) }
+    var wordsPerDay by remember { mutableIntStateOf(10) }
+    var apiKey by remember { mutableStateOf("") }
     var totalStars by remember { mutableIntStateOf(0) }
-    var showResetDialog by remember { mutableStateOf(false) }
 
-    // خواندن تنظیمات
+    var showResetDialog by remember { mutableStateOf(false) }
+    var showApiDialog by remember { mutableStateOf(false) }
+    var tempApiKey by remember { mutableStateOf("") }
+
     LaunchedEffect(Unit) {
         SettingsManager.getTextScale(context).collectLatest { textScale = it }
     }
     LaunchedEffect(Unit) {
         SettingsManager.getTtsSpeed(context).collectLatest { ttsSpeed = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getDarkMode(context).collectLatest { darkMode = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getWordsPerDay(context).collectLatest { wordsPerDay = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getApiKey(context).collectLatest { apiKey = it }
     }
     LaunchedEffect(Unit) {
         ProgressManager.getTotalStars(context).collectLatest { totalStars = it }
@@ -51,7 +68,14 @@ fun SettingsScreen() {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("تنظیمات", fontWeight = FontWeight.Bold, color = Color.White)
+                    Column {
+                        Text("تنظیمات", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(
+                            "شخصی‌سازی اپلیکیشن",
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.85f)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A237E))
             )
@@ -60,135 +84,290 @@ fun SettingsScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
+                .background(Color(0xFFF5F7FA))
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ⭐ امتیاز کل
+            // ==================== کارت امتیاز ====================
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8E1))
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Filled.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFA000),
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Column {
-                        Text("امتیاز کل شما", fontSize = 14.sp, color = Color.Gray)
-                        Text(
-                            "$totalStars ⭐",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFE65100)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
+                            )
                         )
+                        .padding(20.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Star,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "امتیاز کل شما",
+                                fontSize = 13.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                            Text(
+                                "$totalStars ⭐",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
 
-            // 🔤 اندازه متن
-            SettingsCard(
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== عنوان: نمایش ====================
+            SectionTitle("🎨 ظاهر و نمایش")
+
+            // ==================== اندازه متن ====================
+            SettingsSliderCard(
                 icon = Icons.Filled.TextFields,
+                iconColor = Color(0xFF1A237E),
                 title = "اندازه متن",
                 subtitle = when {
                     textScale < 0.9f -> "کوچک"
                     textScale < 1.1f -> "معمولی"
                     textScale < 1.3f -> "بزرگ"
                     else -> "خیلی بزرگ"
+                },
+                value = textScale,
+                valueRange = 0.8f..1.5f,
+                steps = 6,
+                onValueChange = { newValue ->
+                    textScale = newValue
+                    scope.launch { SettingsManager.setTextScale(context, newValue) }
                 }
-            ) {
-                Slider(
-                    value = textScale,
-                    onValueChange = { newValue ->
-                        textScale = newValue
-                        scope.launch {
-                            SettingsManager.setTextScale(context, newValue)
-                        }
-                    },
-                    valueRange = 0.8f..1.5f,
-                    steps = 6,
-                    colors = SliderDefaults.colors(
-                        thumbColor = Color(0xFF1A237E),
-                        activeTrackColor = Color(0xFF1A237E)
-                    )
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("A", fontSize = 12.sp, color = Color.Gray)
-                    Text("A", fontSize = 20.sp, color = Color.Gray)
-                }
-            }
+            )
 
-            // 🔊 سرعت تلفظ
-            SettingsCard(
-                icon = Icons.Filled.VolumeUp,
+            // ==================== حالت شب ====================
+            SettingsSwitchCard(
+                icon = Icons.Filled.DarkMode,
+                iconColor = Color(0xFF4527A0),
+                title = "حالت شب",
+                subtitle = if (darkMode) "فعال" else "غیرفعال",
+                checked = darkMode,
+                onCheckedChange = { enabled ->
+                    darkMode = enabled
+                    scope.launch { SettingsManager.setDarkMode(context, enabled) }
+                }
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== عنوان: صدا ====================
+            SectionTitle("🔊 صدا و تلفظ")
+
+            // ==================== سرعت تلفظ ====================
+            SettingsSliderCard(
+                icon = Icons.AutoMirrored.Filled.VolumeUp,
+                iconColor = Color(0xFF00695C),
                 title = "سرعت تلفظ کلمات",
                 subtitle = when {
                     ttsSpeed < 0.7f -> "خیلی کند"
                     ttsSpeed < 0.95f -> "کند (پیشنهادی)"
                     ttsSpeed < 1.15f -> "معمولی"
                     else -> "سریع"
+                },
+                value = ttsSpeed,
+                valueRange = 0.5f..1.5f,
+                steps = 9,
+                onValueChange = { newValue ->
+                    ttsSpeed = newValue
+                    scope.launch { SettingsManager.setTtsSpeed(context, newValue) }
                 }
-            ) {
-                Slider(
-                    value = ttsSpeed,
-                    onValueChange = { newValue ->
-                        ttsSpeed = newValue
-                        scope.launch {
-                            SettingsManager.setTtsSpeed(context, newValue)
-                        }
-                    },
-                    valueRange = 0.5f..1.5f,
-                    steps = 9,
-                    colors = SliderDefaults.colors(
-                        thumbColor = Color(0xFF1A237E),
-                        activeTrackColor = Color(0xFF1A237E)
-                    )
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("🐢 کند", fontSize = 12.sp, color = Color.Gray)
-                    Text("سریع 🐇", fontSize = 12.sp, color = Color.Gray)
-                }
-            }
+            )
 
-            // 🗑️ ریست کردن پیشرفت
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== عنوان: یادگیری ====================
+            SectionTitle("📚 یادگیری")
+
+            // ==================== تعداد کلمات روزانه ====================
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
-                onClick = { showResetDialog = true }
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF1A237E).copy(alpha = 0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Translate,
+                                contentDescription = null,
+                                tint = Color(0xFF1A237E)
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "تعداد کلمات روزانه",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF1A237E)
+                            )
+                            Text(
+                                "هدف یادگیری روزانه",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
+                        Text(
+                            "$wordsPerDay",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A237E)
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        listOf(5, 10, 15, 20, 30).forEach { count ->
+                            FilterChip(
+                                selected = wordsPerDay == count,
+                                onClick = {
+                                    wordsPerDay = count
+                                    scope.launch { SettingsManager.setWordsPerDay(context, count) }
+                                },
+                                label = { Text("$count", fontSize = 12.sp) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF1A237E),
+                                    selectedLabelColor = Color.White
+                                ),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== عنوان: هوش مصنوعی ====================
+            SectionTitle("🤖 هوش مصنوعی")
+
+            // ==================== کلید AI ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        tempApiKey = apiKey
+                        showApiDialog = true
+                    },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF00838F).copy(alpha = 0.1f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Key,
+                            contentDescription = null,
+                            tint = Color(0xFF00838F)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "کلید API هوش مصنوعی",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A237E)
+                        )
+                        Text(
+                            if (apiKey.isEmpty()) "تنظیم نشده" else "✓ تنظیم شده",
+                            fontSize = 12.sp,
+                            color = if (apiKey.isEmpty()) Color(0xFFD32F2F) else Color(0xFF43A047)
+                        )
+                    }
                     Icon(
-                        Icons.Filled.Delete,
+                        Icons.Filled.ChevronLeft,
                         contentDescription = null,
-                        tint = Color(0xFFD32F2F),
-                        modifier = Modifier.size(28.dp)
+                        tint = Color.Gray
                     )
-                    Spacer(Modifier.width(16.dp))
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== عنوان: مدیریت ====================
+            SectionTitle("⚠️ مدیریت داده")
+
+            // ==================== ریست پیشرفت ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showResetDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFD32F2F).copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = null,
+                            tint = Color(0xFFD32F2F)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
                     Column {
                         Text(
                             "ریست کردن پیشرفت",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
                             color = Color(0xFFD32F2F)
                         )
                         Text(
@@ -200,11 +379,14 @@ fun SettingsScreen() {
                 }
             }
 
-            // ℹ️ درباره اپلیکیشن
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== درباره ====================
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -213,7 +395,7 @@ fun SettingsScreen() {
                             contentDescription = null,
                             tint = Color(0xFF1A237E)
                         )
-                        Spacer(Modifier.width(12.dp))
+                        Spacer(Modifier.width(10.dp))
                         Text(
                             "درباره اپلیکیشن",
                             fontSize = 16.sp,
@@ -224,13 +406,13 @@ fun SettingsScreen() {
                     Spacer(Modifier.height(12.dp))
                     Text(
                         "English Teacher",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text("نسخه ۱.۰", fontSize = 12.sp, color = Color.Gray)
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(10.dp))
                     Text(
-                        "اپلیکیشن آموزش زبان انگلیسی بر پایه کتاب Top Notch\n۳۰ درس، ۳ سطح، مکالمه، داستان و کوییز",
+                        "اپلیکیشن جامع آموزش زبان انگلیسی\n۳۴ درس، ۳ سطح، بانک لغات، کتاب داستان، گرامر، پادکست و AI",
                         fontSize = 12.sp,
                         color = Color.Gray,
                         lineHeight = 18.sp
@@ -242,24 +424,23 @@ fun SettingsScreen() {
         }
     }
 
-    // دیالوگ تأیید ریست
+    // ==================== دیالوگ ریست ====================
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = { Text("ریست کردن پیشرفت؟") },
-            text = {
-                Text("آیا مطمئن هستی؟ تمام پیشرفت، امتیازات و نمرات کوییز پاک می‌شود.")
+            icon = {
+                Icon(Icons.Filled.Warning, contentDescription = null, tint = Color(0xFFD32F2F))
             },
+            title = { Text("ریست کردن پیشرفت؟") },
+            text = { Text("آیا مطمئن هستی؟ تمام پیشرفت، امتیازات و نمرات کوییز پاک می‌شود.") },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        scope.launch {
-                            ProgressManager.resetProgress(context)
-                        }
+                        scope.launch { ProgressManager.resetProgress(context) }
                         showResetDialog = false
                     }
                 ) {
-                    Text("بله، ریست کن", color = Color(0xFFD32F2F))
+                    Text("بله، ریست کن", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
@@ -269,14 +450,94 @@ fun SettingsScreen() {
             }
         )
     }
+
+    // ==================== دیالوگ API Key ====================
+    if (showApiDialog) {
+        AlertDialog(
+            onDismissRequest = { showApiDialog = false },
+            title = { Text("کلید API هوش مصنوعی") },
+            text = {
+                Column {
+                    Text(
+                        "کلید API خود را از Groq دریافت کنید (رایگان):",
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = tempApiKey,
+                        onValueChange = { tempApiKey = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("gsk_...") },
+                        label = { Text("کلید API") },
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "console.groq.com",
+                        fontSize = 11.sp,
+                        color = Color(0xFF00838F),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            SettingsManager.setApiKey(context, tempApiKey.trim())
+                        }
+                        showApiDialog = false
+                    }
+                ) {
+                    Text("ذخیره", color = Color(0xFF1A237E), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showApiDialog = false }) {
+                    Text("لغو")
+                }
+            }
+        )
+    }
 }
 
+// ==================== عنوان بخش ====================
 @Composable
-private fun SettingsCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+private fun SectionTitle(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(4.dp, 20.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(Color(0xFF1A237E))
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1A237E)
+        )
+    }
+}
+
+// ==================== کارت اسلایدر ====================
+@Composable
+private fun SettingsSliderCard(
+    icon: ImageVector,
+    iconColor: Color,
     title: String,
     subtitle: String,
-    content: @Composable () -> Unit
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+    onValueChange: (Float) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -284,22 +545,90 @@ private fun SettingsCard(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, contentDescription = null, tint = Color(0xFF1A237E))
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(iconColor.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(icon, contentDescription = null, tint = iconColor)
+                }
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
                         title,
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1A237E)
                     )
                     Text(subtitle, fontSize = 12.sp, color = Color.Gray)
                 }
             }
-            Spacer(Modifier.height(16.dp))
-            content()
+            Spacer(Modifier.height(12.dp))
+            Slider(
+                value = value,
+                onValueChange = onValueChange,
+                valueRange = valueRange,
+                steps = steps,
+                colors = SliderDefaults.colors(
+                    thumbColor = iconColor,
+                    activeTrackColor = iconColor
+                )
+            )
+        }
+    }
+}
+
+// ==================== کارت سوییچ ====================
+@Composable
+private fun SettingsSwitchCard(
+    icon: ImageVector,
+    iconColor: Color,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(iconColor.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = iconColor)
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    title,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A237E)
+                )
+                Text(subtitle, fontSize = 12.sp, color = Color.Gray)
+            }
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = iconColor
+                )
+            )
         }
     }
 }
