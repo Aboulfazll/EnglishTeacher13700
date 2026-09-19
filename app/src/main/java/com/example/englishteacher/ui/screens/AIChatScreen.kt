@@ -3,6 +3,7 @@ package com.example.englishteacher.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,11 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.data.ChatMessage
 import com.example.englishteacher.data.GroqClient
+import com.example.englishteacher.data.SettingsManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,7 +37,7 @@ fun AIChatScreen() {
     var tempApiKey by remember { mutableStateOf("") }
     var showKeyInput by remember { mutableStateOf(true) }
 
-    var messages = remember { mutableStateListOf<ChatMessage>() }
+    val messages = remember { mutableStateListOf<ChatMessage>() }
     var inputText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
@@ -92,8 +94,6 @@ fun AIChatScreen() {
                 .background(Color(0xFFF8F9FA))
                 .padding(padding)
         ) {
-
-            // اگر کلید وارد نشده
             if (showKeyInput) {
                 ApiKeyInputScreen(
                     tempApiKey = tempApiKey,
@@ -110,7 +110,6 @@ fun AIChatScreen() {
                     }
                 )
             } else {
-                // صفحه چت
                 ChatContent(
                     messages = messages,
                     inputText = inputText,
@@ -179,7 +178,7 @@ private fun ApiKeyInputScreen(
             "برای استفاده از این قابلیت، کلید API خود را وارد کنید",
             fontSize = 14.sp,
             color = Color.Gray,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(24.dp))
 
@@ -246,7 +245,7 @@ private fun ChatContent(
     onInputChange: (String) -> Unit,
     isLoading: Boolean,
     onSend: () -> Unit,
-    listState: androidx.compose.foundation.lazy.LazyListState
+    listState: LazyListState
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
