@@ -4,7 +4,7 @@ object LessonRepository {
 
     private val lessons: List<Lesson> = listOf(
 
-        // ==================== BEGINNER ====================
+        // ==================== BEGINNER (10 Lessons) ====================
         Lesson(
             id = "b1", unitNumber = 1, title = "Getting Acquainted", titlePersian = "آشنایی", level = Level.BEGINNER,
             vocabulary = listOf(
@@ -305,7 +305,7 @@ object LessonRepository {
             )
         ),
 
-        // ==================== INTERMEDIATE ====================
+        // ==================== INTERMEDIATE (10 Lessons) ====================
         Lesson(
             id = "i1", unitNumber = 1, title = "Cultural Literacy", titlePersian = "آگاهی فرهنگی", level = Level.INTERMEDIATE,
             vocabulary = listOf(
@@ -606,7 +606,7 @@ object LessonRepository {
             )
         ),
 
-        // ==================== ADVANCED ====================
+        // ==================== ADVANCED (10 Lessons) ====================
         Lesson(
             id = "a1", unitNumber = 1, title = "Friends and Family", titlePersian = "دوستان و خانواده", level = Level.ADVANCED,
             vocabulary = listOf(
@@ -634,6 +634,276 @@ object LessonRepository {
             quiz = listOf(
                 QuizQuestion("معنی Supportive چیست؟", listOf("بی‌تفاوت", "حمایت‌گر", "خشن", "تنها"), 1),
                 QuizQuestion("کدام مجهول درست است؟", listOf("The book wrote by...", "The book was written by...", "The book is wrote by...", "The book written by..."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a2", unitNumber = 2, title = "Success and Goals", titlePersian = "موفقیت و اهداف", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Success", "موفقیت", "səkˈsɛs"), Word("Goal", "هدف", "ɡoʊl"),
+                Word("Achieve", "دست یافتن", "əˈtʃiv"), Word("Motivation", "انگیزه", "ˌmoʊtəˈveɪʃən"),
+                Word("Perseverance", "پشتکار", "ˌpɜrsəˈvɪrəns"), Word("Ambition", "جاه‌طلبی", "æmˈbɪʃən")
+            ),
+            grammarTitle = "Third Conditional",
+            grammarExplanation = "If + had + pp, would have + pp",
+            grammarExamples = listOf(
+                "If I had studied harder, I would have passed. — اگر بیشتر درس خوانده بودم، قبول می‌شدم.",
+                "If she had known, she would have come. — اگر می‌دانست، می‌آمد.",
+                "If we had left earlier, we would have caught the train. — اگر زودتر رفته بودیم، قطار را می‌گرفتیم."
+            ),
+            conversation = Conversation("Setting goals", "تعیین اهداف", listOf(
+                ConversationLine("A", "What's your biggest goal?", "بزرگ‌ترین هدفت چیه؟"),
+                ConversationLine("B", "To start my own company.", "راه‌اندازی شرکت خودم."),
+                ConversationLine("A", "What motivates you?", "چی بهت انگیزه می‌ده؟"),
+                ConversationLine("B", "My family and dreams.", "خانواده و رویاهام."),
+                ConversationLine("A", "Perseverance is key.", "پشتکار کلیدیه."),
+                ConversationLine("B", "I never give up.", "هرگز تسلیم نمی‌شم.")
+            )),
+            storyTitle = "Path to Success",
+            storyText = "Success does not happen overnight. It requires perseverance and dedication. If Thomas Edison had given up, we would not have electric lights. Every successful person faced failure first. The key is to never give up.",
+            quiz = listOf(
+                QuizQuestion("معنی Perseverance چیست؟", listOf("تسلیم", "پشتکار", "شکست", "خستگی"), 1),
+                QuizQuestion("کدام شرطی نوع سوم درست است؟", listOf("If I had studied, I would pass.", "If I had studied, I would have passed.", "If I studied, I would have passed.", "If I had study, I would pass."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a3", unitNumber = 3, title = "Media and Communication", titlePersian = "رسانه و ارتباطات", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Journalism", "روزنامه‌نگاری", "ˈdʒɜrnəˌlɪzəm"), Word("Broadcast", "پخش", "ˈbrɔdkæst"),
+                Word("Propaganda", "تبلیغات سیاسی", "ˌprɑpəˈɡændə"), Word("Credibility", "اعتبار", "ˌkrɛdəˈbɪləti"),
+                Word("Censorship", "سانسور", "ˈsɛnsərʃɪp"), Word("Objectivity", "بی‌طرفی", "ˌɑbdʒɛkˈtɪvəti")
+            ),
+            grammarTitle = "Reported Questions",
+            grammarExplanation = "Direct: \"Where do you live?\"\nReported: He asked where I lived.",
+            grammarExamples = listOf(
+                "She asked what time it was. — پرسید ساعت چنده.",
+                "He asked if I had finished. — پرسید آیا تمام کرده‌ام.",
+                "They asked why I was late. — پرسیدند چرا دیر کردم."
+            ),
+            conversation = Conversation("Media ethics", "اخلاق رسانه", listOf(
+                ConversationLine("A", "Do you trust the media?", "به رسانه اعتماد داری؟"),
+                ConversationLine("B", "Only credible sources.", "فقط منابع معتبر."),
+                ConversationLine("A", "What about censorship?", "سانسور چطور؟"),
+                ConversationLine("B", "It damages credibility.", "به اعتبار آسیب می‌زند."),
+                ConversationLine("A", "Objectivity is essential.", "بی‌طرفی ضروریه."),
+                ConversationLine("B", "Journalists must stay neutral.", "روزنامه‌نگارها باید بی‌طرف بمانند.")
+            )),
+            storyTitle = "The Credible Journalist",
+            storyText = "A journalist's greatest asset is credibility. She asked difficult questions and reported objectively. She refused propaganda and censorship. Her readers trusted her because she always told the truth.",
+            quiz = listOf(
+                QuizQuestion("معنی Objectivity چیست؟", listOf("تعصب", "بی‌طرفی", "سانسور", "تبلیغ"), 1),
+                QuizQuestion("کدام reported question درست است؟", listOf("He asked where do I live.", "He asked where I lived.", "He asked where I live.", "He asked where did I live."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a4", unitNumber = 4, title = "Global Challenges", titlePersian = "چالش‌های جهانی", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Poverty", "فقر", "ˈpɑvərti"), Word("Inequality", "نابرابری", "ˌɪnɪˈkwɑləti"),
+                Word("Conflict", "درگیری", "ˈkɑnflɪkt"), Word("Humanitarian", "بشردوستانه", "hjuˌmænɪˈtɛriən"),
+                Word("Crisis", "بحران", "ˈkraɪsɪs"), Word("Sustainable", "پایدار", "səˈsteɪnəbəl")
+            ),
+            grammarTitle = "Wish + Past Simple",
+            grammarExplanation = "I wish I were rich. (آرزو می‌کنم ثروتمند بودم)",
+            grammarExamples = listOf(
+                "I wish there were no poverty. — کاش فقری نبود.",
+                "She wishes she could help. — آرزو می‌کند می‌توانست کمک کند.",
+                "We wish the war would end. — کاش جنگ تمام می‌شد."
+            ),
+            conversation = Conversation("Global issues", "مسائل جهانی", listOf(
+                ConversationLine("A", "What's the biggest global challenge?", "بزرگ‌ترین چالش جهانی چیه؟"),
+                ConversationLine("B", "Poverty and inequality.", "فقر و نابرابری."),
+                ConversationLine("A", "How can we help?", "چطور می‌تونیم کمک کنیم؟"),
+                ConversationLine("B", "Support humanitarian efforts.", "حمایت از تلاش‌های بشردوستانه."),
+                ConversationLine("A", "Sustainable solutions needed.", "راه‌حل‌های پایدار لازمه."),
+                ConversationLine("B", "Every contribution helps.", "هر کمکی کمک می‌کنه.")
+            )),
+            storyTitle = "A World in Crisis",
+            storyText = "The world faces many challenges today. Poverty and inequality affect millions. Conflicts force people to flee their homes. Humanitarian organizations provide essential aid. Sustainable solutions are needed for lasting change.",
+            quiz = listOf(
+                QuizQuestion("معنی Poverty چیست؟", listOf("ثروت", "فقر", "سلامتی", "آموزش"), 1),
+                QuizQuestion("کدام جمله با wish درست است؟", listOf("I wish I am rich.", "I wish I were rich.", "I wish I will be rich.", "I wish I be rich."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a5", unitNumber = 5, title = "Art and Culture", titlePersian = "هنر و فرهنگ", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Aesthetic", "زیبایی‌شناسی", "ɛsˈθɛtɪk"), Word("Masterpiece", "شاهکار", "ˈmæstərpis"),
+                Word("Heritage", "میراث", "ˈhɛrɪtɪdʒ"), Word("Contemporary", "معاصر", "kənˈtɛmpərɛri"),
+                Word("Expression", "بیان", "ɪkˈsprɛʃən"), Word("Appreciation", "قدردانی", "əˌpriʃiˈeɪʃən")
+            ),
+            grammarTitle = "Cleft Sentences",
+            grammarExplanation = "It is X that... / What I love is...\nبرای تأکید",
+            grammarExamples = listOf(
+                "It is art that connects us. — این هنر است که ما را وصل می‌کند.",
+                "What I admire is her creativity. — آنچه تحسین می‌کنم خلاقیت اوست.",
+                "It was Picasso who painted Guernica. — پیکاسو بود که گرنیکا را کشید."
+            ),
+            conversation = Conversation("Art appreciation", "قدردانی هنری", listOf(
+                ConversationLine("A", "Do you enjoy art?", "هنر دوست داری؟"),
+                ConversationLine("B", "Yes, especially contemporary art.", "بله، خصوصاً هنر معاصر."),
+                ConversationLine("A", "What's your favorite masterpiece?", "شاهکار مورد علاقه‌ات؟"),
+                ConversationLine("B", "Guernica by Picasso.", "گرنیکا از پیکاسو."),
+                ConversationLine("A", "Cultural heritage matters.", "میراث فرهنگی مهمه."),
+                ConversationLine("B", "Art is essential expression.", "هنر بیانی ضروریه.")
+            )),
+            storyTitle = "The Power of Art",
+            storyText = "Art has the power to move us deeply. It is creativity that makes us human. Great masterpieces survive centuries. Cultural heritage connects us to our past. Contemporary art challenges our perspectives.",
+            quiz = listOf(
+                QuizQuestion("معنی Heritage چیست؟", listOf("آینده", "میراث", "حال", "خیال"), 1),
+                QuizQuestion("کدام cleft sentence درست است؟", listOf("It is art connects us.", "It is art that connects us.", "It art that connects us.", "Art is that connects us."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a6", unitNumber = 6, title = "Personal Growth", titlePersian = "رشد شخصی", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Resilience", "تاب‌آوری", "rɪˈzɪliəns"), Word("Mindfulness", "ذهن‌آگاهی", "ˈmaɪndfəlnəs"),
+                Word("Self-awareness", "خودآگاهی", "sɛlf əˈwɛrnəs"), Word("Growth", "رشد", "ɡroʊθ"),
+                Word("Potential", "پتانسیل", "pəˈtɛnʃəl"), Word("Fulfillment", "رضایت", "fʊlˈfɪlmənt")
+            ),
+            grammarTitle = "Participle Clauses",
+            grammarExplanation = "Having finished work, she went home. (پس از تمام کردن کار، به خانه رفت)",
+            grammarExamples = listOf(
+                "Having learned English, he traveled abroad. — پس از یادگیری انگلیسی، خارج سفر کرد.",
+                "Feeling tired, she went to bed early. — چون خسته بود، زود خوابید.",
+                "Encouraged by friends, he continued. — با تشویق دوستان، ادامه داد."
+            ),
+            conversation = Conversation("Personal development", "توسعه فردی", listOf(
+                ConversationLine("A", "How do you grow personally?", "چطور شخصاً رشد می‌کنی؟"),
+                ConversationLine("B", "Through mindfulness and reflection.", "از طریق ذهن‌آگاهی و تأمل."),
+                ConversationLine("A", "Resilience is important.", "تاب‌آوری مهمه."),
+                ConversationLine("B", "Facing challenges makes us stronger.", "مواجهه با چالش‌ها ما را قوی‌تر می‌کند."),
+                ConversationLine("A", "Self-awareness is key.", "خودآگاهی کلیدیه."),
+                ConversationLine("B", "True fulfillment comes from within.", "رضایت واقعی از درون میاد.")
+            )),
+            storyTitle = "Journey Within",
+            storyText = "Personal growth is a lifelong journey. Having faced many challenges, Maria developed great resilience. She practiced mindfulness daily. Her self-awareness grew, and she discovered her true potential.",
+            quiz = listOf(
+                QuizQuestion("معنی Resilience چیست؟", listOf("ضعف", "تاب‌آوری", "ترس", "شکست"), 1),
+                QuizQuestion("کدام participle clause درست است؟", listOf("Having finish work, she left.", "Having finished work, she left.", "Have finished work, she left.", "Finished having work, she left."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a7", unitNumber = 7, title = "Innovation and Change", titlePersian = "نوآوری و تغییر", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Innovation", "نوآوری", "ˌɪnəˈveɪʃən"), Word("Disruption", "اختلال", "dɪsˈrʌpʃən"),
+                Word("Breakthrough", "پیشرفت بزرگ", "ˈbreɪkθru"), Word("Transformation", "دگرگونی", "ˌtrænsfərˈmeɪʃən"),
+                Word("Visionary", "آینده‌نگر", "ˈvɪʒəˌnɛri"), Word("Revolutionize", "انقلابی کردن", "ˌrɛvəˈluʃəˌnaɪz")
+            ),
+            grammarTitle = "Inversion",
+            grammarExplanation = "Never have I seen such beauty.\nRarely does he speak.",
+            grammarExamples = listOf(
+                "Never have I seen such innovation. — هرگز چنین نوآوری ندیده‌ام.",
+                "Rarely does technology change so fast. — به‌ندرت تکنولوژی این‌قدر سریع تغییر می‌کند.",
+                "Not only did he invent it, but he also improved it. — نه تنها اختراع کرد، بلکه بهبودش داد."
+            ),
+            conversation = Conversation("Innovation", "نوآوری", listOf(
+                ConversationLine("A", "What drives innovation?", "چه چیزی نوآوری را هدایت می‌کند؟"),
+                ConversationLine("B", "Visionary thinking and courage.", "تفکر آینده‌نگر و شجاعت."),
+                ConversationLine("A", "Disruption is inevitable.", "اختلال اجتناب‌ناپذیره."),
+                ConversationLine("B", "It transforms industries.", "صنایع را متحول می‌کند."),
+                ConversationLine("A", "Breakthroughs change everything.", "پیشرفت‌های بزرگ همه چیز را تغییر می‌دهند."),
+                ConversationLine("B", "We must embrace change.", "باید تغییر را بپذیریم.")
+            )),
+            storyTitle = "The Innovator's Mind",
+            storyText = "Never have we lived in such transformative times. Innovation disrupts traditional industries. Visionary thinkers revolutionize the world. Breakthroughs happen when we embrace change.",
+            quiz = listOf(
+                QuizQuestion("معنی Breakthrough چیست؟", listOf("شکست", "پیشرفت بزرگ", "توقف", "عقب‌گرد"), 1),
+                QuizQuestion("کدام inversion درست است؟", listOf("Never I have seen.", "Never have I seen.", "Never I seen have.", "Have never I seen."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a8", unitNumber = 8, title = "Ethics and Morality", titlePersian = "اخلاق", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Ethics", "اخلاق", "ˈɛθɪks"), Word("Morality", "اخلاقیات", "məˈræləti"),
+                Word("Integrity", "درستکاری", "ɪnˈtɛɡrəti"), Word("Dilemma", "دوراهی", "dɪˈlɛmə"),
+                Word("Conscience", "وجدان", "ˈkɑnʃəns"), Word("Principle", "اصل", "ˈprɪnsəpəl")
+            ),
+            grammarTitle = "Subjunctive Mood",
+            grammarExplanation = "It is essential that he be present.\nI suggest that she study harder.",
+            grammarExamples = listOf(
+                "It is important that everyone be treated fairly. — مهم است که با همه منصفانه رفتار شود.",
+                "I suggest that he reconsider his decision. — پیشنهاد می‌کنم تصمیمش را بازنگری کند.",
+                "It is vital that we maintain integrity. — حیاتی است که درستکاری را حفظ کنیم."
+            ),
+            conversation = Conversation("Moral dilemma", "دوراهی اخلاقی", listOf(
+                ConversationLine("A", "What would you do in this dilemma?", "در این دوراهی چی می‌کردی؟"),
+                ConversationLine("B", "I would follow my conscience.", "از وجدانم پیروی می‌کردم."),
+                ConversationLine("A", "Integrity is essential.", "درستکاری ضروریه."),
+                ConversationLine("B", "It is important that we stay principled.", "مهمه که اصولی بمونیم."),
+                ConversationLine("A", "Ethics guide our decisions.", "اخلاق تصمیمات ما رو هدایت می‌کنه."),
+                ConversationLine("B", "Morality shapes society.", "اخلاقیات جامعه رو شکل می‌ده.")
+            )),
+            storyTitle = "The Ethical Choice",
+            storyText = "Life often presents moral dilemmas. It is essential that we maintain our integrity. Our conscience guides us through difficult decisions. Ethical principles should never be compromised for personal gain.",
+            quiz = listOf(
+                QuizQuestion("معنی Integrity چیست؟", listOf("فریب", "درستکاری", "ضعف", "ترس"), 1),
+                QuizQuestion("کدام subjunctive درست است؟", listOf("It is essential that he is present.", "It is essential that he be present.", "It is essential that he was present.", "It is essential that he will be present."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a9", unitNumber = 9, title = "Leadership", titlePersian = "رهبری", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Leadership", "رهبری", "ˈlidərʃɪp"), Word("Vision", "چشم‌انداز", "ˈvɪʒən"),
+                Word("Empower", "توانمند کردن", "ɪmˈpaʊər"), Word("Delegate", "واگذار کردن", "ˈdɛlɪɡeɪt"),
+                Word("Accountability", "پاسخگویی", "əˌkaʊntəˈbɪləti"), Word("Influence", "تأثیر", "ˈɪnfluəns")
+            ),
+            grammarTitle = "Nominalization",
+            grammarExplanation = "تبدیل فعل/صفت به اسم:\nDecide → decision\nPerform → performance\nInnovate → innovation",
+            grammarExamples = listOf(
+                "His decision was widely respected. — تصمیمش محترم بود.",
+                "The performance exceeded expectations. — عملکرد فراتر از انتظارات بود.",
+                "Innovation requires courage. — نوآوری شجاعت می‌خواهد."
+            ),
+            conversation = Conversation("Leadership qualities", "کیفیت‌های رهبری", listOf(
+                ConversationLine("A", "What makes a great leader?", "رهبر بزرگ رو چی می‌سازه؟"),
+                ConversationLine("B", "Vision and empowerment.", "چشم‌انداز و توانمندسازی."),
+                ConversationLine("A", "Accountability is crucial.", "پاسخگویی حیاتیه."),
+                ConversationLine("B", "Leaders must delegate wisely.", "رهبران باید عاقلانه واگذار کنند."),
+                ConversationLine("A", "Influence comes from trust.", "تأثیر از اعتماد میاد."),
+                ConversationLine("B", "True leaders serve others.", "رهبران واقعی به دیگران خدمت می‌کنند.")
+            )),
+            storyTitle = "The True Leader",
+            storyText = "Great leadership is not about power. It is about vision and empowerment. Effective leaders delegate wisely and maintain accountability. Their influence comes from trust. True leaders serve others before themselves.",
+            quiz = listOf(
+                QuizQuestion("معنی Empower چیست؟", listOf("ضعیف کردن", "توانمند کردن", "کنترل", "محدود کردن"), 1),
+                QuizQuestion("کدام nominalization درست است؟", listOf("His decide was respected.", "His decision was respected.", "His deciding was respected.", "His decides was respected."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a10", unitNumber = 10, title = "Life and Philosophy", titlePersian = "زندگی و فلسفه", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Philosophy", "فلسفه", "fəˈlɑsəfi"), Word("Existential", "وجودی", "ˌɛɡzɪˈstɛnʃəl"),
+                Word("Wisdom", "خرد", "ˈwɪzdəm"), Word("Purpose", "هدف", "ˈpɜrpəs"),
+                Word("Meaning", "معنا", "ˈminɪŋ"), Word("Reflection", "تأمل", "rɪˈflɛkʃən")
+            ),
+            grammarTitle = "Mixed Conditionals",
+            grammarExplanation = "ترکیب شرطی‌ها:\nIf I had studied (past), I would be successful (present).",
+            grammarExamples = listOf(
+                "If I had studied philosophy, I would think differently now. — اگر فلسفه خوانده بودم، الان متفاوت فکر می‌کردم.",
+                "If she were wiser, she would have avoided that mistake. — اگر عاقل‌تر بود، آن اشتباه را نمی‌کرد.",
+                "If we had more time, we would reflect more often. — اگر وقت بیشتری داشتیم، بیشتر تأمل می‌کردیم."
+            ),
+            conversation = Conversation("Meaning of life", "معنای زندگی", listOf(
+                ConversationLine("A", "What gives life meaning?", "چی به زندگی معنا می‌ده؟"),
+                ConversationLine("B", "Purpose and connection.", "هدف و ارتباط."),
+                ConversationLine("A", "Philosophy helps us reflect.", "فلسفه به تأمل کمک می‌کند."),
+                ConversationLine("B", "Wisdom comes from experience.", "خرد از تجربه میاد."),
+                ConversationLine("A", "Existential questions matter.", "سوالات وجودی مهمه."),
+                ConversationLine("B", "Reflection brings clarity.", "تأمل شفافیت میاره.")
+            )),
+            storyTitle = "The Examined Life",
+            storyText = "Socrates said the unexamined life is not worth living. Philosophy encourages deep reflection. It asks existential questions about purpose and meaning. Wisdom is not just knowledge, but understanding. A reflective life brings clarity and fulfillment.",
+            quiz = listOf(
+                QuizQuestion("معنی Wisdom چیست؟", listOf("جهل", "خرد", "قدرت", "ثروت"), 1),
+                QuizQuestion("کدام mixed conditional درست است؟", listOf("If I had studied, I would think differently.", "If I studied, I would have thought.", "If I study, I would think.", "If I had study, I would think."), 0)
             )
         )
     )
