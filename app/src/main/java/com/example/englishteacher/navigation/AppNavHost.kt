@@ -22,6 +22,7 @@ import com.example.englishteacher.ui.screens.ProgressScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
 import com.example.englishteacher.ui.screens.StoryBookScreen
 import com.example.englishteacher.ui.screens.StoryDetailScreen
+import com.example.englishteacher.ui.screens.VideoScreen
 import com.example.englishteacher.ui.screens.VocabularyBankScreen
 
 object Routes {
@@ -40,6 +41,7 @@ object Routes {
     const val LEVEL_TEST = "level_test"
     const val PROFILE = "profile"
     const val BOOKMARKED_WORDS = "bookmarked_words"
+    const val VIDEOS = "videos"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -183,6 +185,11 @@ fun AppNavHost(
                 podcastTitle = title,
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        // 🎥 صفحه ویدیوهای آموزشی
+        composable(Routes.VIDEOS) {
+            VideoScreen()
         }
     }
 }
