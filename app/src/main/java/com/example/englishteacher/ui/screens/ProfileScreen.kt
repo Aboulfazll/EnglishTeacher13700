@@ -35,6 +35,7 @@ fun ProfileScreen() {
     var completedLessons by remember { mutableStateOf<Set<String>>(emptySet()) }
     var quizScores by remember { mutableStateOf<Set<String>>(emptySet()) }
     var totalStars by remember { mutableIntStateOf(0) }
+    var streak by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         ProgressManager.getCompletedLessons(context).collectLatest { completedLessons = it }
@@ -44,6 +45,9 @@ fun ProfileScreen() {
     }
     LaunchedEffect(Unit) {
         ProgressManager.getTotalStars(context).collectLatest { totalStars = it }
+    }
+    LaunchedEffect(Unit) {
+        ProgressManager.getStreak(context).collectLatest { streak = it }
     }
 
     val totalLessons = LessonRepository.getLessonsByLevel(Level.BEGINNER).size +
@@ -109,7 +113,6 @@ fun ProfileScreen() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // آواتار
                         Box(
                             modifier = Modifier
                                 .size(100.dp)
@@ -151,7 +154,6 @@ fun ProfileScreen() {
 
                         Spacer(Modifier.height(20.dp))
 
-                        // نوار پیشرفت
                         Text(
                             "پیشرفت کلی",
                             color = Color.White.copy(alpha = 0.9f),
@@ -177,6 +179,65 @@ fun ProfileScreen() {
                     }
                 }
             }
+
+            // ==================== کارت استریک ====================
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFF12711), Color(0xFFF5AF19))
+                            )
+                        )
+                        .padding(20.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🔥", fontSize = 34.sp)
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "استریک روزانه",
+                                fontSize = 13.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                            Text(
+                                "$streak روز متوالی",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                when {
+                                    streak == 0 -> "امروز شروع کن!"
+                                    streak < 3 -> "ادامه بده! 💪"
+                                    streak < 7 -> "عالی پیش می‌ری! ✨"
+                                    streak < 30 -> "فوقالعاده‌ای! 🌟"
+                                    else -> "افسانه‌ای! 👑"
+                                },
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(4.dp))
 
             // ==================== آمار اصلی ====================
             Row(
@@ -208,10 +269,8 @@ fun ProfileScreen() {
 
             Spacer(Modifier.height(4.dp))
 
-            // ==================== عنوان: محتوا ====================
             SectionTitle("📚 محتوای موجود")
 
-            // ==================== آمار محتوا ====================
             ContentStatCard(
                 icon = Icons.Filled.Book,
                 iconColor = Color(0xFF1A237E),
@@ -238,14 +297,13 @@ fun ProfileScreen() {
 
             Spacer(Modifier.height(4.dp))
 
-            // ==================== عنوان: دستاوردها ====================
             SectionTitle("🏆 دستاوردها")
 
-            // ==================== Achievements ====================
             AchievementsGrid(
                 completedCount = completedCount,
                 totalStars = totalStars,
-                quizCount = quizScores.size
+                quizCount = quizScores.size,
+                streak = streak
             )
 
             Spacer(Modifier.height(20.dp))
@@ -354,45 +412,18 @@ private fun SectionTitle(text: String) {
 private fun AchievementsGrid(
     completedCount: Int,
     totalStars: Int,
-    quizCount: Int
+    quizCount: Int,
+    streak: Int
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        AchievementRow(
-            emoji = "🌱",
-            title = "شروع سفر",
-            description = "اولین درس را کامل کن",
-            unlocked = completedCount >= 1
-        )
-        AchievementRow(
-            emoji = "📚",
-            title = "کتاب‌خوان",
-            description = "۵ درس را کامل کن",
-            unlocked = completedCount >= 5
-        )
-        AchievementRow(
-            emoji = "⭐",
-            title = "ستاره‌جمع‌کن",
-            description = "۱۰۰ امتیاز بگیر",
-            unlocked = totalStars >= 100
-        )
-        AchievementRow(
-            emoji = "🎯",
-            title = "کوییزباز",
-            description = "۵ کوییز را کامل کن",
-            unlocked = quizCount >= 5
-        )
-        AchievementRow(
-            emoji = "🏆",
-            title = "قهرمان",
-            description = "۲۵ درس را کامل کن",
-            unlocked = completedCount >= 25
-        )
-        AchievementRow(
-            emoji = "👑",
-            title = "استاد",
-            description = "همه ۳۴ درس را کامل کن",
-            unlocked = completedCount >= 34
-        )
+        AchievementRow("🌱", "شروع سفر", "اولین درس را کامل کن", completedCount >= 1)
+        AchievementRow("📚", "کتاب‌خوان", "۵ درس را کامل کن", completedCount >= 5)
+        AchievementRow("⭐", "ستاره‌جمع‌کن", "۱۰۰ امتیاز بگیر", totalStars >= 100)
+        AchievementRow("🎯", "کوییزباز", "۵ کوییز را کامل کن", quizCount >= 5)
+        AchievementRow("🔥", "۳ روز آتشین", "۳ روز متوالی فعال باش", streak >= 3)
+        AchievementRow("💎", "هفت‌روزه", "۷ روز متوالی فعال باش", streak >= 7)
+        AchievementRow("🏆", "قهرمان", "۲۵ درس را کامل کن", completedCount >= 25)
+        AchievementRow("👑", "استاد", "همه ۳۴ درس را کامل کن", completedCount >= 34)
     }
 }
 
