@@ -24,14 +24,21 @@ data class Conversation(
     val lines: List<ConversationLine>
 )
 
+// 🆕 بخش هجی کردن (Spelling)
+data class SpellingExercise(
+    val name: String,
+    val spelling: String,
+    val persian: String
+)
+
 enum class Level(
     val displayName: String,
     val persianName: String,
     val bookName: String
 ) {
-    BEGINNER("Beginner", "مبتدی", "Top Notch 1"),
-    INTERMEDIATE("Intermediate", "متوسط", "Top Notch 2"),
-    ADVANCED("Advanced", "پیشرفته", "Top Notch 3")
+    BEGINNER("Beginner", "مبتدی", "Top Notch Fundamentals"),
+    INTERMEDIATE("Intermediate", "متوسط", "Top Notch 1"),
+    ADVANCED("Advanced", "پیشرفته", "Top Notch 2")
 }
 
 data class Lesson(
@@ -41,6 +48,7 @@ data class Lesson(
     val titlePersian: String,
     val level: Level,
     val vocabulary: List<Word>,
+    val spelling: List<SpellingExercise> = emptyList(),
     val grammarTitle: String,
     val grammarExplanation: String,
     val grammarExamples: List<String>,
