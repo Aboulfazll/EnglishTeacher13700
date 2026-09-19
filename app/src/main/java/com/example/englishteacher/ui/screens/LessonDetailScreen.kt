@@ -61,24 +61,12 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
 
     var selectedTab by remember { mutableIntStateOf(0) }
 
-    // تب‌ها
-    val tabsWithSpelling = listOf(
-        "📖 لغات" to Icons.AutoMirrored.Filled.VolumeUp,
-        "🔤 هجی" to Icons.AutoMirrored.Filled.VolumeUp,
-        "📝 گرامر" to Icons.AutoMirrored.Filled.VolumeUp,
-        "💬 مکالمه" to Icons.AutoMirrored.Filled.VolumeUp,
-        "📚 داستان" to Icons.AutoMirrored.Filled.VolumeUp,
-        "✅ کوییز" to Icons.AutoMirrored.Filled.VolumeUp
-    )
-    val tabsWithout = listOf(
-        "📖 لغات" to Icons.AutoMirrored.Filled.VolumeUp,
-        "📝 گرامر" to Icons.AutoMirrored.Filled.VolumeUp,
-        "💬 مکالمه" to Icons.AutoMirrored.Filled.VolumeUp,
-        "📚 داستان" to Icons.AutoMirrored.Filled.VolumeUp,
-        "✅ کوییز" to Icons.AutoMirrored.Filled.VolumeUp
-    )
-
-    val tabs = if (lesson.spelling.isNotEmpty()) tabsWithSpelling else tabsWithout
+    // تب‌ها بر اساس داشتن spelling
+    val tabs = if (lesson.spelling.isNotEmpty()) {
+        listOf("لغات", "هجی", "گرامر", "مکالمه", "داستان", "کوییز", "🗣️ گفتار")
+    } else {
+        listOf("لغات", "گرامر", "مکالمه", "داستان", "کوییز", "🗣️ گفتار")
+    }
 
     Scaffold(
         topBar = {
@@ -117,7 +105,6 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 .background(Color(0xFFF5F7FA))
                 .padding(padding)
         ) {
-            // ==================== تب‌های زیبا ====================
             ScrollableTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.White,
@@ -125,7 +112,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 edgePadding = 8.dp,
                 divider = {}
             ) {
-                tabs.forEachIndexed { index, (title, _) ->
+                tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
@@ -140,7 +127,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 }
             }
 
-            // ==================== محتوا ====================
+            // محتوا
             if (lesson.spelling.isNotEmpty()) {
                 when (selectedTab) {
                     0 -> VocabularyTab(lesson.vocabulary, speechHelper, accent)
@@ -148,7 +135,8 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                     2 -> GrammarTab(lesson.grammarTitle, lesson.grammarExplanation, lesson.grammarExamples, accent)
                     3 -> ConversationTab(lesson.conversation, speechHelper, accent)
                     4 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
-                    5 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context) { onBack() }
+                    5 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
+                    6 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
                 }
             } else {
                 when (selectedTab) {
@@ -156,7 +144,8 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                     1 -> GrammarTab(lesson.grammarTitle, lesson.grammarExplanation, lesson.grammarExamples, accent)
                     2 -> ConversationTab(lesson.conversation, speechHelper, accent)
                     3 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
-                    4 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context) { onBack() }
+                    4 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
+                    5 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
                 }
             }
         }
@@ -191,7 +180,6 @@ private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper, accent:
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // حرف اول کلمه در دایره
                     Box(
                         modifier = Modifier
                             .size(46.dp)
@@ -360,7 +348,6 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)
     ) {
-        // عنوان
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
@@ -379,7 +366,6 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
 
         Spacer(Modifier.height(16.dp))
 
-        // توضیح
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -579,9 +565,7 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
                 if (isPlaying) speechHelper.stop() else speechHelper.speak(text)
                 isPlaying = !isPlaying
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(58.dp),
+            modifier = Modifier.fillMaxWidth().height(58.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = accent)
         ) {
@@ -619,15 +603,12 @@ private fun QuizTab(
     var score by remember { mutableIntStateOf(0) }
     var showResult by remember { mutableStateOf(false) }
 
-    // صفحه نتیجه
     if (showResult) {
         Box(
             modifier = Modifier.fillMaxSize().padding(20.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                // ایموجی نتیجه
                 Box(
                     modifier = Modifier
                         .size(120.dp)
@@ -670,11 +651,7 @@ private fun QuizTab(
 
                 Spacer(Modifier.height(12.dp))
 
-                Text(
-                    "امتیاز شما",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
+                Text("امتیاز شما", fontSize = 14.sp, color = Color.Gray)
                 Text(
                     "$score از ${quiz.size}",
                     fontSize = 32.sp,
@@ -684,7 +661,6 @@ private fun QuizTab(
 
                 Spacer(Modifier.height(30.dp))
 
-                // ذخیره امتیاز
                 LaunchedEffect(Unit) {
                     scope.launch {
                         ProgressManager.markLessonCompleted(context, lessonId)
@@ -733,7 +709,6 @@ private fun QuizTab(
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)
     ) {
-        // نوار پیشرفت
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -763,7 +738,6 @@ private fun QuizTab(
 
         Spacer(Modifier.height(24.dp))
 
-        // متن سوال
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -792,7 +766,6 @@ private fun QuizTab(
 
         Spacer(Modifier.height(20.dp))
 
-        // گزینه‌ها
         q.options.forEachIndexed { index, option ->
             val isSelected = selectedOption == index
             val isCorrect = index == q.correctIndex
@@ -813,9 +786,7 @@ private fun QuizTab(
             }
 
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = bgColor),
                 border = androidx.compose.foundation.BorderStroke(2.dp, borderColor),
