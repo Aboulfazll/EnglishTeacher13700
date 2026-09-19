@@ -19,6 +19,9 @@ object SettingsManager {
     private val API_KEY = stringPreferencesKey("api_key")
     private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
     private val WORDS_PER_DAY_KEY = intPreferencesKey("words_per_day")
+    private val NOTIFICATIONS_ENABLED_KEY = booleanPreferencesKey("notifications_enabled")
+    private val NOTIFICATION_HOUR_KEY = intPreferencesKey("notification_hour")
+    private val NOTIFICATION_MINUTE_KEY = intPreferencesKey("notification_minute")
 
     // ==================== Text Scale ====================
     fun getTextScale(context: Context): Flow<Float> =
@@ -62,5 +65,27 @@ object SettingsManager {
 
     suspend fun setWordsPerDay(context: Context, count: Int) {
         context.dataStore.edit { prefs -> prefs[WORDS_PER_DAY_KEY] = count }
+    }
+
+    // ==================== Notifications ====================
+    fun getNotificationsEnabled(context: Context): Flow<Boolean> =
+        context.dataStore.data.map { prefs -> prefs[NOTIFICATIONS_ENABLED_KEY] ?: false }
+
+    suspend fun setNotificationsEnabled(context: Context, enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[NOTIFICATIONS_ENABLED_KEY] = enabled }
+    }
+
+    fun getNotificationHour(context: Context): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[NOTIFICATION_HOUR_KEY] ?: 20 }
+
+    suspend fun setNotificationHour(context: Context, hour: Int) {
+        context.dataStore.edit { prefs -> prefs[NOTIFICATION_HOUR_KEY] = hour }
+    }
+
+    fun getNotificationMinute(context: Context): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[NOTIFICATION_MINUTE_KEY] ?: 0 }
+
+    suspend fun setNotificationMinute(context: Context, minute: Int) {
+        context.dataStore.edit { prefs -> prefs[NOTIFICATION_MINUTE_KEY] = minute }
     }
 }
