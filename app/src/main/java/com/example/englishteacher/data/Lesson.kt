@@ -12,6 +12,18 @@ data class QuizQuestion(
     val correctIndex: Int
 )
 
+data class ConversationLine(
+    val speaker: String,
+    val english: String,
+    val persian: String
+)
+
+data class Conversation(
+    val title: String,
+    val titlePersian: String,
+    val lines: List<ConversationLine>
+)
+
 enum class Level(
     val displayName: String,
     val persianName: String,
@@ -32,6 +44,7 @@ data class Lesson(
     val grammarTitle: String,
     val grammarExplanation: String,
     val grammarExamples: List<String>,
+    val conversation: Conversation,
     val storyTitle: String,
     val storyText: String,
     val quiz: List<QuizQuestion>
