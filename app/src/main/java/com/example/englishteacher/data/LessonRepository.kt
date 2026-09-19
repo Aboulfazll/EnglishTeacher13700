@@ -378,176 +378,144 @@ object LessonRepository {
         Lesson(
             id = "i1", unitNumber = 1, title = "Getting Acquainted", titlePersian = "آشنایی", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Introduce", "معرفی کردن", "ˌɪntrəˈduːs"),
-                Word("Neighbor", "همسایه", "ˈneɪbər"),
-                Word("Classmate", "همکلاسی", "ˈklæsmeɪt"),
-                Word("Colleague", "همکار", "ˈkɑːliːɡ"),
-                Word("Acquaintance", "آشنا", "əˈkweɪntəns"),
-                Word("Nickname", "اسم مستعار", "ˈnɪkneɪm"),
-                Word("Last name", "نام خانوادگی", "læst neɪm"),
-                Word("First name", "نام کوچک", "fɜːrst neɪm")
+                Word("Introduce", "معرفی کردن", "ˌɪntrəˈduːs"), Word("Neighbor", "همسایه", "ˈneɪbər"),
+                Word("Classmate", "همکلاسی", "ˈklæsmeɪt"), Word("Colleague", "همکار", "ˈkɑːliːɡ"),
+                Word("Acquaintance", "آشنا", "əˈkweɪntəns"), Word("Nickname", "اسم مستعار", "ˈnɪkneɪm"),
+                Word("Last name", "نام خانوادگی", "læst neɪm"), Word("First name", "نام کوچک", "fɜːrst neɪm")
             ),
             grammarTitle = "Present Perfect with 'How long'",
-            grammarExplanation = "پرسیدن مدت زمان آشنایی:\n\nHow long have you known him?\nI've known him for two years.\nI've known her since 2020.\n\n• for + مدت زمان (for 2 years)\n• since + نقطه شروع (since 2020)",
+            grammarExplanation = "How long have you known him?\nI've known him for two years.\nI've known her since 2020.\n\n• for + مدت زمان\n• since + نقطه شروع",
             grammarExamples = listOf(
                 "How long have you known your best friend?",
                 "I've known him for five years.",
-                "She's been my neighbor since 2018.",
-                "We've been classmates for one year."
+                "She's been my neighbor since 2018."
             ),
             conversation = Conversation("Meeting a new neighbor", "آشنایی با همسایه جدید", listOf(
                 ConversationLine("A", "Hi! Are you new here?", "سلام! تازه اومدی؟"),
                 ConversationLine("B", "Yes, I just moved in last week.", "بله، هفته پیش اومدم."),
-                ConversationLine("A", "Welcome! I'm Sarah. I live next door.", "خوش اومدی! من سارام. کنارت زندگی می‌کنم."),
-                ConversationLine("B", "Nice to meet you, Sarah. I'm David.", "از آشنایی خوشحالم سارا. من دیویدم."),
-                ConversationLine("A", "How long have you lived in this city?", "چقدره توی این شهر زندگی می‌کنی؟"),
+                ConversationLine("A", "Welcome! I'm Sarah.", "خوش اومدی! من سارام."),
+                ConversationLine("B", "Nice to meet you. I'm David.", "از آشنایی خوشحالم. من دیویدم."),
+                ConversationLine("A", "How long have you lived here?", "چقدره اینجا زندگی می‌کنی؟"),
                 ConversationLine("B", "I've lived here for just a few days.", "فقط چند روزه که اینجام.")
             )),
             storyTitle = "An Old Friendship",
-            storyText = "Tom and Alex have been friends for twenty years. They met in elementary school. Tom has known Alex's family since childhood. They still see each other every weekend.",
+            storyText = "Tom and Alex have been friends for twenty years. They met in elementary school.",
             quiz = listOf(
                 QuizQuestion("کدام درست است؟", listOf("I've known him since 2 years.", "I've known him for 2 years.", "I know him since 2 years.", "I knowing him for 2 years."), 1),
-                QuizQuestion("معنی Colleague چیست؟", listOf("همکلاسی", "همسایه", "همکار", "دوست"), 2),
-                QuizQuestion("کدام درست است؟", listOf("How long you have known him?", "How long have you known him?", "How long do you know him?", "How long you know him?"), 1)
+                QuizQuestion("معنی Colleague چیست؟", listOf("همکلاسی", "همسایه", "همکار", "دوست"), 2)
             )
         ),
 
         Lesson(
             id = "i2", unitNumber = 2, title = "Going Shopping", titlePersian = "خرید کردن", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Receipt", "رسید", "rɪˈsiːt"),
-                Word("Refund", "بازپرداخت", "ˈriːfʌnd"),
-                Word("Exchange", "تعویض", "ɪksˈtʃeɪndʒ"),
-                Word("Warranty", "گارانتی", "ˈwɔːrənti"),
-                Word("Sale", "حراج", "seɪl"),
-                Word("Bargain", "معامله خوب", "ˈbɑːrɡɪn"),
-                Word("Fitting room", "اتاق پرو", "ˈfɪtɪŋ ruːm"),
-                Word("Queue", "صف", "kjuː")
+                Word("Receipt", "رسید", "rɪˈsiːt"), Word("Refund", "بازپرداخت", "ˈriːfʌnd"),
+                Word("Exchange", "تعویض", "ɪksˈtʃeɪndʒ"), Word("Warranty", "گارانتی", "ˈwɔːrənti"),
+                Word("Sale", "حراج", "seɪl"), Word("Bargain", "معامله خوب", "ˈbɑːrɡɪn"),
+                Word("Fitting room", "اتاق پرو", "ˈfɪtɪŋ ruːm"), Word("Queue", "صف", "kjuː")
             ),
             grammarTitle = "Comparative and Superlative",
-            grammarExplanation = "مقایسه:\n\nصفت کوتاه: cheap → cheaper → the cheapest\nصفت بلند: expensive → more expensive → the most expensive\n\nبی‌قاعده: good → better → the best",
+            grammarExplanation = "cheap → cheaper → the cheapest\nexpensive → more expensive → the most expensive\n\nبی‌قاعده: good → better → the best",
             grammarExamples = listOf(
                 "This shirt is cheaper than that one.",
-                "This is the most expensive jacket in the store.",
-                "She's the best customer in this shop."
+                "This is the most expensive jacket.",
+                "She's the best customer."
             ),
             conversation = Conversation("Exchanging a product", "تعویض کالا", listOf(
-                ConversationLine("A", "Hi, I'd like to exchange this shirt.", "سلام، می‌خوام این پیراهن رو تعویض کنم."),
+                ConversationLine("A", "I'd like to exchange this shirt.", "می‌خوام این پیراهن رو تعویض کنم."),
                 ConversationLine("B", "Sure, do you have the receipt?", "حتماً، رسید داری؟"),
-                ConversationLine("A", "Yes, here it is. It's too small.", "بله، بفرمایید. خیلی کوچیکه."),
-                ConversationLine("B", "Would you like a larger size?", "سایز بزرگ‌تر می‌خوای؟"),
-                ConversationLine("A", "Yes, please. Do you have it in blue?", "بله لطفاً. آبی‌اش رو دارید؟"),
-                ConversationLine("B", "Let me check. Please wait a moment.", "بذار چک کنم. یه لحظه صبر کن.")
+                ConversationLine("A", "Yes, it's too small.", "بله، خیلی کوچیکه."),
+                ConversationLine("B", "Would you like a larger size?", "سایز بزرگ‌تر می‌خوای؟")
             )),
             storyTitle = "The Best Bargain",
-            storyText = "Last Saturday, Maria went shopping. She compared prices at three different stores. The first store was expensive. The second was cheaper. But the third had the best bargains. She bought a beautiful coat for half the price.",
+            storyText = "Last Saturday, Maria went shopping.",
             quiz = listOf(
                 QuizQuestion("معنی Refund چیست؟", listOf("تعویض", "بازپرداخت", "تخفیف", "گارانتی"), 1),
-                QuizQuestion("کدام درست است؟", listOf("This is more cheap.", "This is cheaper.", "This is cheapest.", "This is the cheap."), 1),
-                QuizQuestion("معنی Queue چیست؟", listOf("کفش", "صف", "پرونده", "سوال"), 1)
+                QuizQuestion("کدام درست است؟", listOf("This is more cheap.", "This is cheaper.", "This is cheapest.", "This is the cheap."), 1)
             )
         ),
 
         Lesson(
             id = "i3", unitNumber = 3, title = "Planning a Trip", titlePersian = "برنامه‌ریزی سفر", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Reservation", "رزرو", "ˌrezərˈveɪʃən"),
-                Word("Itinerary", "برنامه سفر", "aɪˈtɪnəreri"),
-                Word("Destination", "مقصد", "ˌdestɪˈneɪʃən"),
-                Word("Departure", "حرکت", "dɪˈpɑːrtʃər"),
-                Word("Arrival", "ورود", "əˈraɪvəl"),
-                Word("Luggage", "چمدان", "ˈlʌɡɪdʒ"),
-                Word("Passport", "پاسپورت", "ˈpæspɔːrt"),
-                Word("Boarding pass", "کارت پرواز", "ˈbɔːrdɪŋ pæs")
+                Word("Reservation", "رزرو", "ˌrezərˈveɪʃən"), Word("Itinerary", "برنامه سفر", "aɪˈtɪnəreri"),
+                Word("Destination", "مقصد", "ˌdestɪˈneɪʃən"), Word("Departure", "حرکت", "dɪˈpɑːrtʃər"),
+                Word("Arrival", "ورود", "əˈraɪvəl"), Word("Luggage", "چمدان", "ˈlʌɡɪdʒ"),
+                Word("Passport", "پاسپورت", "ˈpæspɔːrt"), Word("Boarding pass", "کارت پرواز", "ˈbɔːrdɪŋ pæs")
             ),
             grammarTitle = "Future: Will vs Going to",
-            grammarExplanation = "Will: تصمیم لحظه‌ای / پیش‌بینی\nI'll call you later.\n\nGoing to: برنامه قبلی\nI'm going to visit Paris next month.",
+            grammarExplanation = "Will: تصمیم لحظه‌ای\nGoing to: برنامه قبلی",
             grammarExamples = listOf(
                 "I'm going to travel to Turkey next summer.",
                 "We'll book the hotel tomorrow.",
-                "She's going to visit her family in Isfahan."
+                "She's going to visit her family."
             ),
             conversation = Conversation("At the travel agency", "در آژانس مسافرتی", listOf(
                 ConversationLine("A", "Where are you going to travel?", "کجا می‌خوای سفر کنی؟"),
-                ConversationLine("B", "I'm going to visit Italy next month.", "می‌خوام ماه بعد ایتالیا برم."),
+                ConversationLine("B", "I'm going to visit Italy.", "می‌خوام ایتالیا برم."),
                 ConversationLine("A", "How long will you stay?", "چقدر می‌مونی؟"),
-                ConversationLine("B", "I'll stay for two weeks.", "دو هفته می‌مونم."),
-                ConversationLine("A", "Have you made a reservation?", "رزرو کردی؟"),
-                ConversationLine("B", "Not yet. I'll do it tomorrow.", "نه هنوز. فردا می‌کنم.")
+                ConversationLine("B", "I'll stay for two weeks.", "دو هفته.")
             )),
             storyTitle = "The Perfect Trip",
-            storyText = "John is planning a trip to Spain. He's going to visit Madrid and Barcelona. He'll stay for ten days. He's already booked his hotel and made an itinerary. He can't wait to explore the beautiful country.",
+            storyText = "John is planning a trip to Spain.",
             quiz = listOf(
                 QuizQuestion("معنی Luggage چیست؟", listOf("پاسپورت", "چمدان", "بلیط", "مقصد"), 1),
-                QuizQuestion("کدام برای برنامه قبلی درست است؟", listOf("I will travel tomorrow.", "I'm going to travel tomorrow.", "I travel tomorrow.", "I traveling tomorrow."), 1),
-                QuizQuestion("معنی Destination چیست؟", listOf("مقصد", "حرکت", "ورود", "چمدان"), 0)
+                QuizQuestion("کدام برای برنامه قبلی درست است؟", listOf("I will travel.", "I'm going to travel.", "I travel.", "I traveling."), 1)
             )
         ),
 
         Lesson(
             id = "i4", unitNumber = 4, title = "Food and Restaurants", titlePersian = "غذا و رستوران", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Appetizer", "پیش‌غذا", "ˈæpɪtaɪzər"),
-                Word("Main course", "غذای اصلی", "meɪn kɔːrs"),
-                Word("Dessert", "دسر", "dɪˈzɜːrt"),
-                Word("Menu", "منو", "ˈmenjuː"),
-                Word("Waiter", "گارسون", "ˈweɪtər"),
-                Word("Bill", "صورت‌حساب", "bɪl"),
-                Word("Tip", "انعام", "tɪp"),
-                Word("Reservation", "رزرو", "ˌrezərˈveɪʃən")
+                Word("Appetizer", "پیش‌غذا", "ˈæpɪtaɪzər"), Word("Main course", "غذای اصلی", "meɪn kɔːrs"),
+                Word("Dessert", "دسر", "dɪˈzɜːrt"), Word("Menu", "منو", "ˈmenjuː"),
+                Word("Waiter", "گارسون", "ˈweɪtər"), Word("Bill", "صورت‌حساب", "bɪl"),
+                Word("Tip", "انعام", "tɪp"), Word("Reservation", "رزرو", "ˌrezərˈveɪʃən")
             ),
             grammarTitle = "Would like + Infinitive",
-            grammarExplanation = "درخواست مؤدبانه:\n\nI would like (I'd like) a coffee.\nWould you like some dessert?\n\nمخفف: I'd, you'd, he'd, she'd",
+            grammarExplanation = "درخواست مؤدبانه:\n\nI would like (I'd like) a coffee.\nWould you like some dessert?",
             grammarExamples = listOf(
                 "I'd like to make a reservation for two.",
                 "Would you like to see the menu?",
                 "We'd like the bill, please."
             ),
             conversation = Conversation("At a fancy restaurant", "در رستوران شیک", listOf(
-                ConversationLine("A", "Good evening. Do you have a reservation?", "عصر بخیر. رزرو دارید؟"),
-                ConversationLine("B", "Yes, I'd like a table for two.", "بله، میزی برای دو نفر می‌خوام."),
-                ConversationLine("A", "Right this way. Would you like to see the menu?", "بفرمایید. منو رو می‌خواید ببینید؟"),
-                ConversationLine("B", "Yes, please. What do you recommend?", "بله لطفاً. چی پیشنهاد می‌کنید؟"),
-                ConversationLine("A", "The grilled chicken is excellent tonight.", "مرغ گریل امشب عالیه."),
-                ConversationLine("B", "Sounds great. We'll have that, please.", "خوبه. همون رو می‌خوایم لطفاً.")
+                ConversationLine("A", "Do you have a reservation?", "رزرو دارید؟"),
+                ConversationLine("B", "Yes, a table for two.", "بله، میزی برای دو نفر."),
+                ConversationLine("A", "Would you like to see the menu?", "منو رو می‌خواید ببینید؟"),
+                ConversationLine("B", "Yes. What do you recommend?", "بله. چی پیشنهاد می‌کنید؟")
             )),
             storyTitle = "A Memorable Dinner",
-            storyText = "Last Friday, Anna and her friends went to an Italian restaurant. They ordered pasta and pizza as main courses. The appetizers were delicious. For dessert, they had tiramisu. The waiter was very friendly. They left a generous tip.",
+            storyText = "Last Friday, Anna went to an Italian restaurant.",
             quiz = listOf(
                 QuizQuestion("معنی Appetizer چیست؟", listOf("غذای اصلی", "دسر", "پیش‌غذا", "نوشیدنی"), 2),
-                QuizQuestion("کدام مؤدبانه‌تر است؟", listOf("I want a coffee.", "I'd like a coffee.", "Give me coffee.", "Coffee!"), 1)
+                QuizQuestion("کدام مؤدبانه‌تر است؟", listOf("I want coffee.", "I'd like coffee.", "Give me coffee.", "Coffee!"), 1)
             )
         ),
 
         Lesson(
             id = "i5", unitNumber = 5, title = "Around Town", titlePersian = "گشت در شهر", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Downtown", "مرکز شهر", "ˌdaʊnˈtaʊn"),
-                Word("Suburb", "حومه شهر", "ˈsʌbɜːrb"),
-                Word("Intersection", "چهارراه", "ˌɪntərˈsekʃən"),
-                Word("Traffic light", "چراغ راهنما", "ˈtræfɪk laɪt"),
-                Word("Crosswalk", "خط عابر پیاده", "ˈkrɔːswɔːk"),
-                Word("Sidewalk", "پیاده‌رو", "ˈsaɪdwɔːk"),
-                Word("Landmark", "نقطه شاخص", "ˈlændmɑːrk"),
-                Word("Neighborhood", "محله", "ˈneɪbərhʊd")
+                Word("Downtown", "مرکز شهر", "ˌdaʊnˈtaʊn"), Word("Suburb", "حومه شهر", "ˈsʌbɜːrb"),
+                Word("Intersection", "چهارراه", "ˌɪntərˈsekʃən"), Word("Traffic light", "چراغ راهنما", "ˈtræfɪk laɪt"),
+                Word("Crosswalk", "خط عابر", "ˈkrɔːswɔːk"), Word("Sidewalk", "پیاده‌رو", "ˈsaɪdwɔːk"),
+                Word("Landmark", "نقطه شاخص", "ˈlændmɑːrk"), Word("Neighborhood", "محله", "ˈneɪbərhʊd")
             ),
             grammarTitle = "Imperatives for Directions",
-            grammarExplanation = "دستور برای مسیر دادن:\n\nTurn left / Turn right\nGo straight\nGo past the bank\nIt's on your left / right",
+            grammarExplanation = "Turn left / Turn right\nGo straight\nGo past the bank\nIt's on your left / right",
             grammarExamples = listOf(
                 "Go straight for two blocks.",
                 "Turn left at the traffic light.",
                 "The museum is on your right."
             ),
             conversation = Conversation("Asking for directions", "پرسیدن مسیر", listOf(
-                ConversationLine("A", "Excuse me, how do I get to the museum?", "ببخشید، چطور به موزه برم؟"),
+                ConversationLine("A", "How do I get to the museum?", "چطور به موزه برم؟"),
                 ConversationLine("B", "Go straight for two blocks.", "دو بلوک مستقیم برو."),
                 ConversationLine("A", "Then what?", "بعدش چی؟"),
-                ConversationLine("B", "Turn left at the traffic light.", "سر چراغ راهنما بپیچ چپ."),
-                ConversationLine("A", "Is it far?", "دوره؟"),
-                ConversationLine("B", "No, about five minutes on foot.", "نه، حدود ۵ دقیقه پیاده.")
+                ConversationLine("B", "Turn left at the traffic light.", "سر چراغ راهنما بپیچ چپ.")
             )),
             storyTitle = "Lost in the City",
-            storyText = "Sarah was new in the city. She got lost while looking for a famous landmark. She asked a friendly stranger for directions. He told her to go straight and turn right at the intersection. After ten minutes, she found the place.",
+            storyText = "Sarah was new in the city.",
             quiz = listOf(
                 QuizQuestion("معنی Intersection چیست؟", listOf("پیاده‌رو", "چهارراه", "خیابان", "میدان"), 1),
                 QuizQuestion("کدام درست است؟", listOf("Turn in the left.", "Turn left.", "Turn on left.", "Left turn on."), 1)
@@ -557,32 +525,26 @@ object LessonRepository {
         Lesson(
             id = "i6", unitNumber = 6, title = "Shopping for Clothes", titlePersian = "خرید لباس", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Fit", "اندازه بودن", "fɪt"),
-                Word("Suit", "مناسب بودن", "suːt"),
-                Word("Match", "هماهنگ بودن", "mætʃ"),
-                Word("Trend", "مد روز", "trend"),
-                Word("Style", "سبک", "staɪl"),
-                Word("Pattern", "طرح", "ˈpætərn"),
-                Word("Fabric", "پارچه", "ˈfæbrɪk"),
-                Word("Accessories", "اکسسوری", "əkˈsesəriz")
+                Word("Fit", "اندازه بودن", "fɪt"), Word("Suit", "مناسب بودن", "suːt"),
+                Word("Match", "هماهنگ بودن", "mætʃ"), Word("Trend", "مد روز", "trend"),
+                Word("Style", "سبک", "staɪl"), Word("Pattern", "طرح", "ˈpætərn"),
+                Word("Fabric", "پارچه", "ˈfæbrɪk"), Word("Accessories", "اکسسوری", "əkˈsesəriz")
             ),
             grammarTitle = "Too / Enough",
-            grammarExplanation = "too + صفت = خیلی زیاد (منفی)\nenough + اسم = کافی\n\nThis shirt is too small.\nI don't have enough money.",
+            grammarExplanation = "too + صفت = خیلی زیاد (منفی)\nenough + اسم = کافی",
             grammarExamples = listOf(
                 "This dress is too expensive.",
                 "These shoes are too tight.",
-                "I don't have enough time to shop."
+                "I don't have enough time."
             ),
             conversation = Conversation("At the fitting room", "در اتاق پرو", listOf(
                 ConversationLine("A", "How does it fit?", "چطور اندازه‌ست؟"),
-                ConversationLine("B", "It's a bit too tight. Do you have a larger size?", "یه کم تنگه. سایز بزرگ‌تر دارید؟"),
-                ConversationLine("A", "Sure, let me get it for you.", "حتماً، بذار بیارم."),
-                ConversationLine("B", "Also, this color doesn't suit me.", "رنگش هم بهم نمیاد."),
-                ConversationLine("A", "Would you prefer it in black?", "مشکی رو ترجیح می‌دی؟"),
-                ConversationLine("B", "Yes, black matches everything.", "بله، مشکی با همه چی هماهنگه.")
+                ConversationLine("B", "It's too tight. Larger size?", "تنگه. سایز بزرگ‌تر؟"),
+                ConversationLine("A", "Sure. Which color?", "حتماً. چه رنگی؟"),
+                ConversationLine("B", "Black. It matches everything.", "مشکی. با همه چی هماهنگه.")
             )),
             storyTitle = "The Perfect Outfit",
-            storyText = "It was Mary's first day at her new job. She wanted to look professional. She tried on many outfits but none of them fit properly. Finally, she found a dark blue suit that matched her style. It was perfect for the occasion.",
+            storyText = "It was Mary's first day at her new job.",
             quiz = listOf(
                 QuizQuestion("معنی Fit چیست؟", listOf("طرح", "اندازه بودن", "پارچه", "مد"), 1),
                 QuizQuestion("کدام درست است؟", listOf("This shirt is too small.", "This shirt is small too.", "This shirt is very too small.", "This shirt is much small."), 0)
@@ -592,17 +554,13 @@ object LessonRepository {
         Lesson(
             id = "i7", unitNumber = 7, title = "Having Fun", titlePersian = "تفریح", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Entertainment", "سرگرمی", "ˌentərˈteɪnmənt"),
-                Word("Performance", "اجرا", "pərˈfɔːrməns"),
-                Word("Concert", "کنسرت", "ˈkɑːnsərt"),
-                Word("Audience", "تماشاگران", "ˈɔːdiəns"),
-                Word("Ticket", "بلیط", "ˈtɪkɪt"),
-                Word("Amusement park", "شهربازی", "əˈmjuːzmənt pɑːrk"),
-                Word("Enjoyable", "لذت‌بخش", "ɪnˈdʒɔɪəbəl"),
-                Word("Boring", "خسته‌کننده", "ˈbɔːrɪŋ")
+                Word("Entertainment", "سرگرمی", "ˌentərˈteɪnmənt"), Word("Performance", "اجرا", "pərˈfɔːrməns"),
+                Word("Concert", "کنسرت", "ˈkɑːnsərt"), Word("Audience", "تماشاگران", "ˈɔːdiəns"),
+                Word("Ticket", "بلیط", "ˈtɪkɪt"), Word("Amusement park", "شهربازی", "əˈmjuːzmənt pɑːrk"),
+                Word("Enjoyable", "لذت‌بخش", "ɪnˈdʒɔɪəbəl"), Word("Boring", "خسته‌کننده", "ˈbɔːrɪŋ")
             ),
             grammarTitle = "Gerunds after Prepositions",
-            grammarExplanation = "بعد از حرف اضافه، فعل + ing می‌گیرد:\n\ninterested in learning\nGood at singing\nTired of waiting\nThink about going",
+            grammarExplanation = "بعد از حرف اضافه، فعل + ing:\n\ninterested in learning\nGood at singing\nThink about going",
             grammarExamples = listOf(
                 "I'm interested in watching movies.",
                 "She's good at playing the piano.",
@@ -610,34 +568,28 @@ object LessonRepository {
             ),
             conversation = Conversation("Planning entertainment", "برنامه‌ریزی تفریح", listOf(
                 ConversationLine("A", "What do you do for fun?", "برای تفریح چیکار می‌کنی؟"),
-                ConversationLine("B", "I'm interested in watching theater performances.", "به دیدن نمایش‌های تئاتر علاقه دارم."),
-                ConversationLine("A", "Really? I'm good at singing, but I hate watching plays.", "واقعاً؟ من توی خواندن خوبم، ولی از دیدن نمایش متنفرم."),
-                ConversationLine("B", "That's funny! What about concerts?", "جالبه! کنسرت چطور؟"),
-                ConversationLine("A", "I love going to concerts. They're never boring.", "عاشق رفتن به کنسرتم. هرگز خسته‌کننده نیستن."),
-                ConversationLine("B", "Great! There's a concert this weekend.", "عالیه! این آخر هفته یه کنسرت هست.")
+                ConversationLine("B", "I'm interested in watching theater.", "به دیدن تئاتر علاقه دارم."),
+                ConversationLine("A", "I love going to concerts.", "عاشق کنسرتم."),
+                ConversationLine("B", "There's a concert this weekend.", "این آخر هفته یه کنسرت هست.")
             )),
             storyTitle = "A Night at the Theater",
-            storyText = "Last Saturday, David and his friends went to the theater. They watched a comedy performance. The audience laughed all night. After the show, they discussed how enjoyable it was. They decided to go again next month.",
+            storyText = "Last Saturday, David went to the theater.",
             quiz = listOf(
                 QuizQuestion("معنی Audience چیست؟", listOf("بازیگر", "تماشاگران", "کارگردان", "نویسنده"), 1),
-                QuizQuestion("کدام درست است؟", listOf("I'm interested in watch movies.", "I'm interested in watching movies.", "I'm interested to watching.", "I'm interested watching."), 1)
+                QuizQuestion("کدام درست است؟", listOf("I'm interested in watch.", "I'm interested in watching.", "I'm interested to watching.", "I'm interested watching."), 1)
             )
         ),
 
         Lesson(
             id = "i8", unitNumber = 8, title = "Health Matters", titlePersian = "مسائل سلامتی", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Symptom", "نشانه", "ˈsɪmptəm"),
-                Word("Prescription", "نسخه", "prɪˈskrɪpʃən"),
-                Word("Appointment", "قرار ملاقات", "əˈpɔɪntmənt"),
-                Word("Emergency", "اورژانس", "ɪˈmɜːrdʒənsi"),
-                Word("Allergy", "حساسیت", "ˈælərdʒi"),
-                Word("Injury", "آسیب", "ˈɪndʒəri"),
-                Word("Treatment", "درمان", "ˈtriːtmənt"),
-                Word("Recovery", "بهبودی", "rɪˈkʌvəri")
+                Word("Symptom", "نشانه", "ˈsɪmptəm"), Word("Prescription", "نسخه", "prɪˈskrɪpʃən"),
+                Word("Appointment", "قرار ملاقات", "əˈpɔɪntmənt"), Word("Emergency", "اورژانس", "ɪˈmɜːrdʒənsi"),
+                Word("Allergy", "حساسیت", "ˈælərdʒi"), Word("Injury", "آسیب", "ˈɪndʒəri"),
+                Word("Treatment", "درمان", "ˈtriːtmənt"), Word("Recovery", "بهبودی", "rɪˈkʌvəri")
             ),
             grammarTitle = "Should have / Could have",
-            grammarExplanation = "توصیه در گذشته:\n\nShould have + p.p. = باید (ولی نکردی)\nCould have + p.p. = می‌توانستی (ولی نکردی)\n\nYou should have seen a doctor earlier.\nYou could have avoided this problem.",
+            grammarExplanation = "Should have + p.p. = باید (ولی نکردی)\nCould have + p.p. = می‌توانستی (ولی نکردی)",
             grammarExamples = listOf(
                 "You should have taken your medicine.",
                 "She could have gone to the hospital earlier.",
@@ -645,34 +597,28 @@ object LessonRepository {
             ),
             conversation = Conversation("At the doctor's office", "در مطب دکتر", listOf(
                 ConversationLine("A", "What are your symptoms?", "علائمت چیه؟"),
-                ConversationLine("B", "I have a bad cough and a fever.", "سرفه شدید و تب دارم."),
-                ConversationLine("A", "How long have you had these symptoms?", "چقدره این علائم رو داری؟"),
-                ConversationLine("B", "For about a week.", "حدود یه هفته."),
-                ConversationLine("A", "You should have come sooner.", "باید زودتر می‌اومدی."),
-                ConversationLine("B", "You're right. I didn't think it was serious.", "حق داری. فکر نمی‌کردم جدی باشه.")
+                ConversationLine("B", "A bad cough and a fever.", "سرفه شدید و تب."),
+                ConversationLine("A", "How long?", "چقدره؟"),
+                ConversationLine("B", "About a week.", "حدود یه هفته.")
             )),
             storyTitle = "A Lesson Learned",
-            storyText = "James ignored his symptoms for two weeks. He thought they would go away. But his condition got worse. When he finally saw a doctor, he was told he should have come sooner. The doctor prescribed medicine, and James made a full recovery.",
+            storyText = "James ignored his symptoms for two weeks.",
             quiz = listOf(
                 QuizQuestion("معنی Prescription چیست؟", listOf("نسخه", "قرار", "درمان", "علائم"), 0),
-                QuizQuestion("کدام درست است؟", listOf("You should saw a doctor.", "You should have seen a doctor.", "You should have saw a doctor.", "You should seen a doctor."), 1)
+                QuizQuestion("کدام درست است؟", listOf("You should saw a doctor.", "You should have seen a doctor.", "You should have saw.", "You should seen."), 1)
             )
         ),
 
         Lesson(
             id = "i9", unitNumber = 9, title = "Home and Away", titlePersian = "خانه و سفر", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Rent", "اجاره", "rent"),
-                Word("Lease", "قرارداد اجاره", "liːs"),
-                Word("Landlord", "صاحب‌خانه", "ˈlændlɔːrd"),
-                Word("Furnished", "مبله", "ˈfɜːrnɪʃt"),
-                Word("Utilities", "قبض‌های خانه", "juːˈtɪlətiz"),
-                Word("Deposit", "ودیعه", "dɪˈpɑːzɪt"),
-                Word("Roommate", "هم‌اتاقی", "ˈruːmmeɪt"),
-                Word("Move in", "اسباب‌کشی کردن", "muːv ɪn")
+                Word("Rent", "اجاره", "rent"), Word("Lease", "قرارداد اجاره", "liːs"),
+                Word("Landlord", "صاحب‌خانه", "ˈlændlɔːrd"), Word("Furnished", "مبله", "ˈfɜːrnɪʃt"),
+                Word("Utilities", "قبض‌های خانه", "juːˈtɪlətiz"), Word("Deposit", "ودیعه", "dɪˈpɑːzɪt"),
+                Word("Roommate", "هم‌اتاقی", "ˈruːmmeɪt"), Word("Move in", "اسباب‌کشی کردن", "muːv ɪn")
             ),
             grammarTitle = "Present Perfect vs Past Simple",
-            grammarExplanation = "Past Simple: زمان مشخص\nI moved to Tehran in 2020.\n\nPresent Perfect: زمان نامشخص\nI have lived in three cities.",
+            grammarExplanation = "Past Simple: زمان مشخص\nPresent Perfect: زمان نامشخص",
             grammarExamples = listOf(
                 "I moved here last year.",
                 "I've lived in this apartment for two years.",
@@ -680,31 +626,25 @@ object LessonRepository {
             ),
             conversation = Conversation("Looking for an apartment", "دنبال آپارتمان", listOf(
                 ConversationLine("A", "Are you looking for an apartment?", "دنبال آپارتمان می‌گردی؟"),
-                ConversationLine("B", "Yes, I need a furnished one.", "بله، مبله می‌خوام."),
-                ConversationLine("A", "How long have you been searching?", "چقدره که داری می‌گردی؟"),
-                ConversationLine("B", "For about a month.", "حدود یه ماه."),
-                ConversationLine("A", "I moved into my new place last week.", "من هفته پیش اسباب‌کشی کردم."),
-                ConversationLine("B", "Lucky you! Was it expensive?", "خوش به حالت! گرون بود؟")
+                ConversationLine("B", "Yes, furnished one.", "بله، مبله."),
+                ConversationLine("A", "How long have you been searching?", "چقدره می‌گردی؟"),
+                ConversationLine("B", "For about a month.", "حدود یه ماه.")
             )),
             storyTitle = "A New Home",
-            storyText = "Elena recently moved to a new city for work. She found a furnished apartment near her office. The rent was reasonable, but she had to pay a large deposit. She loves her new home. She has already made friends with her neighbors.",
+            storyText = "Elena recently moved to a new city.",
             quiz = listOf(
                 QuizQuestion("معنی Landlord چیست؟", listOf("همسایه", "صاحب‌خانه", "هم‌اتاقی", "مستأجر"), 1),
-                QuizQuestion("کدام درست است؟", listOf("I've moved here in 2020.", "I moved here in 2020.", "I have moved here in 2020.", "I moving here 2020."), 1)
+                QuizQuestion("کدام درست است؟", listOf("I've moved here in 2020.", "I moved here in 2020.", "I have moved here 2020.", "I moving here."), 1)
             )
         ),
 
         Lesson(
             id = "i10", unitNumber = 10, title = "Getting Along", titlePersian = "کنار آمدن", level = Level.INTERMEDIATE,
             vocabulary = listOf(
-                Word("Argue", "بحث کردن", "ˈɑːrɡjuː"),
-                Word("Agree", "موافق بودن", "əˈɡriː"),
-                Word("Disagree", "مخالف بودن", "ˌdɪsəˈɡriː"),
-                Word("Compromise", "سازش کردن", "ˈkɑːmprəmaɪz"),
-                Word("Apologize", "عذرخواهی کردن", "əˈpɑːlədʒaɪz"),
-                Word("Forgive", "بخشیدن", "fərˈɡɪv"),
-                Word("Get along", "کنار آمدن", "ɡet əˈlɔːŋ"),
-                Word("Misunderstanding", "سوءتفاهم", "ˌmɪsʌndərˈstændɪŋ")
+                Word("Argue", "بحث کردن", "ˈɑːrɡjuː"), Word("Agree", "موافق بودن", "əˈɡriː"),
+                Word("Disagree", "مخالف بودن", "ˌdɪsəˈɡriː"), Word("Compromise", "سازش", "ˈkɑːmprəmaɪz"),
+                Word("Apologize", "عذرخواهی", "əˈpɑːlədʒaɪz"), Word("Forgive", "بخشیدن", "fərˈɡɪv"),
+                Word("Get along", "کنار آمدن", "ɡet əˈlɔːŋ"), Word("Misunderstanding", "سوءتفاهم", "ˌmɪsʌndərˈstændɪŋ")
             ),
             grammarTitle = "Reported Speech with Say and Tell",
             grammarExplanation = "Say + (that) + جمله\nShe said she was tired.\n\nTell + شخص + (that) + جمله\nShe told me she was tired.",
@@ -714,53 +654,218 @@ object LessonRepository {
                 "They said they would compromise."
             ),
             conversation = Conversation("Resolving a disagreement", "حل اختلاف", listOf(
-                ConversationLine("A", "I'm upset about what happened yesterday.", "از دیروز ناراحتم."),
-                ConversationLine("B", "I'm sorry. I didn't mean to hurt you.", "متأسفم. قصد نداشتم ناراحتت کنم."),
-                ConversationLine("A", "You said you would help me, but you didn't.", "گفتی کمکم می‌کنی، ولی نکردی."),
-                ConversationLine("B", "You're right. I apologize. Let's compromise.", "حق داری. عذرخواهی می‌کنم. بیا سازش کنیم."),
-                ConversationLine("A", "OK. But next time, tell me in advance.", "باشه. ولی دفعه بعد، از قبل بهم بگو."),
-                ConversationLine("B", "I will. Thanks for understanding.", "حتماً. ممنون که درک می‌کنی.")
+                ConversationLine("A", "I'm upset about yesterday.", "از دیروز ناراحتم."),
+                ConversationLine("B", "I'm sorry. I didn't mean to hurt you.", "متأسفم. قصد نداشتم."),
+                ConversationLine("A", "You said you would help me.", "گفتی کمکم می‌کنی."),
+                ConversationLine("B", "You're right. Let's compromise.", "حق داری. بیا سازش کنیم.")
             )),
             storyTitle = "Learning to Get Along",
-            storyText = "Mark and Lisa are roommates. Last week, they had a big argument about cleaning. Mark said Lisa never helped with chores. Lisa disagreed and said Mark was too strict. After a long conversation, they compromised. Now they take turns cleaning.",
+            storyText = "Mark and Lisa are roommates.",
             quiz = listOf(
                 QuizQuestion("معنی Compromise چیست؟", listOf("بحث", "سازش", "عذرخواهی", "بخشش"), 1),
-                QuizQuestion("کدام درست است؟", listOf("He said me he was tired.", "He told me he was tired.", "He said to me he tired.", "He told that he was tired."), 1)
+                QuizQuestion("کدام درست است؟", listOf("He said me he was tired.", "He told me he was tired.", "He said to me he tired.", "He told that tired."), 1)
             )
         ),
 
-        // ==================== ADVANCED ====================
+        // ==================== ADVANCED - TOP NOTCH 2 (10 Lessons) ====================
         Lesson(
-            id = "a1", unitNumber = 1, title = "Friends and Family", titlePersian = "دوستان و خانواده", level = Level.ADVANCED,
+            id = "a1", unitNumber = 1, title = "Cultural Literacy", titlePersian = "آگاهی فرهنگی", level = Level.ADVANCED,
             vocabulary = listOf(
-                Word("Relationship", "رابطه", "rɪˈleɪʃənʃɪp"), Word("Supportive", "حمایت‌گر", "səˈpɔrtɪv"),
-                Word("Trust", "اعتماد", "trʌst"), Word("Bond", "پیوند", "bɑnd"),
-                Word("Loyalty", "وفاداری", "ˈlɔɪəlti")
+                Word("Culture", "فرهنگ", "ˈkʌltʃər"), Word("Tradition", "سنت", "trəˈdɪʃən"),
+                Word("Custom", "رسم و رسوم", "ˈkʌstəm"), Word("Society", "جامعه", "səˈsaɪəti"),
+                Word("Diversity", "تنوع", "dɪˈvɜːrsəti"), Word("Heritage", "میراث", "ˈherɪtɪdʒ"),
+                Word("Etiquette", "آداب معاشرت", "ˈetɪket"), Word("Taboo", "تابو", "təˈbuː")
             ),
-            grammarTitle = "Passive Voice",
-            grammarExplanation = "be + past participle",
+            grammarTitle = "Present Perfect Continuous",
+            grammarExplanation = "have/has been + verb-ing\n\nبرای کارهایی که در گذشته شروع شده و ادامه دارند و روی حال تأثیر دارند.",
             grammarExamples = listOf(
-                "The book was written by a famous author.",
-                "English is spoken worldwide.",
-                "The bridge was built in 1990."
+                "I've been studying English for three years.",
+                "She's been living in Tokyo since 2019.",
+                "How long have you been working here?",
+                "We've been waiting for the bus for an hour."
             ),
-            conversation = Conversation("Family values", "ارزش‌های خانوادگی", listOf(
-                ConversationLine("A", "Family is most important.", "خانواده مهم‌ترینه."),
-                ConversationLine("B", "Bond built on trust.", "پیوند بر پایه اعتماد."),
-                ConversationLine("A", "Quality time matters.", "وقت باکیفیت مهمه."),
-                ConversationLine("B", "Money can't buy that.", "پول نمی‌تونه بخره.")
+            conversation = Conversation("Discussing cultural differences", "بحث درباره تفاوت‌های فرهنگی", listOf(
+                ConversationLine("A", "Have you noticed cultural differences here?", "تفاوت‌های فرهنگی اینجا رو متوجه شدی؟"),
+                ConversationLine("B", "Yes, I've been learning a lot about them.", "بله، دارم خیلی چیزها یاد می‌گیرم."),
+                ConversationLine("A", "What surprised you the most?", "چی بیشتر تعجبت کرد؟"),
+                ConversationLine("B", "The food etiquette. It's so different!", "آداب غذا خوردن. خیلی متفاوته!"),
+                ConversationLine("A", "How long have you been living abroad?", "چقدره خارج زندگی می‌کنی؟"),
+                ConversationLine("B", "I've been living abroad for two years now.", "دو ساله که خارج زندگی می‌کنم.")
             )),
-            storyTitle = "Value of Friendship",
-            storyText = "True friendship is built on trust and loyalty.",
+            storyTitle = "Bridging Cultures",
+            storyText = "Maria has been working in Japan for three years. She's been learning the language and customs. At first, she struggled with the etiquette. Now she feels comfortable in both cultures. She's discovered that understanding comes from experience.",
             quiz = listOf(
-                QuizQuestion("معنی Supportive چیست؟", listOf("بی‌تفاوت", "حمایت‌گر", "خشن", "تنها"), 1)
+                QuizQuestion("معنی Etiquette چیست؟", listOf("فرهنگ", "آداب معاشرت", "سنت", "زبان"), 1),
+                QuizQuestion("کدام درست است؟", listOf("I've studying English.", "I've been studying English.", "I has been studying.", "I have be studying."), 1),
+                QuizQuestion("معنی Diversity چیست؟", listOf("یکنواختی", "تنوع", "فرهنگ", "جامعه"), 1)
             )
-        )
-    )
+        ),
 
-    fun getLessonsByLevel(level: Level): List<Lesson> =
-        lessons.filter { it.level == level }
+        Lesson(
+            id = "a2", unitNumber = 2, title = "Shopping and Consumerism", titlePersian = "خرید و مصرف‌گرایی", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Consumer", "مصرف‌کننده", "kənˈsuːmər"), Word("Brand", "برند", "brænd"),
+                Word("Advertisement", "تبلیغات", "ˌædvərˈtaɪzmənt"), Word("Budget", "بودجه", "ˈbʌdʒɪt"),
+                Word("Impulse buying", "خرید لحظه‌ای", "ˈɪmpʌls ˈbaɪɪŋ"), Word("Quality", "کیفیت", "ˈkwɑːləti"),
+                Word("Warranty", "گارانتی", "ˈwɔːrənti"), Word("Bargain hunter", "شکارچی تخفیف", "ˈbɑːrɡɪn ˈhʌntər")
+            ),
+            grammarTitle = "Too / Enough / Not enough",
+            grammarExplanation = "too + صفت = خیلی زیاد\najective + enough = به اندازه کافی\nnot + adjective + enough = به اندازه کافی نیست",
+            grammarExamples = listOf(
+                "This watch is too expensive.",
+                "The car is small enough for the city.",
+                "This apartment is not big enough.",
+                "I don't have enough money to buy it."
+            ),
+            conversation = Conversation("Talking about shopping habits", "صحبت درباره عادت‌های خرید", listOf(
+                ConversationLine("A", "I've become a smart shopper lately.", "اخیراً خریدار باهوشی شده‌ام."),
+                ConversationLine("B", "Really? What changed?", "واقعاً؟ چی عوض شد؟"),
+                ConversationLine("A", "I used to buy on impulse. Now I only shop with a list.", "قبلاً لحظه‌ای می‌خریدم. الان فقط با لیست."),
+                ConversationLine("B", "That's a great habit! Do you have a budget?", "عادت عالیه! بودجه داری؟"),
+                ConversationLine("A", "Yes, I've been tracking my expenses.", "بله، هزینه‌هامو پیگیری می‌کنم."),
+                ConversationLine("B", "I should learn from you.", "باید از تو یاد بگیرم.")
+            )),
+            storyTitle = "The Impulse Purchase",
+            storyText = "Sarah went to the mall for one item. She saw a sale sign and couldn't resist. She bought three things she didn't need. The next day, she felt guilty. She decided to return the items. Now she always shops with a list and a budget.",
+            quiz = listOf(
+                QuizQuestion("معنی Consumer چیست؟", listOf("فروشنده", "مصرف‌کننده", "تولیدکننده", "برند"), 1),
+                QuizQuestion("کدام درست است؟", listOf("It's expensive too.", "It's too expensive.", "It's very too expensive.", "It's much expensive."), 1)
+            )
+        ),
 
-    fun getLessonById(id: String): Lesson? =
-        lessons.firstOrNull { it.id == id }
-}
+        Lesson(
+            id = "a3", unitNumber = 3, title = "Personal Care and Appearance", titlePersian = "مراقبت شخصی و ظاهر", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Appearance", "ظاهر", "əˈpɪrəns"), Word("Cosmetic", "آرایشی", "kɑːzˈmetɪk"),
+                Word("Grooming", "آراستگی", "ˈɡruːmɪŋ"), Word("Hygiene", "بهداشت", "ˈhaɪdʒiːn"),
+                Word("Moisturizer", "مرطوب‌کننده", "ˈmɔɪstʃəraɪzər"), Word("Sunscreen", "ضد آفتاب", "ˈsʌnskriːn"),
+                Word("Makeover", "تغییر چهره", "ˈmeɪkoʊvər"), Word("Confidence", "اعتماد به نفس", "ˈkɑːnfɪdəns")
+            ),
+            grammarTitle = "Causative: Have / Get Something Done",
+            grammarExplanation = "وقتی کسی برای ما کاری انجام می‌دهد:\n\nhave + مفعول + past participle\nget + مفعول + past participle",
+            grammarExamples = listOf(
+                "I had my hair cut yesterday.",
+                "She gets her nails done every week.",
+                "We had our house painted last month.",
+                "He's getting his teeth whitened."
+            ),
+            conversation = Conversation("Talking about self-care", "صحبت درباره مراقبت از خود", listOf(
+                ConversationLine("A", "You look great! Have you done something different?", "عالی به نظر می‌رسی! چیز متفاوتی انجام دادی؟"),
+                ConversationLine("B", "Thanks! I had my hair cut and colored.", "ممنون! موهامو کوتاه و رنگ کردم."),
+                ConversationLine("A", "It suits you! What else do you do for self-care?", "بهت میاد! دیگه چی برای مراقبت از خودت انجام می‌دی؟"),
+                ConversationLine("B", "I have a skincare routine and use sunscreen daily.", "یه روتین مراقبت از پوست دارم و هر روز ضدآفتاب می‌زنم."),
+                ConversationLine("A", "That's important. I should take better care of my skin.", "این مهمه. باید بهتر از پوستم مراقبت کنم."),
+                ConversationLine("B", "Small habits make a big difference.", "عادت‌های کوچک تفاوت بزرگی ایجاد می‌کنند.")
+            )),
+            storyTitle = "A Change for the Better",
+            storyText = "David used to neglect his appearance. He never exercised and ate poorly. One day, he decided to change. He had his hair styled professionally. He started a skincare routine. He even got his teeth whitened. His confidence grew, and people noticed the change.",
+            quiz = listOf(
+                QuizQuestion("معنی Confidence چیست؟", listOf("خجالت", "اعتماد به نفس", "غرور", "ترس"), 1),
+                QuizQuestion("کدام درست است؟", listOf("I cut my hair yesterday.", "I had my hair cut yesterday.", "I have cut hair yesterday.", "I had cut my hair."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a4", unitNumber = 4, title = "Modern Technology", titlePersian = "تکنولوژی مدرن", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Artificial Intelligence", "هوش مصنوعی", "ˌɑːrtɪˈfɪʃəl ɪnˈtelɪdʒəns"),
+                Word("Algorithm", "الگوریتم", "ˈælɡərɪðəm"),
+                Word("Encryption", "رمزنگاری", "ɪnˈkrɪpʃən"),
+                Word("Cybersecurity", "امنیت سایبری", "ˌsaɪbərsɪˈkjʊrəti"),
+                Word("Cloud storage", "ذخیره ابری", "klaʊd ˈstɔːrɪdʒ"),
+                Word("Bandwidth", "پهنای باند", "ˈbændwɪdθ"),
+                Word("Interface", "رابط کاربری", "ˈɪntərfeɪs"),
+                Word("Automation", "اتوماسیون", "ˌɔːtəˈmeɪʃən")
+            ),
+            grammarTitle = "Modals of Deduction",
+            grammarExplanation = "بیان حدس و گمان:\n\nmust be = قطعاً هست\nmight be = ممکنه باشه\ncan't be = غیرممکنه باشه\nmust have been = قطعاً بوده",
+            grammarExamples = listOf(
+                "The data must be encrypted.",
+                "AI might replace some jobs in the future.",
+                "That can't be true!",
+                "He must have forgotten his password."
+            ),
+            conversation = Conversation("Discussing AI", "بحث درباره هوش مصنوعی", listOf(
+                ConversationLine("A", "Do you think AI will change our lives?", "فکر می‌کنی AI زندگی ما رو تغییر می‌ده؟"),
+                ConversationLine("B", "It must be already happening.", "قطعاً همین الان داره اتفاق میفته."),
+                ConversationLine("A", "I worry about cybersecurity.", "نگران امنیت سایبریم."),
+                ConversationLine("B", "You're right. Encryption must be stronger.", "حق داری. رمزنگاری باید قوی‌تر باشه."),
+                ConversationLine("A", "What about job automation?", "اتوماسیون شغل‌ها چطور؟"),
+                ConversationLine("B", "It might create new opportunities too.", "ممکنه فرصت‌های جدیدی هم ایجاد کنه.")
+            )),
+            storyTitle = "The AI Revolution",
+            storyText = "Artificial intelligence has been transforming industries for years. Algorithms now power everything from social media to healthcare. Cybersecurity has become critical. Cloud storage enables remote work. The interface between humans and machines keeps evolving. This must be the most significant technological shift of our time.",
+            quiz = listOf(
+                QuizQuestion("معنی Encryption چیست؟", listOf("رمزنگاری", "الگوریتم", "امنیت", "اتوماسیون"), 0),
+                QuizQuestion("کدام درست است؟", listOf("That must to be true.", "That must be true.", "That musts be true.", "That be must true."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a5", unitNumber = 5, title = "Holidays and Celebrations", titlePersian = "تعطیلات و جشن‌ها", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Celebration", "جشن", "ˌselɪˈbreɪʃən"), Word("Ceremony", "مراسم", "ˈserəmoʊni"),
+                Word("Anniversary", "سالگرد", "ˌænɪˈvɜːrsəri"), Word("Festival", "فستیوال", "ˈfestɪvəl"),
+                Word("Decoration", "تزئینات", "ˌdekəˈreɪʃən"), Word("Fireworks", "آتش‌بازی", "ˈfaɪərwɜːrks"),
+                Word("Tradition", "سنت", "trəˈdɪʃən"), Word("Gathering", "گردهمایی", "ˈɡæðərɪŋ")
+            ),
+            grammarTitle = "Passive Voice (Present and Past)",
+            grammarExplanation = "مجهول:\n\nحال ساده: is/are + p.p.\nگذشته: was/were + p.p.\n\nوقتی فاعل مهم نیست یا نامشخص است.",
+            grammarExamples = listOf(
+                "Nowruz is celebrated in many countries.",
+                "The party was organized by my sister.",
+                "Fireworks are set off at midnight.",
+                "The ceremony was held outdoors."
+            ),
+            conversation = Conversation("Discussing celebrations", "بحث درباره جشن‌ها", listOf(
+                ConversationLine("A", "How is Nowruz celebrated in your family?", "نوروز توی خانواده‌ت چطور جشن گرفته می‌شه؟"),
+                ConversationLine("B", "The house is cleaned thoroughly before the new year.", "خونه قبل از سال نو کاملاً تمیز می‌شه."),
+                ConversationLine("A", "What special food is prepared?", "چه غذای خاصی آماده می‌شه؟"),
+                ConversationLine("B", "Many dishes are cooked, especially sweets.", "غذاهای زیادی پخته می‌شه، خصوصاً شیرینی‌ها."),
+                ConversationLine("A", "Are gifts given to children?", "به بچه‌ها هدیه داده می‌شه؟"),
+                ConversationLine("B", "Yes, money is usually given by the elders.", "بله، معمولاً بزرگ‌ترها پول می‌دن.")
+            )),
+            storyTitle = "A Memorable Celebration",
+            storyText = "Last year, Maria's wedding was held in a beautiful garden. Hundreds of flowers were arranged by professional decorators. Traditional music was played throughout the evening. Delicious food was served by waiters. The ceremony was attended by over 200 guests. It was a night that would never be forgotten.",
+            quiz = listOf(
+                QuizQuestion("معنی Ceremony چیست؟", listOf("جشن", "مراسم", "فستیوال", "سالگرد"), 1),
+                QuizQuestion("کدام مجهول درست است؟", listOf("Nowruz celebrated in Iran.", "Nowruz is celebrated in Iran.", "Nowruz is celebrate in Iran.", "Nowruz celebrating in Iran."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a6", unitNumber = 6, title = "Eating Well", titlePersian = "تغذیه سالم", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Nutrition", "تغذیه", "nuˈtrɪʃən"), Word("Calorie", "کالری", "ˈkæləri"),
+                Word("Protein", "پروتئین", "ˈproʊtiːn"), Word("Carbohydrate", "کربوهیدرات", "ˌkɑːrboʊˈhaɪdreɪt"),
+                Word("Balanced diet", "رژیم متعادل", "ˈbælənst ˈdaɪət"), Word("Organic", "ارگانیک", "ɔːrˈɡænɪk"),
+                Word("Processed food", "غذای فرآوری‌شده", "ˈprɑːsest fuːd"), Word("Portion", "سهم", "ˈpɔːrʃən")
+            ),
+            grammarTitle = "Quantifiers: A few, A little, A lot of",
+            grammarExplanation = "a few + اسم قابل شمارش\nA little + اسم غیرقابل شمارش\na lot of + هر دو",
+            grammarExamples = listOf(
+                "I eat a few vegetables every day.",
+                "She drinks a little coffee in the morning.",
+                "They consume a lot of processed food.",
+                "Add a little salt, not too much."
+            ),
+            conversation = Conversation("Talking about diet", "صحبت درباره رژیم غذایی", listOf(
+                ConversationLine("A", "I'm trying to eat healthier.", "سعی می‌کنم سالم‌تر بخورم."),
+                ConversationLine("B", "What changes have you made?", "چه تغییراتی دادی؟"),
+                ConversationLine("A", "I eat a lot of vegetables now and a little less meat.", "الان سبزیجات زیاد و گوشت کمتر می‌خورم."),
+                ConversationLine("B", "That's good. Do you count calories?", "خوبه. کالری می‌شمری؟"),
+                ConversationLine("A", "Not exactly, but I watch my portions.", "دقیقاً نه، ولی مراقب سهم‌هام هستم."),
+                ConversationLine("B", "Balanced diet is the key.", "رژیم متعادل کلیدیه.")
+            )),
+            storyTitle = "A Healthy Transformation",
+            storyText = "Peter used to eat fast food every day. He rarely exercised and consumed a lot of sugar. After a health scare, he consulted a nutritionist. He learned about balanced diets and portions. Now he eats organic vegetables and lean protein. He feels better than ever.",
+            quiz = listOf(
+                QuizQuestion("معنی Balanced diet چیست؟", listOf("رژیم سخت", "رژیم متعادل", "غذای ارگانیک", "کالری"), 1),
+                QuizQuestion("کدام درست است؟", listOf("I eat a little vegetables.", "I eat a few vegetables.", "I eat few vegetables.", "I eat little vegetables."), 1)
+            )
+        ),
+
+        Lesson(
+            id = "a7", unitNumber = 7, title = "About the Environment", titlePersian = "درباره محیط زیست", level = Level.ADVANCED,
+            vocabulary = listOf(
+                Word("Climate
