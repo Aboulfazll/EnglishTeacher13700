@@ -7,12 +7,15 @@ import java.util.Locale
 class SpeechHelper(context: Context) {
 
     private var isReady = false
+    private lateinit var tts: TextToSpeech
 
-    private val tts = TextToSpeech(context) { status ->
-        if (status == TextToSpeech.SUCCESS) {
-            tts.language = Locale.US
-            tts.setSpeechRate(0.85f)
-            isReady = true
+    init {
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts.language = Locale.US
+                tts.setSpeechRate(0.85f)
+                isReady = true
+            }
         }
     }
 
