@@ -16,6 +16,7 @@ import com.example.englishteacher.ui.screens.LessonListScreen
 import com.example.englishteacher.ui.screens.LevelTestScreen
 import com.example.englishteacher.ui.screens.PodcastPlayerScreen
 import com.example.englishteacher.ui.screens.PodcastScreen
+import com.example.englishteacher.ui.screens.ProfileScreen
 import com.example.englishteacher.ui.screens.ProgressScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
 import com.example.englishteacher.ui.screens.StoryBookScreen
@@ -36,6 +37,7 @@ object Routes {
     const val STORY_DETAIL = "story_detail/{storyId}"
     const val VOCABULARY_BANK = "vocabulary_bank"
     const val LEVEL_TEST = "level_test"
+    const val PROFILE = "profile"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -132,6 +134,10 @@ fun AppNavHost(
 
         composable(Routes.PROGRESS) {
             ProgressScreen()
+        }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen()
         }
 
         composable(Routes.AI_CHAT) {
