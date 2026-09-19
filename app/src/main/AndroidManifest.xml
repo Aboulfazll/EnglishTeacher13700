@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+package com.example.englishteacher
 
-    <uses-permission android:name="android.permission.INTERNET" />
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.navigation.compose.rememberNavController
+import com.example.englishteacher.navigation.AppNavHost
 
-    <application
-        android:allowBackup="true"
-        android:label="English Teacher"
-        android:supportsRtl="true">
+class MainActivity : ComponentActivity() {
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
-
-    </application>
-
-</manifest>
+        setContent {
+            MaterialTheme {
+                Surface {
+                    val navController = rememberNavController()
+                    AppNavHost(navController = navController)
+                }
+            }
+        }
+    }
+}
