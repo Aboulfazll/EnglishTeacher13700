@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Star
@@ -26,7 +27,8 @@ import com.example.englishteacher.data.Level
 @Composable
 fun HomeScreen(
     onLevelClick: (Level) -> Unit,
-    onGrammarClick: () -> Unit = {}
+    onGrammarClick: () -> Unit = {},
+    onStoryBookClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -115,6 +117,53 @@ fun HomeScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            // 🆕 دکمه کتاب داستان
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .clickable { onStoryBookClick() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFC2185B), Color(0xFFE91E63))
+                            )
+                        )
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.AutoStories,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(44.dp)
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "کتاب داستان",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "۱۵ داستان کوتاه با صوت",
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // دکمه کتابخانه گرامر
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
