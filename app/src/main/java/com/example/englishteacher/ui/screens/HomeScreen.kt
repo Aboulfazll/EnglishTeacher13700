@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -23,7 +24,10 @@ import coil.compose.AsyncImage
 import com.example.englishteacher.data.Level
 
 @Composable
-fun HomeScreen(onLevelClick: (Level) -> Unit) {
+fun HomeScreen(
+    onLevelClick: (Level) -> Unit,
+    onGrammarClick: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +93,7 @@ fun HomeScreen(onLevelClick: (Level) -> Unit) {
 
             LevelCard(
                 title = "مبتدی",
-                subtitle = "Top Notch 1 - سطح A1",
+                subtitle = "Top Notch Fundamentals - ۱۴ درس",
                 gradient = listOf(Color(0xFF43A047), Color(0xFF66BB6A))
             ) { onLevelClick(Level.BEGINNER) }
 
@@ -97,7 +101,7 @@ fun HomeScreen(onLevelClick: (Level) -> Unit) {
 
             LevelCard(
                 title = "متوسط",
-                subtitle = "Top Notch 2 - سطح A2",
+                subtitle = "Top Notch 1 - ۱۰ درس",
                 gradient = listOf(Color(0xFF7B1FA2), Color(0xFF9C27B0))
             ) { onLevelClick(Level.INTERMEDIATE) }
 
@@ -105,9 +109,54 @@ fun HomeScreen(onLevelClick: (Level) -> Unit) {
 
             LevelCard(
                 title = "پیشرفته",
-                subtitle = "Top Notch 3 - سطح B1",
+                subtitle = "Top Notch 2 - ۱۰ درس",
                 gradient = listOf(Color(0xFFE65100), Color(0xFFF57C00))
             ) { onLevelClick(Level.ADVANCED) }
+
+            Spacer(Modifier.height(16.dp))
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .clickable { onGrammarClick() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF00838F), Color(0xFF00ACC1))
+                            )
+                        )
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Book,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(44.dp)
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "کتابخانه گرامر",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "همه گرامرها یکجا",
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
 
             Spacer(Modifier.height(20.dp))
         }
