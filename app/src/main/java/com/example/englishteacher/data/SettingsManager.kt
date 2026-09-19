@@ -1,8 +1,10 @@
 package com.example.englishteacher.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -15,40 +17,50 @@ object SettingsManager {
     private val TEXT_SCALE_KEY = floatPreferencesKey("text_scale")
     private val TTS_SPEED_KEY = floatPreferencesKey("tts_speed")
     private val API_KEY = stringPreferencesKey("api_key")
+    private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
+    private val WORDS_PER_DAY_KEY = intPreferencesKey("words_per_day")
 
-    fun getTextScale(context: Context): Flow<Float> {
-        return context.dataStore.data.map { prefs ->
-            prefs[TEXT_SCALE_KEY] ?: 1.0f
-        }
-    }
+    // ==================== Text Scale ====================
+    fun getTextScale(context: Context): Flow<Float> =
+        context.dataStore.data.map { prefs -> prefs[TEXT_SCALE_KEY] ?: 1.0f }
 
     suspend fun setTextScale(context: Context, scale: Float) {
-        context.dataStore.edit { prefs ->
-            prefs[TEXT_SCALE_KEY] = scale
-        }
+        context.dataStore.edit { prefs -> prefs[TEXT_SCALE_KEY] = scale }
     }
 
-    fun getTtsSpeed(context: Context): Flow<Float> {
-        return context.dataStore.data.map { prefs ->
-            prefs[TTS_SPEED_KEY] ?: 0.85f
-        }
-    }
+    // ==================== TTS Speed ====================
+    fun getTtsSpeed(context: Context): Flow<Float> =
+        context.dataStore.data.map { prefs -> prefs[TTS_SPEED_KEY] ?: 0.85f }
 
     suspend fun setTtsSpeed(context: Context, speed: Float) {
-        context.dataStore.edit { prefs ->
-            prefs[TTS_SPEED_KEY] = speed
-        }
+        context.dataStore.edit { prefs -> prefs[TTS_SPEED_KEY] = speed }
     }
 
-    fun getApiKey(context: Context): Flow<String> {
-        return context.dataStore.data.map { prefs ->
-            prefs[API_KEY] ?: ""
-        }
-    }
+    // ==================== API Key ====================
+    fun getApiKey(context: Context): Flow<String> =
+        context.dataStore.data.map { prefs -> prefs[API_KEY] ?: "" }
 
     suspend fun setApiKey(context: Context, key: String) {
-        context.dataStore.edit { prefs ->
-            prefs[API_KEY] = key
-        }
+        context.dataStore.edit { prefs -> prefs[API_KEY] = key }
+    }
+
+    suspend fun clearApiKey(context: Context) {
+        context.dataStore.edit { prefs -> prefs.remove(API_KEY) }
+    }
+
+    // ==================== Dark Mode ====================
+    fun getDarkMode(context: Context): Flow<Boolean> =
+        context.dataStore.data.map { prefs -> prefs[DARK_MODE_KEY] ?: false }
+
+    suspend fun setDarkMode(context: Context, enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[DARK_MODE_KEY] = enabled }
+    }
+
+    // ==================== Words Per Day ====================
+    fun getWordsPerDay(context: Context): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[WORDS_PER_DAY_KEY] ?: 10 }
+
+    suspend fun setWordsPerDay(context: Context, count: Int) {
+        context.dataStore.edit { prefs -> prefs[WORDS_PER_DAY_KEY] = count }
     }
 }
