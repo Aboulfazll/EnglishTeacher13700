@@ -22,6 +22,9 @@ object SettingsManager {
     private val NOTIFICATIONS_ENABLED_KEY = booleanPreferencesKey("notifications_enabled")
     private val NOTIFICATION_HOUR_KEY = intPreferencesKey("notification_hour")
     private val NOTIFICATION_MINUTE_KEY = intPreferencesKey("notification_minute")
+    private val VIBRATION_KEY = booleanPreferencesKey("vibration")
+    private val SOUND_EFFECTS_KEY = booleanPreferencesKey("sound_effects")
+    private val LANGUAGE_KEY = stringPreferencesKey("language")
 
     // ==================== Text Scale ====================
     fun getTextScale(context: Context): Flow<Float> =
@@ -87,5 +90,29 @@ object SettingsManager {
 
     suspend fun setNotificationMinute(context: Context, minute: Int) {
         context.dataStore.edit { prefs -> prefs[NOTIFICATION_MINUTE_KEY] = minute }
+    }
+
+    // ==================== Vibration ====================
+    fun getVibration(context: Context): Flow<Boolean> =
+        context.dataStore.data.map { prefs -> prefs[VIBRATION_KEY] ?: true }
+
+    suspend fun setVibration(context: Context, enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[VIBRATION_KEY] = enabled }
+    }
+
+    // ==================== Sound Effects ====================
+    fun getSoundEffects(context: Context): Flow<Boolean> =
+        context.dataStore.data.map { prefs -> prefs[SOUND_EFFECTS_KEY] ?: true }
+
+    suspend fun setSoundEffects(context: Context, enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[SOUND_EFFECTS_KEY] = enabled }
+    }
+
+    // ==================== Language ====================
+    fun getLanguage(context: Context): Flow<String> =
+        context.dataStore.data.map { prefs -> prefs[LANGUAGE_KEY] ?: "fa" }
+
+    suspend fun setLanguage(context: Context, lang: String) {
+        context.dataStore.edit { prefs -> prefs[LANGUAGE_KEY] = lang }
     }
 }
