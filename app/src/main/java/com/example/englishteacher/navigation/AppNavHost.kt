@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.ui.screens.AIChatScreen
+import com.example.englishteacher.ui.screens.BookmarkedStoriesScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
 import com.example.englishteacher.ui.screens.DailyQuizScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
@@ -46,6 +47,7 @@ object Routes {
     const val LEVEL_TEST = "level_test"
     const val PROFILE = "profile"
     const val BOOKMARKED_WORDS = "bookmarked_words"
+    const val BOOKMARKED_STORIES = "bookmarked_stories"
     const val VIDEOS = "videos"
     const val DAILY_SENTENCES = "daily_sentences"
     const val DAILY_QUIZ = "daily_quiz"
@@ -93,6 +95,9 @@ fun AppNavHost(
                 },
                 onDailySentencesClick = {
                     navController.navigate(Routes.DAILY_SENTENCES)
+                },
+                onBookmarkedStoriesClick = {
+                    navController.navigate(Routes.BOOKMARKED_STORIES)
                 }
             )
         }
@@ -126,7 +131,6 @@ fun AppNavHost(
             )
         }
 
-        // 📝 امتحان گروهی
         composable(
             route = Routes.GROUP_QUIZ,
             arguments = listOf(
@@ -147,7 +151,6 @@ fun AppNavHost(
             )
         }
 
-        // 📖 گرامر
         composable(Routes.GRAMMAR) {
             GrammarScreen(
                 onStartQuiz = {
@@ -156,7 +159,6 @@ fun AppNavHost(
             )
         }
 
-        // 🏆 کوییز گرامر
         composable(Routes.GRAMMAR_QUIZ) {
             GrammarQuizScreen(
                 onBack = { navController.popBackStack() }
@@ -202,6 +204,14 @@ fun AppNavHost(
             BookmarkedWordsScreen()
         }
 
+        composable(Routes.BOOKMARKED_STORIES) {
+            BookmarkedStoriesScreen(
+                onStoryClick = { storyId ->
+                    navController.navigate(Routes.storyDetail(storyId))
+                }
+            )
+        }
+
         composable(Routes.AI_CHAT) {
             AIChatScreen()
         }
@@ -238,12 +248,10 @@ fun AppNavHost(
             )
         }
 
-        // 🎥 صفحه ویدیوهای آموزشی
         composable(Routes.VIDEOS) {
             VideoScreen()
         }
 
-        // 💬 جملات روزمره
         composable(Routes.DAILY_SENTENCES) {
             DailySentencesScreen(
                 onStartQuiz = {
@@ -252,7 +260,6 @@ fun AppNavHost(
             )
         }
 
-        // 🎯 کوییز جملات روزمره
         composable(Routes.DAILY_QUIZ) {
             DailyQuizScreen(
                 onBack = { navController.popBackStack() }
