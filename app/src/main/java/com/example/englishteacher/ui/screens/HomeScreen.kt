@@ -40,7 +40,8 @@ fun HomeScreen(
     onLevelTestClick: () -> Unit = {},
     onBookmarkedWordsClick: () -> Unit = {},
     onVideoClick: () -> Unit = {},
-    onDailySentencesClick: () -> Unit = {}
+    onDailySentencesClick: () -> Unit = {},
+    onBookmarkedStoriesClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -267,6 +268,60 @@ fun HomeScreen(
 
             Spacer(Modifier.height(12.dp))
 
+            // ==================== داستان‌های ذخیره‌شده ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .clickable { onBookmarkedStoriesClick() },
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFAD1457), Color(0xFFE91E63))
+                            )
+                        )
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Bookmark,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column {
+                            Text(
+                                "داستان‌های ذخیره‌شده",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "داستان‌هایی که نشان کردی",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
             // ==================== جملات روزمره ====================
             Card(
                 modifier = Modifier
@@ -432,7 +487,6 @@ fun HomeScreen(
     }
 }
 
-// ==================== کارت سطح ====================
 @Composable
 private fun LevelCard(
     emoji: String,
@@ -520,7 +574,6 @@ private fun LevelCard(
     }
 }
 
-// ==================== کارت ویژه ====================
 @Composable
 private fun SpecialCard(
     modifier: Modifier = Modifier,
