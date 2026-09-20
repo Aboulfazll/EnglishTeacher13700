@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
+import com.example.englishteacher.ui.screens.DailyQuizScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
 import com.example.englishteacher.ui.screens.GrammarQuizScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
@@ -47,6 +48,7 @@ object Routes {
     const val BOOKMARKED_WORDS = "bookmarked_words"
     const val VIDEOS = "videos"
     const val DAILY_SENTENCES = "daily_sentences"
+    const val DAILY_QUIZ = "daily_quiz"
     const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
@@ -243,7 +245,18 @@ fun AppNavHost(
 
         // 💬 جملات روزمره
         composable(Routes.DAILY_SENTENCES) {
-            DailySentencesScreen()
+            DailySentencesScreen(
+                onStartQuiz = {
+                    navController.navigate(Routes.DAILY_QUIZ)
+                }
+            )
+        }
+
+        // 🎯 کوییز جملات روزمره
+        composable(Routes.DAILY_QUIZ) {
+            DailyQuizScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
