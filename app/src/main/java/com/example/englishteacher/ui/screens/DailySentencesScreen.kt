@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -32,7 +33,10 @@ import com.example.englishteacher.data.SentenceCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailySentencesScreen(onStartQuiz: () -> Unit = {}) {
+fun DailySentencesScreen(
+    onStartQuiz: () -> Unit = {},
+    onStartReading: (String) -> Unit = {}
+) {
     val context = LocalContext.current
     val speechHelper = remember { SpeechHelper(context) }
 
@@ -46,7 +50,8 @@ fun DailySentencesScreen(onStartQuiz: () -> Unit = {}) {
         SentencesListView(
             category = selectedCategory!!,
             speechHelper = speechHelper,
-            onBack = { selectedCategory = null }
+            onBack = { selectedCategory = null },
+            onStartReading = onStartReading
         )
     } else {
         CategoriesListView(
@@ -365,7 +370,8 @@ private fun CategoryCard(category: SentenceCategory, onClick: () -> Unit) {
 private fun SentencesListView(
     category: SentenceCategory,
     speechHelper: SpeechHelper,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onStartReading: (String) -> Unit
 ) {
     val color = Color(category.color)
 
@@ -407,6 +413,72 @@ private fun SentencesListView(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onStartReading(category.id) },
+                    shape = RoundedCornerShape(18.dp),
+                    elevation = CardDefaults.cardElevation(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(color, color.copy(alpha = 0.7f))
+                                )
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.25f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.Headphones,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(26.dp)
+                                )
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    "🎧 حالت خوانش",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "جمله‌به‌جمله گوش کن و یاد بگیر",
+                                    fontSize = 11.sp,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.25f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "→",
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
