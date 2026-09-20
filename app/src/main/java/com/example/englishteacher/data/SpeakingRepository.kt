@@ -1,1143 +1,328 @@
-package com.example.englishteacher.ui.screens
+package com.example.englishteacher.data
 
-import android.content.Intent
-import android.os.Bundle
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.englishteacher.SpeechHelper
-import com.example.englishteacher.data.ProgressManager
-import com.example.englishteacher.data.SpeakingCategory
-import com.example.englishteacher.data.SpeakingDifficulty
-import com.example.englishteacher.data.SpeakingLevel
-import com.example.englishteacher.data.SpeakingRepository
-import com.example.englishteacher.data.SpeakingSentence
-import kotlinx.coroutines.delay
-import kotlin.math.abs
-import kotlin.math.sin
-import kotlin.random.Random
-
-private val ACCENT = Color(0xFF7B1FA2)
-private val SUCCESS = Color(0xFF43A047)
-private val ERROR = Color(0xFFE53935)
-private val WARNING = Color(0xFFFFA726)
-private val INFO = Color(0xFF0288D1)
-private val GOLD = Color(0xFFFFB300)
-
-enum class PracticeMode(val emoji: String, val title: String, val desc: String) {
-    PRACTICE("🎯", "عادی", "تمرکز روی هر جمله"),
-    SHADOW("🎭", "سایه", "بعد از گوینده تکرار کن"),
-    FREESTYLE("⚡", "آزاد", "سریع برو جلو"),
-    REVIEW("🔄", "مرور", "جملات اشتباه")
-}
-
-data class SentenceRecord(
-    val sentenceId: String,
-    val bestScore: Int,
-    val attempts: Int,
-    val lastScore: Int
+data class SpeakingSentence(
+    val id: String,
+    val english: String,
+    val persian: String,
+    val category: SpeakingCategory,
+    val difficulty: SpeakingDifficulty,
+    val level: SpeakingLevel,
+    val lesson: String = ""
 )
 
-data class SessionStat(val score: Int, val timestamp: Long)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SpeakingPracticeScreen(onBack: () -> Unit) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val speechHelper = remember { SpeechHelper(context) }
-
-    DisposableEffect(Unit) {
-        onDispose { speechHelper.close() }
-    }
-
-    var selectedLevel by remember { mutableStateOf<SpeakingLevel?>(SpeakingLevel.BEGINNER) }
-    var selectedCategory by remember { mutableStateOf<SpeakingCategory?>(null) }
-    var selectedDifficulty by remember { mutableStateOf<SpeakingDifficulty?>(null) }
-    var practiceMode by remember { mutableStateOf(PracticeMode.PRACTICE) }
-
-    val filteredSentences = remember(selectedLevel, selectedCategory, selectedDifficulty) {
-        SpeakingRepository.getFiltered(selectedCategory, selectedDifficulty, selectedLevel)
-            .shuffled()
-            .take(25)
-    }
-
-    var currentIndex by remember { mutableIntStateOf(0) }
-    var isListening by remember { mutableStateOf(false) }
-    var recognizedText by remember { mutableStateOf("") }
-    var lastScore by remember { mutableIntStateOf(-1) }
-    var totalAttempts by remember { mutableIntStateOf(0) }
-    var totalScore by remember { mutableIntStateOf(0) }
-    var perfectCount by remember { mutableIntStateOf(0) }
-    var comboCount by remember { mutableIntStateOf(0) }
-    var maxCombo by remember { mutableIntStateOf(0) }
-    var showConfetti by remember { mutableStateOf(false) }
-    var sessionStarted by remember { mutableStateOf(false) }
-    var showFilterSheet by remember { mutableStateOf(false) }
-    var voiceLevel by remember { mutableFloatStateOf(0f) }
-    var records by remember { mutableStateOf<Map<String, SentenceRecord>>(emptyMap()) }
-    var aiFeedback by remember { mutableStateOf("") }
-    var showAiFeedback by remember { mutableStateOf(false) }
-    var speakingSpeed by remember { mutableIntStateOf(0) }
-    var sessionHistory by remember { mutableStateOf<List<SessionStat>>(emptyList()) }
-    var startTime by remember { mutableLongStateOf(0L) }
-    var showPronunciationTips by remember { mutableStateOf(false) }
-    var wrongSentenceIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-    var showHistorySheet by remember { mutableStateOf(false) }
-
-    LaunchedEffect(filteredSentences) {
-        currentIndex = 0
-        recognizedText = ""
-        lastScore = -1
-    }
-
-    val speechRecognizer = remember {
-        if (SpeechRecognizer.isRecognitionAvailable(context)) {
-            SpeechRecognizer.createSpeechRecognizer(context)
-        } else null
-    }
-
-    val recognizerIntent = remember {
-        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        }
-    }
-
-    DisposableEffect(speechRecognizer) {
-        onDispose { speechRecognizer?.destroy() }
-    }
-
-    if (speechRecognizer != null) {
-        DisposableEffect(speechRecognizer) {
-            speechRecognizer.setRecognitionListener(object : RecognitionListener {
-                override fun onReadyForSpeech(params: Bundle?) {
-                    isListening = true
-                    recognizedText = ""
-                    startTime = System.currentTimeMillis()
-                }
-                override fun onBeginningOfSpeech() {}
-                override fun onBufferReceived(buffer: ByteArray?) {}
-                override fun onEndOfSpeech() { isListening = false; voiceLevel = 0f }
-                override fun onRmsChanged(rmsdB: Float) {
-                    voiceLevel = ((rmsdB + 2f) / 12f).coerceIn(0f, 1f)
-                }
-                override fun onError(error: Int) {
-                    isListening = false
-                    voiceLevel = 0f
-                }
-                override fun onResults(results: Bundle?) {
-                    val text = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?.firstOrNull() ?: ""
-                    recognizedText = text
-                    isListening = false
-                    voiceLevel = 0f
-
-                    val durationSec = (System.currentTimeMillis() - startTime) / 1000.0
-                    if (text.isNotEmpty() && filteredSentences.isNotEmpty()) {
-                        val target = filteredSentences[currentIndex]
-                        val newScore = calculateScore(target.english, text)
-                        lastScore = newScore
-                        totalScore += newScore
-                        totalAttempts++
-                        sessionHistory = sessionHistory + SessionStat(newScore, System.currentTimeMillis())
-
-                        val wordCount = text.split(Regex("\\s+")).size
-                        speakingSpeed = if (durationSec > 0)
-                            ((wordCount / durationSec) * 60).toInt() else 0
-
-                        val old = records[target.id]
-                        records = records + (target.id to SentenceRecord(
-                            sentenceId = target.id,
-                            bestScore = maxOf(old?.bestScore ?: 0, newScore),
-                            attempts = (old?.attempts ?: 0) + 1,
-                            lastScore = newScore
-                        ))
-
-                        if (newScore >= 90) {
-                            perfectCount++
-                            comboCount++
-                            if (comboCount > maxCombo) maxCombo = comboCount
-                            showConfetti = true
-                            scope.launch { delay(2500); showConfetti = false }
-                            val bonus = if (newScore == 100) 20 else newScore / 10
-                            scope.launch { ProgressManager.addStars(context, bonus) }
-                            wrongSentenceIds = wrongSentenceIds - target.id
-                        } else {
-                            comboCount = 0
-                            wrongSentenceIds = wrongSentenceIds + target.id
-                        }
-
-                        if (newScore < 70 && text.isNotEmpty()) {
-                            aiFeedback = generateFeedback(target.english, text, newScore)
-                            showAiFeedback = true
-                        }
-                    }
-                }
-                override fun onPartialResults(partialResults: Bundle?) {
-                    val text = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?.firstOrNull() ?: ""
-                    if (text.isNotEmpty()) recognizedText = text
-                }
-                override fun onEvent(eventType: Int, params: Bundle?) {}
-            })
-            onDispose {}
-        }
-    }
-
-    if (!sessionStarted) {
-        SpeakingStartScreen(
-            selectedLevel = selectedLevel,
-            selectedCategory = selectedCategory,
-            selectedDifficulty = selectedDifficulty,
-            practiceMode = practiceMode,
-            totalCount = filteredSentences.size,
-            wrongCount = wrongSentenceIds.size,
-            onLevelChange = { selectedLevel = it },
-            onCategoryChange = { selectedCategory = it },
-            onDifficultyChange = { selectedDifficulty = it },
-            onModeChange = { practiceMode = it },
-            onStart = { sessionStarted = true },
-            onBack = onBack
-        )
-        return
-    }
-
-    if (filteredSentences.isEmpty()) {
-        Box(Modifier.fillMaxSize().background(Color(0xFFF5F7FA)), contentAlignment = Alignment.Center) {
-            Text("جمله‌ای موجود نیست", color = Color.Gray)
-        }
-        return
-    }
-
-    val currentItem = filteredSentences[currentIndex]
-    val total = filteredSentences.size
-    val avgScore = if (totalAttempts > 0) totalScore / totalAttempts else 0
-    val bestRecord = records[currentItem.id]
-    val sessionBest = records.values.maxOfOrNull { it.bestScore } ?: 0
-    val hardWordSet = remember(currentItem) { findHardWords(currentItem.english) }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text("🎤 ${practiceMode.title}", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.White)
-                        Text("${currentIndex + 1}/$total • میانگین: $avgScore%", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        speechRecognizer?.stopListening()
-                        onBack()
-                    }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
-                    }
-                },
-                actions = {
-                    if (comboCount > 1) {
-                        Box(
-                            modifier = Modifier
-                                .padding(end = 4.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(GOLD)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text("🔥 $comboCount", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                    IconButton(onClick = { showHistorySheet = true }) {
-                        Icon(Icons.Filled.History, "History", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ACCENT)
-            )
-        }
-    ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF5F7FA))
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LinearProgressIndicator(
-                    progress = { (currentIndex + 1).toFloat() / total },
-                    modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
-                    color = ACCENT,
-                    trackColor = ACCENT.copy(alpha = 0.15f)
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    MiniStat(Modifier.weight(1f), "🎯", "$totalAttempts", "تلاش", ACCENT)
-                    MiniStat(Modifier.weight(1f), "🏆", "$perfectCount", "کامل", SUCCESS)
-                    MiniStat(Modifier.weight(1f), "📊", "$avgScore%", "میانگین", if (avgScore >= 70) SUCCESS else WARNING)
-                    MiniStat(Modifier.weight(1f), "👑", "$sessionBest%", "رکورد", GOLD)
-                }
-
-                if (speakingSpeed > 0) {
-                    Spacer(Modifier.height(6.dp))
-                    SpeedGauge(speakingSpeed)
-                }
-
-                if (sessionHistory.size > 1) {
-                    Spacer(Modifier.height(6.dp))
-                    ProgressChart(sessionHistory)
-                }
-
-                Spacer(Modifier.height(10.dp))
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(5.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Brush.verticalGradient(listOf(ACCENT.copy(alpha = 0.06f), Color.White)))
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .background(Color(currentItem.level.color).copy(alpha = 0.15f))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                ) {
-                                    Text(
-                                        "${currentItem.level.emoji} ${currentItem.level.displayName}",
-                                        fontSize = 9.sp,
-                                        color = Color(currentItem.level.color),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                                Spacer(Modifier.width(4.dp))
-                                Text("${currentItem.category.emoji} ${currentItem.category.displayName}", fontSize = 10.sp, color = Color.Gray)
-                            }
-                            if (bestRecord != null) {
-                                Text("🏆 ${bestRecord.bestScore}%", fontSize = 10.sp, color = SUCCESS, fontWeight = FontWeight.Bold)
-                            }
-                        }
-
-                        Spacer(Modifier.height(12.dp))
-
-                        Text(
-                            text = buildHardWordHighlight(currentItem.english, hardWordSet),
-                            fontSize = 21.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A237E),
-                            textAlign = TextAlign.Center,
-                            lineHeight = 28.sp
-                        )
-
-                        Spacer(Modifier.height(6.dp))
-
-                        Text(currentItem.persian, fontSize = 12.sp, color = Color.Gray, textAlign = TextAlign.Center)
-
-                        Spacer(Modifier.height(10.dp))
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            CompactButton("🔊 گوش کن", ACCENT) { speechHelper.speak(currentItem.english) }
-                            CompactButton("💡 نکات", WARNING) { showPronunciationTips = !showPronunciationTips }
-                        }
-                    }
-                }
-
-                AnimatedVisibility(visible = showPronunciationTips, enter = fadeIn() + slideInVertically()) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = WARNING.copy(alpha = 0.1f))
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text("💡 نکات تلفظ", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFE65100))
-                            Spacer(Modifier.height(6.dp))
-                            getPronunciationTips(currentItem.english).forEach { tip ->
-                                Row(modifier = Modifier.padding(vertical = 1.dp)) {
-                                    Text("•", color = WARNING, fontSize = 11.sp)
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(tip, fontSize = 11.sp, color = Color(0xFF424242), lineHeight = 16.sp)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(10.dp))
-
-                WaveformMicButton(
-                    isListening = isListening,
-                    voiceLevel = voiceLevel,
-                    onClick = {
-                        if (isListening) {
-                            speechRecognizer?.stopListening()
-                            isListening = false
-                        } else {
-                            recognizedText = ""
-                            lastScore = -1
-                            showAiFeedback = false
-                            try { speechRecognizer?.startListening(recognizerIntent) } catch (_: Exception) {}
-                        }
-                    }
-                )
-
-                if (recognizedText.isNotEmpty()) {
-                    Spacer(Modifier.height(10.dp))
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(2.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🎤", fontSize = 14.sp)
-                                Spacer(Modifier.width(6.dp))
-                                Text("تو گفتی:", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
-                            }
-                            Spacer(Modifier.height(6.dp))
-                            Text(
-                                text = buildColoredComparison(currentItem.english, recognizedText),
-                                fontSize = 14.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
-
-                if (lastScore >= 0) {
-                    Spacer(Modifier.height(10.dp))
-                    ScoreDisplay(lastScore)
-                }
-
-                if (showAiFeedback && aiFeedback.isNotEmpty()) {
-                    Spacer(Modifier.height(8.dp))
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = INFO.copy(alpha = 0.08f))
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🤖", fontSize = 14.sp)
-                                Spacer(Modifier.width(6.dp))
-                                Text("AI:", fontSize = 11.sp, color = INFO, fontWeight = FontWeight.Bold)
-                                Spacer(Modifier.weight(1f))
-                                Text("✕", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.clickable { showAiFeedback = false })
-                            }
-                            Spacer(Modifier.height(4.dp))
-                            Text(aiFeedback, fontSize = 12.sp, color = Color(0xFF424242), lineHeight = 18.sp)
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            if (currentIndex > 0) {
-                                currentIndex--
-                                recognizedText = ""
-                                lastScore = -1
-                                showAiFeedback = false
-                                showPronunciationTips = false
-                            }
-                        },
-                        enabled = currentIndex > 0,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = ACCENT)
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("قبلی", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                    }
-
-                    Button(
-                        onClick = {
-                            if (currentIndex < total - 1) {
-                                currentIndex++
-                                recognizedText = ""
-                                lastScore = -1
-                                showAiFeedback = false
-                                showPronunciationTips = false
-                            }
-                        },
-                        enabled = currentIndex < total - 1,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
-                    ) {
-                        Text("بعدی", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 13.sp)
-                        Spacer(Modifier.width(4.dp))
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, null, modifier = Modifier.size(16.dp))
-                    }
-                }
-
-                Spacer(Modifier.height(20.dp))
-            }
-
-            if (showConfetti) ConfettiOverlay()
-        }
-    }
-
-    if (showHistorySheet) {
-        AlertDialog(
-            onDismissRequest = { showHistorySheet = false },
-            title = { Text("📈 تاریخچه") },
-            text = {
-                Column(modifier = Modifier.verticalScroll(rememberScrollState()).heightIn(max = 350.dp)) {
-                    if (sessionHistory.isEmpty()) {
-                        Text("هنوز چیزی ثبت نشده", color = Color.Gray)
-                    } else {
-                        Text("میانگین: $avgScore%", fontWeight = FontWeight.Bold)
-                        Text("بهترین کمبو: $maxCombo 🔥", fontWeight = FontWeight.Bold, color = GOLD)
-                        Spacer(Modifier.height(8.dp))
-                        sessionHistory.reversed().take(20).forEachIndexed { i, stat ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("${sessionHistory.size - i}.", fontSize = 12.sp, color = Color.Gray)
-                                Text(
-                                    "${stat.score}%",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = when {
-                                        stat.score >= 90 -> SUCCESS
-                                        stat.score >= 70 -> WARNING
-                                        else -> ERROR
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showHistorySheet = false }) {
-                    Text("بستن", color = ACCENT, fontWeight = FontWeight.Bold)
-                }
-            }
-        )
-    }
+enum class SpeakingLevel(val displayName: String, val emoji: String, val color: Long) {
+    BEGINNER("مبتدی", "🌱", 0xFF43A047),
+    INTERMEDIATE("متوسط", "🚀", 0xFF7B1FA2),
+    ADVANCED("پیشرفته", "🏆", 0xFFE65100)
 }
 
-@Composable
-private fun SpeedGauge(speed: Int) {
-    val color = when {
-        speed < 80 -> INFO
-        speed < 150 -> SUCCESS
-        else -> WARNING
-    }
-    val label = when {
-        speed < 80 -> "آهسته"
-        speed < 150 -> "عالی"
-        else -> "سریع"
-    }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("⚡", fontSize = 16.sp)
-            Spacer(Modifier.width(6.dp))
-            Text("سرعت:", fontSize = 10.sp, color = Color.Gray)
-            Spacer(Modifier.weight(1f))
-            Text("$speed کلمه/د", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = color)
-            Spacer(Modifier.width(6.dp))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(color)
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
-            ) {
-                Text(label, fontSize = 9.sp, color = Color.White, fontWeight = FontWeight.Bold)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ProgressChart(history: List<SessionStat>) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-            Text("📊 روند", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
-            Spacer(Modifier.height(6.dp))
-            Canvas(modifier = Modifier.fillMaxWidth().height(60.dp)) {
-                val points = history.takeLast(15)
-                if (points.size < 2) return@Canvas
-                val step = size.width / (points.size - 1)
-                val path = Path()
-                points.forEachIndexed { i, stat ->
-                    val x = i * step
-                    val y = size.height - (stat.score / 100f) * size.height
-                    if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
-                }
-                drawPath(
-                    path = path,
-                    brush = Brush.horizontalGradient(listOf(ACCENT, INFO)),
-                    style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
-                )
-                points.forEachIndexed { i, stat ->
-                    val x = i * step
-                    val y = size.height - (stat.score / 100f) * size.height
-                    drawCircle(
-                        color = when {
-                            stat.score >= 90 -> SUCCESS
-                            stat.score >= 70 -> WARNING
-                            else -> ERROR
-                        },
-                        radius = 3.dp.toPx(),
-                        center = Offset(x, y)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun CompactButton(label: String, color: Color, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(color.copy(alpha = 0.12f))
-            .clickable { onClick() }
-            .padding(horizontal = 10.dp, vertical = 5.dp)
-    ) {
-        Text(label, fontSize = 11.sp, color = color, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-@Composable
-private fun WaveformMicButton(isListening: Boolean, voiceLevel: Float, onClick: () -> Unit) {
-    val infiniteTransition = rememberInfiniteTransition(label = "wave")
-    val wave1 by infiniteTransition.animateFloat(
-        initialValue = 0f, targetValue = 360f,
-        animationSpec = infiniteRepeatable(tween(2000, easing = LinearEasing)),
-        label = "w1"
-    )
-    val pulse by infiniteTransition.animateFloat(
-        initialValue = 0.6f, targetValue = 1.5f,
-        animationSpec = infiniteRepeatable(tween(1400, easing = LinearEasing)),
-        label = "p"
-    )
-    val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.5f, targetValue = 0f,
-        animationSpec = infiniteRepeatable(tween(1400, easing = LinearEasing)),
-        label = "pa"
-    )
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier.fillMaxWidth().height(45.dp), contentAlignment = Alignment.Center) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                val barCount = 36
-                val barWidth = size.width / barCount - 2
-                val centerY = size.height / 2
-                for (i in 0 until barCount) {
-                    val x = i * (size.width / barCount) + barWidth / 2
-                    val heightFactor = if (isListening) {
-                        val wave = sin((wave1 + i * 15f) * Math.PI.toFloat() / 180f)
-                        (abs(wave) * (voiceLevel * 0.8f + 0.2f)).coerceIn(0.1f, 1f)
-                    } else {
-                        (sin((i + wave1 / 10f) * 0.5f) * 0.15f + 0.2f).coerceIn(0.05f, 0.4f)
-                    }
-                    val barHeight = size.height * heightFactor
-                    drawRoundRect(
-                        brush = Brush.verticalGradient(
-                            colors = if (isListening) listOf(ERROR, ACCENT.copy(alpha = 0.7f))
-                            else listOf(ACCENT.copy(alpha = 0.6f), ACCENT.copy(alpha = 0.3f)),
-                            startY = centerY - barHeight / 2,
-                            endY = centerY + barHeight / 2
-                        ),
-                        topLeft = Offset(x, centerY - barHeight / 2),
-                        size = Size(barWidth, barHeight),
-                        cornerRadius = CornerRadius(barWidth / 2)
-                    )
-                }
-            }
-        }
-        Spacer(Modifier.height(8.dp))
-        Box(modifier = Modifier.size(130.dp).clickable { onClick() }, contentAlignment = Alignment.Center) {
-            if (isListening) {
-                Canvas(modifier = Modifier.size(130.dp)) {
-                    drawCircle(
-                        color = ERROR.copy(alpha = pulseAlpha),
-                        radius = (size.minDimension / 2) * pulse,
-                        style = Stroke(width = 3.dp.toPx())
-                    )
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .size(85.dp)
-                    .clip(CircleShape)
-                    .background(Brush.linearGradient(
-                        if (isListening) listOf(ERROR, Color(0xFFC62828))
-                        else listOf(ACCENT, ACCENT.copy(alpha = 0.75f))
-                    )),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    if (isListening) Icons.Filled.Stop else Icons.Filled.Mic,
-                    null, tint = Color.White, modifier = Modifier.size(40.dp)
-                )
-            }
-        }
-        if (isListening) {
-            Text("🔴 در حال ضبط...", fontSize = 11.sp, color = ERROR, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SpeakingStartScreen(
-    selectedLevel: SpeakingLevel?,
-    selectedCategory: SpeakingCategory?,
-    selectedDifficulty: SpeakingDifficulty?,
-    practiceMode: PracticeMode,
-    totalCount: Int,
-    wrongCount: Int,
-    onLevelChange: (SpeakingLevel?) -> Unit,
-    onCategoryChange: (SpeakingCategory?) -> Unit,
-    onDifficultyChange: (SpeakingDifficulty?) -> Unit,
-    onModeChange: (PracticeMode) -> Unit,
-    onStart: () -> Unit,
-    onBack: () -> Unit
+enum class SpeakingCategory(
+    val displayName: String,
+    val emoji: String,
+    val color: Long
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("🎤 تمرین گفتار", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ACCENT)
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(18.dp)
-        ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Brush.linearGradient(listOf(ACCENT, Color(0xFFAB47BC))))
-                        .padding(20.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Text("🎤", fontSize = 50.sp)
-                        Spacer(Modifier.height(8.dp))
-                        Text("Speaking", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                        Spacer(Modifier.height(4.dp))
-                        Text("تلفظت رو با AI بسنج", fontSize = 12.sp, color = Color.White.copy(alpha = 0.9f))
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            SectionTitle("📊 سطح")
-            Spacer(Modifier.height(6.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                item {
-                    FilterChip(
-                        selected = selectedLevel == null,
-                        onClick = { onLevelChange(null) },
-                        label = { Text("همه", fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ACCENT, selectedLabelColor = Color.White)
-                    )
-                }
-                items(listOf(SpeakingLevel.BEGINNER, SpeakingLevel.INTERMEDIATE)) { lvl ->
-                    FilterChip(
-                        selected = selectedLevel == lvl,
-                        onClick = { onLevelChange(lvl) },
-                        label = { Text("${lvl.emoji} ${lvl.displayName}", fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(lvl.color), selectedLabelColor = Color.White)
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            SectionTitle("🎭 حالت")
-            Spacer(Modifier.height(6.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(PracticeMode.values().toList()) { mode ->
-                    Card(
-                        modifier = Modifier.width(90.dp).clickable { onModeChange(mode) },
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (practiceMode == mode) ACCENT else Color.White),
-                        elevation = CardDefaults.cardElevation(if (practiceMode == mode) 6.dp else 2.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(mode.emoji, fontSize = 20.sp)
-                            Spacer(Modifier.height(2.dp))
-                            Text(
-                                mode.title, fontSize = 10.sp, fontWeight = FontWeight.Bold,
-                                color = if (practiceMode == mode) Color.White else Color(0xFF1A237E),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            SectionTitle("📚 دسته")
-            Spacer(Modifier.height(6.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                item {
-                    FilterChip(
-                        selected = selectedCategory == null,
-                        onClick = { onCategoryChange(null) },
-                        label = { Text("همه", fontSize = 11.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ACCENT, selectedLabelColor = Color.White)
-                    )
-                }
-                items(SpeakingCategory.values().toList()) { cat ->
-                    FilterChip(
-                        selected = selectedCategory == cat,
-                        onClick = { onCategoryChange(cat) },
-                        label = { Text("${cat.emoji} ${cat.displayName}", fontSize = 11.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ACCENT, selectedLabelColor = Color.White)
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            SectionTitle("🎚️ طول جمله")
-            Spacer(Modifier.height(6.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                item {
-                    FilterChip(
-                        selected = selectedDifficulty == null,
-                        onClick = { onDifficultyChange(null) },
-                        label = { Text("همه", fontSize = 11.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ACCENT, selectedLabelColor = Color.White)
-                    )
-                }
-                items(SpeakingDifficulty.values().toList()) { d ->
-                    FilterChip(
-                        selected = selectedDifficulty == d,
-                        onClick = { onDifficultyChange(d) },
-                        label = { Text("${d.emoji} ${d.displayName}", fontSize = 11.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ACCENT, selectedLabelColor = Color.White)
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(18.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = ACCENT.copy(alpha = 0.1f))
-            ) {
-                Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("📊", fontSize = 22.sp)
-                        Spacer(Modifier.width(10.dp))
-                        Column {
-                            Text("$totalCount جمله آماده", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = ACCENT)
-                            if (wrongCount > 0) {
-                                Text("🔄 $wrongCount اشتباه برای مرور", fontSize = 10.sp, color = WARNING)
-                            } else {
-                                Text("از کلمات، جملات و مکالمه", fontSize = 10.sp, color = Color.Gray)
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            Button(
-                onClick = onStart,
-                enabled = totalCount > 0,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
-            ) {
-                Text("🚀 شروع", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
-
-            Spacer(Modifier.height(20.dp))
-        }
-    }
+    GREETING("احوال‌پرسی", "👋", 0xFF43A047),
+    INTRODUCE("معرفی خود", "🙋", 0xFF7B1FA2),
+    FAMILY("خانواده", "👨‍👩‍👧", 0xFFE91E63),
+    FOOD("غذا و رستوران", "🍽️", 0xFFFF6F00),
+    SHOPPING("خرید", "🛒", 0xFF00897B),
+    DIRECTIONS("مسیریابی", "🗺️", 0xFF1565C0),
+    TRAVEL("سفر", "✈️", 0xFF3949AB),
+    TIME("زمان و تاریخ", "🕐", 0xFF6A1B9A),
+    WORK("کار و اداری", "💼", 0xFF00695C),
+    FEELINGS("احساسات", "❤️", 0xFFD81B60),
+    WEATHER("آب و هوا", "☀️", 0xFF0288D1),
+    OPINIONS("نظرات", "💭", 0xFF5E35B1),
+    ADVANCED("پیشرفته", "🎓", 0xFFBF360C)
 }
 
-@Composable
-private fun SectionTitle(text: String) {
-    Text(text, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
+enum class SpeakingDifficulty(
+    val displayName: String,
+    val emoji: String
+) {
+    WORD("کلمه", "🔤"),
+    PHRASE("عبارت", "📝"),
+    SHORT("کوتاه", "📄"),
+    MEDIUM("متوسط", "📖"),
+    LONG("بلند", "📚"),
+    PARAGRAPH("پاراگراف", "📕")
 }
 
-@Composable
-private fun MiniStat(modifier: Modifier = Modifier, emoji: String, value: String, label: String, color: Color) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(emoji, fontSize = 12.sp)
-            Text(value, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = color)
-            Text(label, fontSize = 8.sp, color = Color.Gray)
-        }
-    }
-}
+object SpeakingRepository {
 
-@Composable
-private fun ScoreDisplay(score: Int) {
-    val color = when {
-        score >= 90 -> SUCCESS
-        score >= 70 -> WARNING
-        score >= 50 -> Color(0xFFFB8C00)
-        else -> ERROR
-    }
-    val emoji = when {
-        score >= 90 -> "🏆"
-        score >= 70 -> "👍"
-        score >= 50 -> "💪"
-        else -> "🎯"
-    }
-    val message = when {
-        score >= 90 -> "عالی! بی‌نقص!"
-        score >= 70 -> "خیلی خوب بود"
-        score >= 50 -> "خوب بود، بهتر می‌شی"
-        else -> "دوباره امتحان کن"
-    }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.size(48.dp).clip(CircleShape).background(color.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) { Text(emoji, fontSize = 22.sp) }
-            Spacer(Modifier.width(10.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(message, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
-                Text("امتیاز تلفظ", fontSize = 9.sp, color = Color.Gray)
-            }
-            Text("$score%", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = color)
-        }
-    }
-}
+    private val sentences: List<SpeakingSentence> = listOf(
 
-@Composable
-private fun ConfettiOverlay() {
-    val particles = remember {
-        List(60) {
-            ConfettiParticle(
-                x = Random.nextFloat(),
-                color = listOf(
-                    Color(0xFFE91E63), Color(0xFFFFA726), Color(0xFF43A047),
-                    Color(0xFF1E88E5), Color(0xFF8E24AA), Color(0xFFFFEB3B)
-                ).random(),
-                size = Random.nextInt(5, 10),
-                speed = Random.nextFloat() * 1.5f + 1f
-            )
-        }
-    }
-    val infiniteTransition = rememberInfiniteTransition(label = "confetti")
-    val progress by infiniteTransition.animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(2500, easing = LinearEasing)),
-        label = "cp"
+        // ========== 🌱 مبتدی - احوال‌پرسی ==========
+        SpeakingSentence("b_gr_1", "Hello", "سلام", SpeakingCategory.GREETING, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_2", "Hi", "سلام (دوستانه)", SpeakingCategory.GREETING, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_3", "Good morning", "صبح بخیر", SpeakingCategory.GREETING, SpeakingDifficulty.PHRASE, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_4", "Good afternoon", "بعدازظهر بخیر", SpeakingCategory.GREETING, SpeakingDifficulty.PHRASE, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_5", "Good evening", "عصر بخیر", SpeakingCategory.GREETING, SpeakingDifficulty.PHRASE, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_6", "Good night", "شب بخیر", SpeakingCategory.GREETING, SpeakingDifficulty.PHRASE, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_7", "How are you?", "حالت چطوره؟", SpeakingCategory.GREETING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_8", "I'm fine, thank you", "خوبم، ممنون", SpeakingCategory.GREETING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_9", "Nice to meet you", "از آشنایی خوشحالم", SpeakingCategory.GREETING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_10", "See you later", "بعداً می‌بینمت", SpeakingCategory.GREETING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_11", "Have a nice day", "روز خوبی داشته باشی", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_12", "It's nice to see you again", "خوشحالم دوباره می‌بینمت", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_13", "Long time no see", "خیلی وقت بود ندیدمت", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_14", "How have you been?", "چطور بودی این مدت؟", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 1"),
+        SpeakingSentence("b_gr_15", "Take care", "مواظب خودت باش", SpeakingCategory.GREETING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 1"),
+
+        // ========== 🌱 معرفی خود ==========
+        SpeakingSentence("b_int_1", "My name is Ali", "اسم من علیه", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_2", "I'm from Iran", "من اهل ایرانم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_3", "I am a student", "من دانش‌آموزم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_4", "I'm twenty years old", "بیست سالمه", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_5", "What's your name?", "اسمت چیه؟", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_6", "Where are you from?", "اهل کجایی؟", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_7", "How old are you?", "چند سالته؟", SpeakingCategory.INTRODUCE, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_8", "I work as a teacher", "من به عنوان معلم کار می‌کنم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_9", "I live in Tehran", "من در تهران زندگی می‌کنم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_10", "I'm learning English", "دارم انگلیسی یاد می‌گیرم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_11", "I have two brothers and one sister", "من دو برادر و یه خواهر دارم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 2"),
+        SpeakingSentence("b_int_12", "This is my first English class", "این اولین کلاس انگلیسی منه", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 2"),
+
+        // ========== 🌱 خانواده ==========
+        SpeakingSentence("b_fam_1", "This is my mother", "این مادر منه", SpeakingCategory.FAMILY, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_2", "This is my father", "این پدر منه", SpeakingCategory.FAMILY, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_3", "I have a big family", "من یه خانواده‌ی بزرگ دارم", SpeakingCategory.FAMILY, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_4", "My brother is a doctor", "برادرم دکتره", SpeakingCategory.FAMILY, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_5", "My sister is younger than me", "خواهرم از من کوچیک‌تره", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_6", "We are a family of five", "ما یه خانواده‌ی پنج نفره هستیم", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_7", "My parents live in Shiraz", "پدر و مادرم در شیراز زندگی می‌کنند", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_8", "I love spending time with my family", "عاشق گذروندن وقت با خانواده‌ام هستم", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_9", "My grandmother is eighty years old", "مادربزرگم هشتاد سالشه", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_10", "I have a very kind family", "من یه خانواده‌ی خیلی مهربون دارم", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_11", "We always eat dinner together", "ما همیشه با هم شام می‌خوریم", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
+        SpeakingSentence("b_fam_12", "Family is the most important thing", "خانواده مهم‌ترین چیزه", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 3"),
+
+        // ========== 🌱 غذا ==========
+        SpeakingSentence("b_food_1", "I'm hungry", "گرسنه‌ام", SpeakingCategory.FOOD, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_2", "I'm thirsty", "تشنه‌ام", SpeakingCategory.FOOD, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_3", "I want some water", "یه کم آب می‌خوام", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_4", "I like pizza", "پیتزا دوست دارم", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_5", "This food is delicious", "این غذا خوشمزه‌ست", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_6", "Can I have the menu?", "می‌تونم منو رو ببینم؟", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_7", "I'd like a cup of tea", "یه فنجون چای می‌خوام", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_8", "The bill, please", "صورت‌حساب، لطفاً", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_9", "What do you recommend?", "چی پیشنهاد می‌کنید؟", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_10", "I don't eat meat", "من گوشت نمی‌خورم", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_11", "Could I have a glass of water?", "می‌تونم یه لیوان آب داشته باشم؟", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_12", "A table for two, please", "یه میز برای دو نفر، لطفاً", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_13", "I'm allergic to nuts", "به آجیل حساسیت دارم", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_14", "Can I get this to go?", "می‌تونم این رو بیرون ببرم؟", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+        SpeakingSentence("b_food_15", "Breakfast is my favorite meal", "صبحانه وعده‌ی مورد علاقه‌مه", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 4"),
+
+        // ========== 🌱 خرید ==========
+        SpeakingSentence("b_sh_1", "How much is this?", "این چنده؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_2", "That's too expensive", "این خیلی گرونه", SpeakingCategory.SHOPPING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_3", "Do you have a smaller size?", "سایز کوچیک‌تر دارید؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_4", "Can I try it on?", "می‌تونم پروش کنم؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_5", "I'll take it", "این رو می‌خرم", SpeakingCategory.SHOPPING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_6", "Can I get a receipt?", "می‌تونم فاکتور بگیرم؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_7", "Do you accept credit cards?", "کارت اعتباری قبول می‌کنید؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_8", "I'm just looking, thanks", "فقط دارم نگاه می‌کنم، ممنون", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_9", "Where is the fitting room?", "اتاق پرو کجاست؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_10", "Is there a discount?", "تخفیف داره؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_11", "I need to buy some shoes", "باید کفش بخرم", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+        SpeakingSentence("b_sh_12", "This color doesn't suit me", "این رنگ بهم نمیاد", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 5"),
+
+        // ========== 🌱 مسیریابی ==========
+        SpeakingSentence("b_dir_1", "Where is the bank?", "بانک کجاست؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_2", "Turn left", "بپیچ چپ", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_3", "Turn right", "بپیچ راست", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_4", "Go straight", "مستقیم برو", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_5", "Is it far from here?", "از اینجا دوره؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_6", "How do I get there?", "چطور برم اونجا؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_7", "It's next to the park", "کنار پارکه", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_8", "Can you show me on the map?", "می‌تونی روی نقشه نشونم بدی؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_9", "I think I'm lost", "فکر می‌کنم گم شدم", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_10", "Is there a bus stop nearby?", "نزدیک اینجا ایستگاه اتوبوس هست؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_11", "Take the second street on the right", "از خیابون دوم سمت راست برو", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 6"),
+        SpeakingSentence("b_dir_12", "The station is across from the mall", "ایستگاه روبروی مال‌ه", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 6"),
+
+        // ========== 🌱 سفر ==========
+        SpeakingSentence("b_tr_1", "I have a reservation", "رزرو دارم", SpeakingCategory.TRAVEL, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_2", "Where is the airport?", "فرودگاه کجاست؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_3", "I need a taxi", "تاکسی لازم دارم", SpeakingCategory.TRAVEL, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_4", "What time is check-out?", "ساعت تخلیه کیه؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_5", "The flight was delayed", "پرواز تأخیر داشت", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_6", "Here is my passport", "این پاسپورت منه", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_7", "Is breakfast included?", "صبحانه شامل می‌شه؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_8", "I'm here on vacation", "من برای تعطیلات اینجام", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_9", "Can I have a window seat?", "می‌تونم صندلی کنار پنجره داشته باشم؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_10", "Where can I buy tickets?", "از کجا می‌تونم بلیط بخرم؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_11", "I would like to extend my stay", "می‌خوام اقامتم رو تمدید کنم", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 7"),
+        SpeakingSentence("b_tr_12", "My luggage is missing", "چمدونم گم شده", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
+
+        // ========== 🌱 زمان ==========
+        SpeakingSentence("b_tm_1", "What time is it?", "ساعت چنده؟", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_2", "It's three o'clock", "ساعت سه‌ست", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_3", "Today is Monday", "امروز دوشنبه‌ست", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_4", "I wake up at seven", "ساعت هفت بیدار می‌شم", SpeakingCategory.TIME, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_5", "See you tomorrow", "فردا می‌بینمت", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_6", "What day is it today?", "امروز چه روزیه؟", SpeakingCategory.TIME, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_7", "I was born in 1990", "من در سال ۱۹۹۰ به دنیا آمدم", SpeakingCategory.TIME, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_8", "The meeting is at two", "جلسه ساعت دوئه", SpeakingCategory.TIME, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_9", "I usually go to bed at eleven", "معمولاً ساعت یازده می‌خوابم", SpeakingCategory.TIME, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 8"),
+        SpeakingSentence("b_tm_10", "My birthday is in May", "تولدم در ماه مه‌ست", SpeakingCategory.TIME, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 8"),
+
+        // ========== 🌱 آب و هوا ==========
+        SpeakingSentence("b_w_1", "It's hot today", "امروز گرمه", SpeakingCategory.WEATHER, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_2", "It's cold outside", "بیرون سرده", SpeakingCategory.WEATHER, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_3", "It's raining", "داره بارون میاد", SpeakingCategory.WEATHER, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_4", "The weather is nice today", "امروز هوا خوبه", SpeakingCategory.WEATHER, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_5", "I like sunny days", "روزهای آفتابی رو دوست دارم", SpeakingCategory.WEATHER, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_6", "Take an umbrella with you", "چتر با خودت ببر", SpeakingCategory.WEATHER, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_7", "It's snowing in the mountains", "توی کوه‌ها داره برف میاد", SpeakingCategory.WEATHER, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_8", "What's the weather like tomorrow?", "هوای فردا چطوره؟", SpeakingCategory.WEATHER, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_9", "It's too windy to go out", "خیلی بادیه که بیرون بریم", SpeakingCategory.WEATHER, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 9"),
+        SpeakingSentence("b_w_10", "Spring is my favorite season", "بهار فصل مورد علاقه‌مه", SpeakingCategory.WEATHER, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 9"),
+
+        // ========== 🌱 احساسات ==========
+        SpeakingSentence("b_f_1", "I'm happy", "خوشحالم", SpeakingCategory.FEELINGS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_2", "I'm sad", "غمگینم", SpeakingCategory.FEELINGS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_3", "I'm tired", "خسته‌ام", SpeakingCategory.FEELINGS, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_4", "I'm so excited", "خیلی هیجان‌زده‌ام", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_5", "I love you", "دوستت دارم", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_6", "I miss you", "دلم برات تنگ شده", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_7", "Don't worry, it's okay", "نگران نباش، خوبه", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_8", "I'm so proud of you", "خیلی بهت افتخار می‌کنم", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_9", "You can do it", "تو می‌تونی", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 10"),
+        SpeakingSentence("b_f_10", "Everything will be fine", "همه چیز خوب می‌شه", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 10"),
+
+        // ========== 🚀 متوسط - احوال‌پرسی ==========
+        SpeakingSentence("i_gr_1", "How's everything going?", "اوضاع چطور پیش می‌ره؟", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_2", "What have you been up to?", "چه خبر؟ (این مدت چیکار می‌کردی؟)", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_3", "I hope you're doing well", "امیدوارم حالت خوب باشه", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_4", "It's been a while, hasn't it?", "خیلی وقت گذشته، مگه نه؟", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_5", "Please send my regards to your family", "لطفاً به خانوادت سلام برسون", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_6", "I've heard so much about you", "درباره‌ت خیلی شنیدم", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_7", "What a pleasant surprise!", "چه سورپرایز دلنشینی!", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+        SpeakingSentence("i_gr_8", "I'd love to catch up sometime", "خیلی دوست دارم یه وقت ببینمت", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
+
+        // ========== 🚀 معرفی خود ==========
+        SpeakingSentence("i_int_1", "I'm currently working as a software engineer", "الان به عنوان مهندس نرم‌افزار کار می‌کنم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_2", "I've been living here for three years", "سه ساله اینجا زندگی می‌کنم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_3", "I graduated from Tehran University", "از دانشگاه تهران فارغ‌التحصیل شدم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_4", "I'm really passionate about learning languages", "واقعاً به یادگیری زبان‌ها علاقه دارم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_5", "In my free time, I enjoy reading books", "توی وقت آزادم از کتاب خوندن لذت می‌برم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_6", "I've been learning English for two years", "دو ساله دارم انگلیسی یاد می‌گیرم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_7", "My goal is to become fluent in English", "هدفم تسلط کامل به انگلیسیه", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_8", "I come from a small town near Isfahan", "من از یه شهر کوچیک نزدیک اصفهان میام", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_9", "I consider myself a hardworking person", "خودمو آدم سخت‌کوشی می‌دونم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+        SpeakingSentence("i_int_10", "One day I hope to travel around the world", "یه روز امیدوارم دور دنیا سفر کنم", SpeakingCategory.INTRODUCE, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 2"),
+
+        // ========== 🚀 خانواده ==========
+        SpeakingSentence("i_fam_1", "My family has always been very supportive", "خانواده‌ام همیشه خیلی حمایتگر بوده", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_2", "I get along really well with my siblings", "با خواهر و برادرام خیلی خوب کنار میام", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_3", "Family traditions are important to us", "سنت‌های خانوادگی برای ما مهمه", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_4", "We try to have dinner together every weekend", "سعی می‌کنیم هر آخر هفته با هم شام بخوریم", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_5", "My parents taught me to be honest", "پدر و مادرم بهم یاد دادن که صادق باشم", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_6", "My grandmother is the heart of our family", "مادربزرگم قلب خونواده‌مونه", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_7", "I value the time I spend with my family", "برای وقتی که با خانوادم می‌گذرونم ارزش قائلم", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+        SpeakingSentence("i_fam_8", "Family means everything to me", "خانواده برای من همه چیزه", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
+
+        // ========== 🚀 غذا ==========
+        SpeakingSentence("i_food_1", "I'd like to make a reservation for tonight", "می‌خوام برای امشب رزرو کنم", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_2", "Could you recommend something vegetarian?", "می‌تونی یه غذای گیاهی پیشنهاد کنی؟", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_3", "This dish is absolutely delicious", "این غذا کاملاً خوشمزه‌ست", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_4", "I'm on a special diet", "من رژیم خاصی دارم", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_5", "Could we split the bill, please?", "می‌تونیم صورت‌حساب رو نصف کنیم؟", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_6", "I've never tried this before", "تا حالا این رو امتحان نکرده‌ام", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_7", "The service here is excellent", "خدمات اینجا عالیه", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_8", "Could I get this without onions?", "می‌تونم این رو بدون پیاز بگیرم؟", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_9", "I'm really in the mood for Italian food", "خیلی هوس غذای ایتالیایی کردم", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+        SpeakingSentence("i_food_10", "I'll have the same as him", "منم همون رو می‌خورم که اون خورد", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
+
+        // ========== 🚀 خرید ==========
+        SpeakingSentence("i_sh_1", "I'm looking for a gift for my friend", "دنبال یه هدیه برای دوستم می‌گردم", SpeakingCategory.SHOPPING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_2", "Could you gift-wrap this for me?", "می‌تونی این رو کادوپیچ کنی؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_3", "I'd like to return this item", "می‌خوام این کالا رو برگردونم", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_4", "Do you have this in a different color?", "این رو رنگ دیگه‌ای دارید؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_5", "I'm comparing prices before I decide", "قبل از تصمیم‌گیری قیمت‌ها رو مقایسه می‌کنم", SpeakingCategory.SHOPPING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_6", "Is there a warranty on this product?", "این محصول گارانتی داره؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_7", "That's a bit more than I wanted to spend", "این یه کم بیشتر از اونیه که می‌خواستم خرج کنم", SpeakingCategory.SHOPPING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+        SpeakingSentence("i_sh_8", "Could you give me a discount?", "می‌تونی تخفیف بدی؟", SpeakingCategory.SHOPPING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 5"),
+
+        // ========== 🚀 مسیریابی ==========
+        SpeakingSentence("i_dir_1", "Could you tell me how to get to the museum?", "می‌تونی بگی چطور به موزه برم؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_2", "It's about a ten-minute walk from here", "از اینجا حدود ده دقیقه پیاده‌ست", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_3", "You can't miss it, it's a big building", "نمی‌تونی از دستش بدی، ساختمون بزرگیه", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_4", "Take the subway and get off at the third stop", "مترو سوار شو و ایستگاه سوم پیاده شو", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_5", "Is this the right way to the train station?", "این راه به ایستگاه قطاره؟", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_6", "The building is just around the corner", "ساختمون درست سر نبشه", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_7", "I'll walk you to the bus stop", "تا ایستگاه اتوبوس همراهیت می‌کنم", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+        SpeakingSentence("i_dir_8", "Follow this road until you reach the traffic light", "این جاده رو تا چراغ راهنما ادامه بده", SpeakingCategory.DIRECTIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 6"),
+
+        // ========== 🚀 سفر ==========
+        SpeakingSentence("i_tr_1", "I'd like to book a room for three nights", "می‌خوام یه اتاق برای سه شب رزرو کنم", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_2", "Is there Wi-Fi in the room?", "توی اتاق وای‌فای هست؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_3", "Could you call a taxi for me?", "می‌تونی برام تاکسی بگیری؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_4", "What's the best way to get to the airport?", "بهترین راه رفتن به فرودگاه چیه؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_5", "I've never been abroad before", "تا حالا خارج از کشور نبوده‌ام", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_6", "Could I have a wake-up call at seven?", "می‌تونم ساعت هفت بیدارم کنید؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_7", "Do you have any recommendations for sightseeing?", "چیزی برای بازدید پیشنهاد می‌کنید؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_8", "The hotel is centrally located", "هتل در مرکز شهر قرار داره", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_9", "I'm traveling with my family", "من با خانواده‌ام سفر می‌کنم", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+        SpeakingSentence("i_tr_10", "Is there a shuttle service to the airport?", "سرویس رفتن به فرودگاه دارید؟", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 7"),
+
+        // ========== 🚀 کار ==========
+        SpeakingSentence("i_w_1", "Could we schedule a meeting for tomorrow?", "می‌تونیم برای فردا جلسه بذاریم؟", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_2", "I'll send you the report by the end of the day", "گزارش رو تا آخر امروز برات می‌فرستم", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_3", "Let me check my calendar and get back to you", "بذار تقویمم رو چک کنم و بهت خبر بدم", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_4", "We need to meet the deadline", "باید مهلت رو رعایت کنیم", SpeakingCategory.WORK, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_5", "I appreciate your hard work on this project", "از تلاش سختت روی این پروژه قدردانی می‌کنم", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_6", "Could you review this document before Friday?", "می‌تونی این سند رو قبل از جمعه بررسی کنی؟", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_7", "I'm working from home today", "امروز از خونه کار می‌کنم", SpeakingCategory.WORK, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_8", "Let's discuss the details in the meeting", "بذار جزئیات رو توی جلسه بحث کنیم", SpeakingCategory.WORK, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_9", "I'm afraid I can't make it to the meeting", "متأسفانه نمی‌تونم توی جلسه باشم", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+        SpeakingSentence("i_w_10", "That's an excellent idea, let's implement it", "ایده‌ی عالیه، بیا اجراش کنیم", SpeakingCategory.WORK, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 8"),
+
+        // ========== 🚀 احساسات ==========
+        SpeakingSentence("i_f_1", "I couldn't be happier right now", "الان نمی‌تونم خوشحال‌تر باشم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_2", "I'm really looking forward to the trip", "خیلی منتظر سفرم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_3", "I feel a bit under the weather today", "امروز یه کم حالم خوب نیست", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_4", "That really made my day", "واقعاً روزمو ساخت", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_5", "I'm over the moon about the news", "از این خبر خیلی خوشحالم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_6", "I can't thank you enough", "نمی‌تونم به اندازه کافی ازت تشکر کنم", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_7", "I'm really stressed about the exam", "خیلی برای امتحان استرس دارم", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_8", "That's a huge relief", "این یه آرامش بزرگه", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+
+        // ========== 🚀 نظرات ==========
+        SpeakingSentence("i_op_1", "In my opinion, this is the best solution", "به نظر من، این بهترین راه‌حله", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_2", "I couldn't agree more with you", "کاملاً با تو موافقم", SpeakingCategory.OPINIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_3", "I see your point, but I disagree", "نظرت رو می‌فهمم، ولی مخالفم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_4", "That's a good point, actually", "این واقعاً نکته‌ی خوبیه", SpeakingCategory.OPINIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_5", "From my perspective, it's worth trying", "از دید من، ارزش امتحان کردن رو داره", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_6", "I'm not sure I follow your reasoning", "مطمئن نیستم استدلالت رو بفهمم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_7", "Let me see if I understand correctly", "بذار ببینم درست فهمیدم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_8", "That makes perfect sense to me", "این برای من کاملاً منطقیه", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_9", "I have mixed feelings about this", "درباره‌ی این احساسات متناقضی دارم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_10", "We'll have to agree to disagree", "باید بپذیریم که نظر متفاوتی داریم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10")
     )
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        particles.forEach { p ->
-            val y = progress * size.height * p.speed
-            val x = p.x * size.width + sin(progress * 10f + p.x * 5f) * 30
-            val alpha = if (progress > 0.8f) (1f - progress) * 5f else 1f
-            if (y < size.height) {
-                drawCircle(
-                    color = p.color.copy(alpha = alpha.coerceIn(0f, 1f)),
-                    radius = p.size.dp.toPx() / 2,
-                    center = Offset(x, y)
-                )
-            }
+
+    fun getAll(): List<SpeakingSentence> = sentences
+
+    fun getByCategory(category: SpeakingCategory): List<SpeakingSentence> =
+        sentences.filter { it.category == category }
+
+    fun getByLevel(level: SpeakingLevel): List<SpeakingSentence> =
+        sentences.filter { it.level == level }
+
+    fun getByDifficulty(difficulty: SpeakingDifficulty): List<SpeakingSentence> =
+        sentences.filter { it.difficulty == difficulty }
+
+    fun getFiltered(
+        category: SpeakingCategory?,
+        difficulty: SpeakingDifficulty?,
+        level: SpeakingLevel?
+    ): List<SpeakingSentence> {
+        return sentences.filter { s ->
+            (category == null || s.category == category) &&
+            (difficulty == null || s.difficulty == difficulty) &&
+            (level == null || s.level == level)
         }
     }
-}
-
-private data class ConfettiParticle(val x: Float, val color: Color, val size: Int, val speed: Float)
-
-private fun buildColoredComparison(target: String, recognized: String) = buildAnnotatedString {
-    val tWords = target.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
-    val rWords = recognized.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
-    tWords.forEachIndexed { i, w ->
-        val ok = rWords.any { levenshtein(it, w) <= 1 }
-        withStyle(SpanStyle(color = if (ok) SUCCESS else ERROR, fontWeight = FontWeight.Bold)) { append(w) }
-        if (i < tWords.size - 1) append(" ")
-    }
-}
-
-private fun buildHardWordHighlight(text: String, hardWords: Set<String>) = buildAnnotatedString {
-    val words = text.split(Regex("\\s+"))
-    words.forEachIndexed { i, w ->
-        val clean = w.lowercase().trim('.', ',', '!', '?', ';', ':')
-        if (hardWords.contains(clean)) {
-            withStyle(SpanStyle(background = WARNING.copy(alpha = 0.2f), fontWeight = FontWeight.Bold)) { append(w) }
-        } else append(w)
-        if (i < words.size - 1) append(" ")
-    }
-}
-
-private fun findHardWords(text: String): Set<String> {
-    val words = text.lowercase().split(Regex("\\s+"))
-    return words.filter { w ->
-        val clean = w.trim('.', ',', '!', '?', ';', ':')
-        clean.length >= 7 || clean.contains("th") || clean.contains("r")
-    }.toSet()
-}
-
-private fun getPronunciationTips(text: String): List<String> {
-    val tips = mutableListOf<String>()
-    if (text.lowercase().contains("th")) tips.add("صدای /θ/ یا /ð/ با تماس زبان به دندان‌های بالا")
-    if (text.lowercase().contains("r")) tips.add("صدای /r/ با برگرداندن زبان، بدون لمس سقف دهان")
-    if (text.lowercase().contains("w")) tips.add("صدای /w/ با گرد کردن لب‌ها")
-    if (text.lowercase().contains("ing")) tips.add("پسوند -ing با صدای nasal گفته می‌شه")
-    if (tips.isEmpty()) tips.add("آروم شروع کن، بعد تدریجاً سریع‌تر")
-    return tips.take(3)
-}
-
-private fun calculateScore(target: String, recognized: String): Int {
-    if (recognized.isBlank()) return 0
-    val t = target.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
-    val r = recognized.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
-    if (t.isEmpty()) return 0
-    var m = 0
-    t.forEach { tw -> if (r.any { rw -> levenshtein(rw, tw) <= 1 }) m++ }
-    return (m.toFloat() / t.size * 100).toInt().coerceIn(0, 100)
-}
-
-private fun levenshtein(a: String, b: String): Int {
-    if (a == b) return 0
-    if (a.isEmpty()) return b.length
-    if (b.isEmpty()) return a.length
-    val dp = Array(a.length + 1) { IntArray(b.length + 1) }
-    for (i in 0..a.length) dp[i][0] = i
-    for (j in 0..b.length) dp[0][j] = j
-    for (i in 1..a.length) for (j in 1..b.length) {
-        val c = if (a[i - 1] == b[j - 1]) 0 else 1
-        dp[i][j] = minOf(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + c)
-    }
-    return dp[a.length][b.length]
-}
-
-private fun abs(value: Float): Float = if (value < 0) -value else value
-
-private fun generateFeedback(target: String, recognized: String, score: Int): String = when {
-    score < 30 -> "تلفظ خیلی فاصله داره. کلمه به کلمه تمرین کن."
-    score < 50 -> "نزدیک شدی ولی چند کلمه اشتباهه. آرومتر بگو."
-    score < 70 -> "خوب بود! فقط روی کلمات سخت تمرکز کن."
-    else -> "تلفظت درسته، فقط روان‌تر بگو."
 }
