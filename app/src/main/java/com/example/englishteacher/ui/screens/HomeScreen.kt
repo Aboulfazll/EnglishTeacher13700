@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Quiz
@@ -41,7 +42,8 @@ fun HomeScreen(
     onBookmarkedWordsClick: () -> Unit = {},
     onVideoClick: () -> Unit = {},
     onDailySentencesClick: () -> Unit = {},
-    onBookmarkedStoriesClick: () -> Unit = {}
+    onBookmarkedStoriesClick: () -> Unit = {},
+    onAchievementsClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -162,6 +164,55 @@ fun HomeScreen(
                                 "سطح خودت رو بسنج",
                                 fontSize = 12.sp,
                                 color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            // ==================== دستاوردها ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .clickable { onAchievementsClick() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFFFA000), Color(0xFFFFD54F))
+                            )
+                        )
+                        .padding(18.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🏆", fontSize = 30.sp)
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "دستاوردها",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "مدال‌ها و نشان‌های خودت رو ببین",
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.95f)
                             )
                         }
                     }
