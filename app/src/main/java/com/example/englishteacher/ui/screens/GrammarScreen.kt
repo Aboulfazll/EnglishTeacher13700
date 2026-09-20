@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -33,7 +35,7 @@ import com.example.englishteacher.data.GrammarTopic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GrammarScreen() {
+fun GrammarScreen(onStartQuiz: () -> Unit = {}) {
     val context = LocalContext.current
     val speechHelper = remember { SpeechHelper(context) }
 
@@ -51,7 +53,8 @@ fun GrammarScreen() {
         )
     } else {
         GrammarListView(
-            onTopicClick = { selectedTopic = it }
+            onTopicClick = { selectedTopic = it },
+            onStartQuiz = onStartQuiz
         )
     }
 }
@@ -59,7 +62,8 @@ fun GrammarScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GrammarListView(
-    onTopicClick: (GrammarTopic) -> Unit
+    onTopicClick: (GrammarTopic) -> Unit,
+    onStartQuiz: () -> Unit
 ) {
     val allTopics = GrammarRepository.getAllTopics()
     var searchQuery by remember { mutableStateOf("") }
@@ -86,6 +90,15 @@ private fun GrammarListView(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = onStartQuiz) {
+                        Icon(
+                            Icons.Filled.Quiz,
+                            contentDescription = "کوییز گرامر",
+                            tint = Color.White
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF00695C))
             )
         }
@@ -97,11 +110,77 @@ private fun GrammarListView(
                 .padding(padding)
         ) {
 
-            // نوار جستجو
+            // ==================== کارت کوییز ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .clickable { onStartQuiz() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                            )
+                        )
+                        .padding(18.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.EmojiEvents,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "🏆 کوییز گرامر",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "۱۰ سؤال تصادفی — خودت رو محک بزن!",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "→",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
+            // ==================== نوار جستجو ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -112,7 +191,18 @@ private fun GrammarListView(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     placeholder = { Text("جستجوی گرامر...") },
                     leadingIcon = {
-                        Icon(Icons.Filled.Search, contentDescription = null, tint = Color(0xFF00695C))
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = Color(0xFF00695C)
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Text("✕", color = Color.Gray, fontSize = 16.sp)
+                            }
+                        }
                     },
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
@@ -123,10 +213,10 @@ private fun GrammarListView(
                 )
             }
 
-            // لیست گرامرها
+            // ==================== لیست گرامرها ====================
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 val grouped = filteredTopics.groupBy { it.category }
@@ -149,6 +239,13 @@ private fun GrammarListView(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1A237E)
+                            )
+                            Spacer(Modifier.weight(1f))
+                            Text(
+                                "${topics.size}",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
@@ -184,7 +281,10 @@ private fun BeautifulGrammarCard(topic: GrammarTopic, onClick: () -> Unit) {
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFF00695C).copy(alpha = 0.2f), Color(0xFF00695C).copy(alpha = 0.4f))
+                            listOf(
+                                Color(0xFF00695C).copy(alpha = 0.2f),
+                                Color(0xFF00695C).copy(alpha = 0.4f)
+                            )
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -253,7 +353,12 @@ private fun GrammarDetailView(
             TopAppBar(
                 title = {
                     Column {
-                        Text(topic.title, fontWeight = FontWeight.Bold, fontSize = 15.sp, maxLines = 1)
+                        Text(
+                            topic.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            maxLines = 1
+                        )
                         Text(
                             topic.titlePersian,
                             fontSize = 11.sp,
@@ -428,6 +533,20 @@ private fun GrammarDetailView(
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1A237E)
                 )
+                Spacer(Modifier.weight(1f))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF00695C).copy(alpha = 0.12f))
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        "👆 لمس کن",
+                        fontSize = 10.sp,
+                        color = Color(0xFF00695C),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
 
             Spacer(Modifier.height(12.dp))
@@ -441,7 +560,7 @@ private fun GrammarDetailView(
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.Top
                     ) {
                         Box(
                             modifier = Modifier
@@ -459,12 +578,13 @@ private fun GrammarDetailView(
                         }
                         Spacer(Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                example.english,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                lineHeight = 20.sp,
-                                color = Color(0xFF1A237E)
+                            ClickableStoryText(
+                                text = example.english,
+                                accent = Color(0xFF00695C),
+                                fontSize = 14,
+                                lineHeight = 22,
+                                showHint = false,
+                                baseColor = Color(0xFF1A237E)
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
