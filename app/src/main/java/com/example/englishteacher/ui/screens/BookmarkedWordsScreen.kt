@@ -1,13 +1,13 @@
 package com.example.englishteacher.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -17,39 +17,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.example.englishteacher.BookmarkManager
+import com.example.englishteacher.SpeechHelper
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
-import com.example.englishteacher.data.Story
-import com.example.englishteacher.data.StoryBookRepository
+import com.example.englishteacher.data.LessonRepository
+import com.example.englishteacher.data.Word
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookmarkedStoriesScreen(
-    onStoryClick: (String) -> Unit
-) {
+fun BookmarkedWordsScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val speechHelper = remember { SpeechHelper(context) }
+
+    DisposableEffect(Unit) {
+        onDispose { speechHelper.close() }
+    }
 
     var bookmarkedIds by remember { mutableStateOf<Set<String>>(emptySet()) }
 
     LaunchedEffect(Unit) {
-        BookmarkManager.getBookmarkedStories(context).collectLatest {
-            bookmarkedIds = it
-        }
+        BookmarkManager.getBookmarkedWords(context).collectLatest { bookmarkedIds = it }
     }
 
-    val bookmarkedStories: List<Story> = remember(bookmarkedIds) {
-        StoryBookRepository.getAllStories().filter { it.id in bookmarkedIds }
+    val bookmarkedWords: List<Pair<Word, String>> = remember(bookmarkedIds) {
+        val list = mutableListOf<Pair<Word, String>>()
+        Level.values().forEach { level ->
+            val lessons = LessonRepository.getLessonsByLevel(level)
+            lessons.forEach { lesson ->
+                lesson.vocabulary.forEach { word ->
+                    if (bookmarkedIds.contains(word.english)) {
+                        list.add(word to level.persianName)
+                    }
+                }
+            }
+        }
+        list.distinctBy { it.first.english }
     }
 
     Scaffold(
@@ -57,19 +67,15 @@ fun BookmarkedStoriesScreen(
             TopAppBar(
                 title = {
                     Column {
+                        Text("🔖 لغات ذخیره‌شده", fontWeight = FontWeight.Bold, color = Color.White)
                         Text(
-                            "🔖 داستان‌های ذخیره‌شده",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            "${bookmarkedStories.size} داستان",
+                            "${bookmarkedWords.size} لغت",
                             fontSize = 12.sp,
                             color = Color.White.copy(alpha = 0.85f)
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFE91E63))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A237E))
             )
         }
     ) { padding ->
@@ -79,7 +85,7 @@ fun BookmarkedStoriesScreen(
                 .background(Color(0xFFF5F7FA))
                 .padding(padding)
         ) {
-            if (bookmarkedStories.isEmpty()) {
+            if (bookmarkedWords.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -92,26 +98,26 @@ fun BookmarkedStoriesScreen(
                             modifier = Modifier
                                 .size(120.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFCE4EC)),
+                                .background(Color(0xFFE8EAF6)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 Icons.Filled.Bookmark,
                                 contentDescription = null,
-                                tint = Color(0xFFE91E63),
+                                tint = Color(0xFF1A237E),
                                 modifier = Modifier.size(60.dp)
                             )
                         }
                         Spacer(Modifier.height(20.dp))
                         Text(
-                            "هنوز داستانی ذخیره نکردی",
+                            "هنوز لغتی ذخیره نکردی",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF1A237E)
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            "توی هر داستان، روی آیکون 🔖 بالای صفحه بزن تا اینجا ذخیره بشه",
+                            "توی بانک لغات یا دروس، روی آیکون 🔖 بزن تا لغات اینجا ذخیره شن",
                             fontSize = 13.sp,
                             color = Color.Gray,
                             textAlign = TextAlign.Center,
@@ -123,50 +129,38 @@ fun BookmarkedStoriesScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(bookmarkedStories, key = { it.id }) { story ->
-                        val levelColor = when (story.level) {
-                            Level.BEGINNER -> Color(0xFF11998E)
-                            Level.INTERMEDIATE -> Color(0xFF8E2DE2)
-                            Level.ADVANCED -> Color(0xFFF12711)
-                        }
-
+                    items(bookmarkedWords) { (word, levelName) ->
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onStoryClick(story.id) },
-                            shape = RoundedCornerShape(18.dp),
-                            elevation = CardDefaults.cardElevation(4.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = CardDefaults.cardElevation(3.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.White)
                         ) {
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                                modifier = Modifier.fillMaxWidth().padding(14.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // تصویر جلد
                                 Box(
                                     modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(RoundedCornerShape(14.dp))
-                                ) {
-                                    AsyncImage(
-                                        model = story.coverUrl,
-                                        contentDescription = story.title,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    listOf(
-                                                        Color.Transparent,
-                                                        Color.Black.copy(alpha = 0.3f)
-                                                    )
+                                        .size(46.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.linearGradient(
+                                                listOf(
+                                                    Color(0xFF1A237E).copy(alpha = 0.15f),
+                                                    Color(0xFF1A237E).copy(alpha = 0.3f)
                                                 )
                                             )
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        word.english.first().uppercase(),
+                                        color = Color(0xFF1A237E),
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
                                 }
 
@@ -174,41 +168,62 @@ fun BookmarkedStoriesScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        story.title,
+                                        word.english,
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
-                                        color = Color(0xFF1A237E),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        fontSize = 16.sp,
+                                        color = Color(0xFF1A237E)
                                     )
+                                    if (word.pronunciation.isNotEmpty()) {
+                                        Text(
+                                            "/${word.pronunciation}/",
+                                            fontSize = 11.sp,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                    Spacer(Modifier.height(3.dp))
                                     Text(
-                                        story.titlePersian,
-                                        fontSize = 12.sp,
-                                        color = Color.Gray,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        word.persian,
+                                        color = Color(0xFF1A237E),
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.SemiBold
                                     )
-                                    Spacer(Modifier.height(6.dp))
+                                    Spacer(Modifier.height(4.dp))
                                     Box(
                                         modifier = Modifier
                                             .clip(RoundedCornerShape(6.dp))
-                                            .background(levelColor.copy(alpha = 0.12f))
-                                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                                            .background(Color(0xFF1A237E).copy(alpha = 0.08f))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
                                     ) {
                                         Text(
-                                            story.level.persianName,
+                                            levelName,
                                             fontSize = 10.sp,
-                                            color = levelColor,
+                                            color = Color(0xFF1A237E),
                                             fontWeight = FontWeight.SemiBold
                                         )
                                     }
                                 }
 
-                                // دکمه حذف
+                                IconButton(
+                                    onClick = { speechHelper.speak(word.english) },
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFF1A237E).copy(alpha = 0.1f))
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Play",
+                                        tint = Color(0xFF1A237E),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+
+                                Spacer(Modifier.width(4.dp))
+
                                 IconButton(
                                     onClick = {
                                         scope.launch {
-                                            BookmarkManager.removeStoryBookmark(context, story.id)
+                                            BookmarkManager.removeBookmark(context, word.english)
                                         }
                                     },
                                     modifier = Modifier
@@ -218,7 +233,7 @@ fun BookmarkedStoriesScreen(
                                 ) {
                                     Icon(
                                         Icons.Filled.Delete,
-                                        contentDescription = "حذف",
+                                        contentDescription = "Delete",
                                         tint = Color(0xFFD32F2F),
                                         modifier = Modifier.size(20.dp)
                                     )
