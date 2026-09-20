@@ -240,7 +240,7 @@ fun StoryDetailScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // متن داستان
+                // ==================== متن داستان (قابل لمس) ====================
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -259,13 +259,29 @@ fun StoryDetailScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1A237E)
                             )
+                            Spacer(Modifier.weight(1f))
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(levelColor.copy(alpha = 0.12f))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    "👆 لمس کن",
+                                    fontSize = 10.sp,
+                                    color = levelColor,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                         Spacer(Modifier.height(14.dp))
-                        Text(
+
+                        // 🎯 متن قابل لمس
+                        ClickableStoryText(
                             text = story.text,
-                            fontSize = 16.sp,
-                            lineHeight = 30.sp,
-                            color = Color(0xFF424242)
+                            accent = levelColor,
+                            fontSize = 16,
+                            lineHeight = 30
                         )
                     }
                 }
