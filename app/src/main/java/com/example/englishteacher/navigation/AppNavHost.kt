@@ -11,6 +11,7 @@ import com.example.englishteacher.data.Level
 import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
+import com.example.englishteacher.ui.screens.GrammarQuizScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
 import com.example.englishteacher.ui.screens.GroupQuizScreen
 import com.example.englishteacher.ui.screens.HomeScreen
@@ -37,6 +38,7 @@ object Routes {
     const val PODCAST = "podcast"
     const val PODCAST_PLAYER = "podcast_player/{url}/{title}"
     const val GRAMMAR = "grammar"
+    const val GRAMMAR_QUIZ = "grammar_quiz"
     const val STORY_BOOK = "story_book"
     const val STORY_DETAIL = "story_detail/{storyId}"
     const val VOCABULARY_BANK = "vocabulary_bank"
@@ -138,14 +140,25 @@ fun AppNavHost(
                 groupIndex = groupIndex,
                 onBack = { navController.popBackStack() },
                 onPassed = {
-                    // بعد از قبولی، برمی‌گردیم به لیست درس‌ها (که حالا گروه بعدی بازه)
                     navController.popBackStack()
                 }
             )
         }
 
+        // 📖 گرامر
         composable(Routes.GRAMMAR) {
-            GrammarScreen()
+            GrammarScreen(
+                onStartQuiz = {
+                    navController.navigate(Routes.GRAMMAR_QUIZ)
+                }
+            )
+        }
+
+        // 🏆 کوییز گرامر
+        composable(Routes.GRAMMAR_QUIZ) {
+            GrammarQuizScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.VOCABULARY_BANK) {
