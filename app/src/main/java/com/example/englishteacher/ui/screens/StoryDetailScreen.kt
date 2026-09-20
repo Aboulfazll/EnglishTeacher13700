@@ -26,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.englishteacher.BookmarkManager
 import com.example.englishteacher.ShareHelper
 import com.example.englishteacher.SpeechHelper
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.StoryBookRepository
@@ -52,12 +52,10 @@ fun StoryDetailScreen(
         onDispose { speechHelper.close() }
     }
 
-    // ثبت داستان به عنوان خونده‌شده
     LaunchedEffect(storyId) {
         ProgressManager.markStoryRead(context, storyId)
     }
 
-    // چک کردن وضعیت بوکمارک
     LaunchedEffect(storyId) {
         BookmarkManager.isStoryBookmarked(context, storyId).collectLatest {
             isBookmarked = it
@@ -111,7 +109,6 @@ fun StoryDetailScreen(
                     }
                 },
                 actions = {
-                    // 🔖 دکمه بوکمارک
                     IconButton(onClick = {
                         scope.launch {
                             BookmarkManager.toggleStoryBookmark(context, storyId)
@@ -127,7 +124,6 @@ fun StoryDetailScreen(
                         )
                     }
 
-                    // اشتراک‌گذاری
                     IconButton(onClick = {
                         ShareHelper.shareStory(
                             context = context,
