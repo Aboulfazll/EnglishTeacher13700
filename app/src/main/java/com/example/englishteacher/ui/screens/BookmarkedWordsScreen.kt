@@ -1,7 +1,6 @@
 package com.example.englishteacher.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.SpeechHelper
@@ -47,7 +47,6 @@ fun BookmarkedWordsScreen() {
         BookmarkManager.getBookmarkedWords(context).collectLatest { bookmarkedIds = it }
     }
 
-    // جمع‌آوری همه لغات ذخیره‌شده از دروس
     val bookmarkedWords: List<Pair<Word, String>> = remember(bookmarkedIds) {
         val list = mutableListOf<Pair<Word, String>>()
         Level.values().forEach { level ->
@@ -87,7 +86,6 @@ fun BookmarkedWordsScreen() {
                 .padding(padding)
         ) {
             if (bookmarkedWords.isEmpty()) {
-                // حالت خالی
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -122,7 +120,7 @@ fun BookmarkedWordsScreen() {
                             "توی بانک لغات یا دروس، روی آیکون 🔖 بزن تا لغات اینجا ذخیره شن",
                             fontSize = 13.sp,
                             color = Color.Gray,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )
                     }
@@ -205,7 +203,6 @@ fun BookmarkedWordsScreen() {
                                     }
                                 }
 
-                                // دکمه پخش
                                 IconButton(
                                     onClick = { speechHelper.speak(word.english) },
                                     modifier = Modifier
@@ -223,7 +220,6 @@ fun BookmarkedWordsScreen() {
 
                                 Spacer(Modifier.width(4.dp))
 
-                                // دکمه حذف
                                 IconButton(
                                     onClick = {
                                         scope.launch {
