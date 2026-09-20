@@ -720,5 +720,5 @@ private fun SpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: C
                 }
             }
         }
-    }
+    }. دذ
 }
