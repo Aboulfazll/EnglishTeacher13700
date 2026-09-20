@@ -26,6 +26,7 @@ import com.example.englishteacher.ui.screens.PodcastPlayerScreen
 import com.example.englishteacher.ui.screens.PodcastScreen
 import com.example.englishteacher.ui.screens.ProfileScreen
 import com.example.englishteacher.ui.screens.ProgressScreen
+import com.example.englishteacher.ui.screens.ReadingModeScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
 import com.example.englishteacher.ui.screens.StoryBookScreen
 import com.example.englishteacher.ui.screens.StoryDetailScreen
@@ -55,6 +56,7 @@ object Routes {
     const val DAILY_QUIZ = "daily_quiz"
     const val FLASHCARD = "flashcard/{mode}"
     const val ACHIEVEMENTS = "achievements"
+    const val READING_MODE = "reading_mode/{lessonId}/{categoryId}"
     const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
@@ -63,6 +65,8 @@ object Routes {
     fun storyDetail(storyId: String) = "story_detail/$storyId"
     fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
     fun flashcard(mode: String) = "flashcard/$mode"
+    fun readingMode(lessonId: String = "", categoryId: String = "") =
+        "reading_mode/$lessonId/$categoryId"
 }
 
 @Composable
@@ -135,7 +139,10 @@ fun AppNavHost(
             val lessonId = entry.arguments?.getString("lessonId") ?: ""
             LessonDetailScreen(
                 lessonId = lessonId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onStartReading = {
+                    navController.navigate(Routes.readingMode(lessonId = lessonId))
+                }
             )
         }
 
@@ -153,9 +160,7 @@ fun AppNavHost(
                 level = level,
                 groupIndex = groupIndex,
                 onBack = { navController.popBackStack() },
-                onPassed = {
-                    navController.popBackStack()
-                }
+                onPassed = { navController.popBackStack() }
             )
         }
 
@@ -168,9 +173,7 @@ fun AppNavHost(
         }
 
         composable(Routes.GRAMMAR_QUIZ) {
-            GrammarQuizScreen(
-                onBack = { navController.popBackStack() }
-            )
+            GrammarQuizScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.VOCABULARY_BANK) {
@@ -283,12 +286,30 @@ fun AppNavHost(
             DailySentencesScreen(
                 onStartQuiz = {
                     navController.navigate(Routes.DAILY_QUIZ)
+                },
+                onStartReading = { categoryId ->
+                    navController.navigate(Routes.readingMode(categoryId = categoryId))
                 }
             )
         }
 
         composable(Routes.DAILY_QUIZ) {
-            DailyQuizScreen(
+            DailyQuizScreen(onBack = { navController.popBackStack() })
+        }
+
+        // حالت خوانش
+        composable(
+            route = Routes.READING_MODE,
+            arguments = listOf(
+                navArgument("lessonId") { type = NavType.StringType },
+                navArgument("categoryId") { type = NavType.StringType }
+            )
+        ) { entry ->
+            val lessonId = entry.arguments?.getString("lessonId") ?: ""
+            val categoryId = entry.arguments?.getString("categoryId") ?: ""
+            ReadingModeScreen(
+                lessonId = lessonId,
+                categoryId = categoryId,
                 onBack = { navController.popBackStack() }
             )
         }
