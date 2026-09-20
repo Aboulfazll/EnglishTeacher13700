@@ -1,4 +1,3 @@
-
 package com.example.englishteacher.navigation
 
 import androidx.compose.runtime.Composable
@@ -9,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.englishteacher.data.Level
+import com.example.englishteacher.ui.screens.AchievementsScreen
 import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedStoriesScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
@@ -54,6 +54,7 @@ object Routes {
     const val DAILY_SENTENCES = "daily_sentences"
     const val DAILY_QUIZ = "daily_quiz"
     const val FLASHCARD = "flashcard/{mode}"
+    const val ACHIEVEMENTS = "achievements"
     const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
@@ -102,6 +103,9 @@ fun AppNavHost(
                 },
                 onBookmarkedStoriesClick = {
                     navController.navigate(Routes.BOOKMARKED_STORIES)
+                },
+                onAchievementsClick = {
+                    navController.navigate(Routes.ACHIEVEMENTS)
                 }
             )
         }
@@ -229,6 +233,10 @@ fun AppNavHost(
                     navController.navigate(Routes.storyDetail(storyId))
                 }
             )
+        }
+
+        composable(Routes.ACHIEVEMENTS) {
+            AchievementsScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.AI_CHAT) {
