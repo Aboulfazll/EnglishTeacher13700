@@ -30,38 +30,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.englishteacher.data.WordDictionary
 
-/**
- * متن داستان با قابلیت لمس هر کلمه برای دیدن معنی فارسی.
- * دوباره روی همون کلمه بزن → معنی پنهان می‌شه.
- */
 @Composable
 fun ClickableStoryText(
     text: String,
     accent: Color,
     modifier: Modifier = Modifier,
     fontSize: Int = 16,
-    lineHeight: Int = 30
+    lineHeight: Int = 30,
+    showHint: Boolean = true,
+    baseColor: Color = Color(0xFF424242)
 ) {
-    // کلمه انتخاب‌شده و معنیش
     var selectedWord by remember { mutableStateOf<String?>(null) }
     var selectedMeaning by remember { mutableStateOf<String?>(null) }
-
-    // نتیجه layout برای پیدا کردن کلمه زیر انگشت
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    // ساخت AnnotatedString با علامت‌گذاری کلمه‌هایی که توی دیکشنری هستن
     val annotated = remember(text) {
         buildAnnotatedString {
-            // متن رو با regex به کلمه + جداکننده تقسیم می‌کنیم
             val pattern = Regex("([A-Za-z']+)")
             var lastIndex = 0
-
             pattern.findAll(text).forEach { match ->
-                // متن بین دو کلمه (فاصله، نقطه، کاما و ...)
                 if (match.range.first > lastIndex) {
                     append(text.substring(lastIndex, match.range.first))
                 }
-
                 val word = match.value
                 if (WordDictionary.contains(word)) {
                     pushStringAnnotation(tag = "word", annotation = word)
@@ -70,11 +60,8 @@ fun ClickableStoryText(
                 } else {
                     append(word)
                 }
-
                 lastIndex = match.range.last + 1
             }
-
-            // باقیمانده
             if (lastIndex < text.length) {
                 append(text.substring(lastIndex))
             }
@@ -83,7 +70,7 @@ fun ClickableStoryText(
 
     Column(modifier = modifier) {
 
-        // ==================== کارت معنی ====================
+        // کارت معنی
         AnimatedVisibility(
             visible = selectedWord != null && selectedMeaning != null,
             enter = fadeIn() + expandVertically(),
@@ -92,34 +79,34 @@ fun ClickableStoryText(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(accent.copy(alpha = 0.13f))
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                    .padding(bottom = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(accent.copy(alpha = 0.15f))
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     Icons.Filled.Translate,
                     contentDescription = null,
                     tint = accent,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(16.dp)
                 )
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.width(6.dp))
                 Text(
                     text = selectedWord ?: "",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 13.sp,
                     color = Color(0xFF1A237E)
                 )
                 Text(
-                    text = "  =  ",
-                    fontSize = 16.sp,
+                    text = " = ",
+                    fontSize = 13.sp,
                     color = Color.Gray
                 )
                 Text(
                     text = selectedMeaning ?: "",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 13.sp,
                     color = accent
                 )
                 Spacer(Modifier.weight(1f))
@@ -128,8 +115,7 @@ fun ClickableStoryText(
                     contentDescription = "بستن",
                     tint = Color.Gray,
                     modifier = Modifier
-                        .size(20.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .size(16.dp)
                         .clickable {
                             selectedWord = null
                             selectedMeaning = null
@@ -138,12 +124,12 @@ fun ClickableStoryText(
             }
         }
 
-        // ==================== متن با کلیک‌پذیری ====================
+        // متن
         Text(
             text = annotated,
             fontSize = fontSize.sp,
             lineHeight = lineHeight.sp,
-            color = Color(0xFF424242),
+            color = baseColor,
             onTextLayout = { layoutResult = it },
             modifier = Modifier
                 .fillMaxWidth()
@@ -153,10 +139,8 @@ fun ClickableStoryText(
                         val position = layout.getOffsetForPosition(offset)
                         val annotations = annotated
                             .getStringAnnotations("word", position, position)
-
                         val clicked = annotations.firstOrNull()?.item
                         if (clicked != null) {
-                            // اگه همون کلمه دوباره لمس شد → پنهان کن
                             if (selectedWord.equals(clicked, ignoreCase = true)) {
                                 selectedWord = null
                                 selectedMeaning = null
@@ -172,13 +156,13 @@ fun ClickableStoryText(
                 }
         )
 
-        Spacer(Modifier.height(8.dp))
-
-        // راهنمای کوچک
-        Text(
-            text = "👆 روی هر کلمه بزن تا معنی‌اش رو ببینی",
-            fontSize = 11.sp,
-            color = Color.Gray
-        )
+        if (showHint) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "👆 روی هر کلمه بزن تا معنی‌اش رو ببینی",
+                fontSize = 11.sp,
+                color = Color.Gray
+            )
+        }
     }
 }
