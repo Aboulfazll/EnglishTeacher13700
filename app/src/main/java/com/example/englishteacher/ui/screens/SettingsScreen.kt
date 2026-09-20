@@ -28,10 +28,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.englishteacher.AchievementManager
-import com.example.englishteacher.BookmarkManager
 import com.example.englishteacher.NotificationHelper
 import com.example.englishteacher.NotificationScheduler
+import com.example.englishteacher.data.AchievementManager
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.SettingsManager
 import kotlinx.coroutines.flow.collectLatest
@@ -190,7 +190,7 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== ظاهر و نمایش ====================
+            // ==================== ظاهر ====================
             SectionTitle("🎨 ظاهر و نمایش")
 
             SettingsSliderCard(
@@ -224,7 +224,7 @@ fun SettingsScreen() {
                 }
             )
 
-            // ==================== صدا و تلفظ ====================
+            // ==================== صدا ====================
             SectionTitle("🔊 صدا و تلفظ")
 
             SettingsSliderCard(
@@ -551,7 +551,6 @@ fun SettingsScreen() {
             // ==================== مدیریت داده ====================
             SectionTitle("⚠️ مدیریت داده")
 
-            // ریست پیشرفت
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -594,7 +593,6 @@ fun SettingsScreen() {
                 }
             }
 
-            // ریست دستاوردها
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -637,7 +635,6 @@ fun SettingsScreen() {
                 }
             }
 
-            // پاک کردن بوکمارک‌ها
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -746,7 +743,6 @@ fun SettingsScreen() {
 
     // ==================== دیالوگ‌ها ====================
 
-    // ریست پیشرفت
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
@@ -781,7 +777,6 @@ fun SettingsScreen() {
         )
     }
 
-    // ریست دستاوردها
     if (showResetAchievementsDialog) {
         AlertDialog(
             onDismissRequest = { showResetAchievementsDialog = false },
@@ -814,7 +809,6 @@ fun SettingsScreen() {
         )
     }
 
-    // پاک کردن بوکمارک‌ها
     if (showResetBookmarksDialog) {
         AlertDialog(
             onDismissRequest = { showResetBookmarksDialog = false },
@@ -850,7 +844,6 @@ fun SettingsScreen() {
         )
     }
 
-    // API
     if (showApiDialog) {
         AlertDialog(
             onDismissRequest = { showApiDialog = false },
@@ -893,7 +886,6 @@ fun SettingsScreen() {
         )
     }
 
-    // ساعت
     if (showTimeDialog) {
         val hours = (0..23).toList()
         var tempHour by remember { mutableIntStateOf(notificationHour) }
@@ -956,7 +948,6 @@ fun SettingsScreen() {
         )
     }
 
-    // درباره
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
@@ -1002,8 +993,6 @@ fun SettingsScreen() {
         )
     }
 }
-
-// ==================== کامپوننت‌های کمکی ====================
 
 @Composable
 private fun InfoRow(emoji: String, text: String) {
