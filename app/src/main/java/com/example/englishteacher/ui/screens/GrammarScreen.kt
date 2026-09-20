@@ -1,618 +1,249 @@
-package com.example.englishteacher.ui.screens
+package com.example.englishteacher.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Quiz
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.englishteacher.ShareHelper
-import com.example.englishteacher.SpeechHelper
-import com.example.englishteacher.data.GrammarRepository
-import com.example.englishteacher.data.GrammarTopic
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.englishteacher.data.Level
+import com.example.englishteacher.ui.screens.AIChatScreen
+import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
+import com.example.englishteacher.ui.screens.DailySentencesScreen
+import com.example.englishteacher.ui.screens.GrammarQuizScreen
+import com.example.englishteacher.ui.screens.GrammarScreen
+import com.example.englishteacher.ui.screens.GroupQuizScreen
+import com.example.englishteacher.ui.screens.HomeScreen
+import com.example.englishteacher.ui.screens.LessonDetailScreen
+import com.example.englishteacher.ui.screens.LessonListScreen
+import com.example.englishteacher.ui.screens.LevelTestScreen
+import com.example.englishteacher.ui.screens.PodcastPlayerScreen
+import com.example.englishteacher.ui.screens.PodcastScreen
+import com.example.englishteacher.ui.screens.ProfileScreen
+import com.example.englishteacher.ui.screens.ProgressScreen
+import com.example.englishteacher.ui.screens.SettingsScreen
+import com.example.englishteacher.ui.screens.StoryBookScreen
+import com.example.englishteacher.ui.screens.StoryDetailScreen
+import com.example.englishteacher.ui.screens.VideoScreen
+import com.example.englishteacher.ui.screens.VocabularyBankScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun GrammarScreen(onStartQuiz: () -> Unit = {}) {
-    val context = LocalContext.current
-    val speechHelper = remember { SpeechHelper(context) }
+object Routes {
+    const val HOME = "home"
+    const val LESSON_LIST = "lessons/{level}"
+    const val LESSON_DETAIL = "lesson/{lessonId}"
+    const val PROGRESS = "progress"
+    const val AI_CHAT = "ai_chat"
+    const val SETTINGS = "settings"
+    const val PODCAST = "podcast"
+    const val PODCAST_PLAYER = "podcast_player/{url}/{title}"
+    const val GRAMMAR = "grammar"
+    const val GRAMMAR_QUIZ = "grammar_quiz"
+    const val STORY_BOOK = "story_book"
+    const val STORY_DETAIL = "story_detail/{storyId}"
+    const val VOCABULARY_BANK = "vocabulary_bank"
+    const val LEVEL_TEST = "level_test"
+    const val PROFILE = "profile"
+    const val BOOKMARKED_WORDS = "bookmarked_words"
+    const val VIDEOS = "videos"
+    const val DAILY_SENTENCES = "daily_sentences"
+    const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
-    DisposableEffect(Unit) {
-        onDispose { speechHelper.close() }
-    }
-
-    var selectedTopic by remember { mutableStateOf<GrammarTopic?>(null) }
-
-    if (selectedTopic != null) {
-        GrammarDetailView(
-            topic = selectedTopic!!,
-            speechHelper = speechHelper,
-            onBack = { selectedTopic = null }
-        )
-    } else {
-        GrammarListView(
-            onTopicClick = { selectedTopic = it },
-            onStartQuiz = onStartQuiz
-        )
-    }
+    fun lessonList(level: Level) = "lessons/${level.name}"
+    fun lessonDetail(lessonId: String) = "lesson/$lessonId"
+    fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
+    fun storyDetail(storyId: String) = "story_detail/$storyId"
+    fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GrammarListView(
-    onTopicClick: (GrammarTopic) -> Unit,
-    onStartQuiz: () -> Unit
+fun AppNavHost(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
-    val allTopics = GrammarRepository.getAllTopics()
-    var searchQuery by remember { mutableStateOf("") }
-
-    val filteredTopics = if (searchQuery.isEmpty()) {
-        allTopics
-    } else {
-        allTopics.filter {
-            it.title.contains(searchQuery, ignoreCase = true) ||
-            it.titlePersian.contains(searchQuery)
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text("📖 کتابخانه گرامر", fontWeight = FontWeight.Bold, color = Color.White)
-                        Text(
-                            "${allTopics.size} موضوع گرامری",
-                            fontSize = 12.sp,
-                            color = Color.White.copy(alpha = 0.85f)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onStartQuiz) {
-                        Icon(
-                            Icons.Filled.Quiz,
-                            contentDescription = "کوییز گرامر",
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF00695C))
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
-                .padding(padding)
-        ) {
-
-            // ==================== کارت کوییز ====================
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .clickable { onStartQuiz() },
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
-                            )
-                        )
-                        .padding(18.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.EmojiEvents,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(14.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "🏆 کوییز گرامر",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "۱۰ سؤال تصادفی — خودت رو محک بزن!",
-                                fontSize = 11.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "→",
-                                color = Color.White,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
-
-            // ==================== نوار جستجو ====================
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(3.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    placeholder = { Text("جستجوی گرامر...") },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.Search,
-                            contentDescription = null,
-                            tint = Color(0xFF00695C)
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { searchQuery = "" }) {
-                                Text("✕", color = Color.Gray, fontSize = 16.sp)
-                            }
-                        }
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF00695C),
-                        unfocusedBorderColor = Color.LightGray
-                    )
-                )
-            }
-
-            // ==================== لیست گرامرها ====================
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                val grouped = filteredTopics.groupBy { it.category }
-
-                grouped.forEach { (category, topics) ->
-                    item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(4.dp, 22.dp)
-                                    .clip(RoundedCornerShape(2.dp))
-                                    .background(Color(0xFF00695C))
-                            )
-                            Spacer(Modifier.width(10.dp))
-                            Text(
-                                category,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1A237E)
-                            )
-                            Spacer(Modifier.weight(1f))
-                            Text(
-                                "${topics.size}",
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-
-                    items(topics) { topic ->
-                        BeautifulGrammarCard(topic) { onTopicClick(topic) }
-                    }
-                }
-
-                item { Spacer(Modifier.height(20.dp)) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun BeautifulGrammarCard(topic: GrammarTopic, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+    NavHost(
+        navController = navController,
+        startDestination = Routes.HOME,
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Color(0xFF00695C).copy(alpha = 0.2f),
-                                Color(0xFF00695C).copy(alpha = 0.4f)
-                            )
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Filled.Book,
-                    contentDescription = null,
-                    tint = Color(0xFF00695C),
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(Modifier.width(14.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    topic.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    color = Color(0xFF1A237E)
-                )
-                Spacer(Modifier.height(2.dp))
-                Text(
-                    topic.titlePersian,
-                    color = Color.Gray,
-                    fontSize = 12.sp
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    "${topic.examples.size} مثال",
-                    fontSize = 10.sp,
-                    color = Color(0xFF00695C),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF00695C).copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "→",
-                    color = Color(0xFF00695C),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun GrammarDetailView(
-    topic: GrammarTopic,
-    speechHelper: SpeechHelper,
-    onBack: () -> Unit
-) {
-    val context = LocalContext.current
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            topic.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            maxLines = 1
-                        )
-                        Text(
-                            topic.titlePersian,
-                            fontSize = 11.sp,
-                            color = Color.White.copy(alpha = 0.85f)
-                        )
-                    }
+        composable(Routes.HOME) {
+            HomeScreen(
+                onLevelClick = { level ->
+                    navController.navigate(Routes.lessonList(level))
                 },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
+                onGrammarClick = {
+                    navController.navigate(Routes.GRAMMAR)
                 },
-                actions = {
-                    IconButton(onClick = {
-                        ShareHelper.shareGrammar(
-                            context = context,
-                            title = topic.title,
-                            titlePersian = topic.titlePersian,
-                            explanation = topic.explanation,
-                            examples = topic.examples.map { it.english + " — " + it.persian }
-                        )
-                    }) {
-                        Icon(
-                            Icons.Filled.Share,
-                            contentDescription = "Share",
-                            tint = Color.White
-                        )
-                    }
+                onStoryBookClick = {
+                    navController.navigate(Routes.STORY_BOOK)
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF00695C))
+                onVocabularyBankClick = {
+                    navController.navigate(Routes.VOCABULARY_BANK)
+                },
+                onLevelTestClick = {
+                    navController.navigate(Routes.LEVEL_TEST)
+                },
+                onBookmarkedWordsClick = {
+                    navController.navigate(Routes.BOOKMARKED_WORDS)
+                },
+                onVideoClick = {
+                    navController.navigate(Routes.VIDEOS)
+                },
+                onDailySentencesClick = {
+                    navController.navigate(Routes.DAILY_SENTENCES)
+                }
             )
         }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp)
-        ) {
 
-            // دکمه اشتراک‌گذاری
-            OutlinedButton(
-                onClick = {
-                    ShareHelper.shareGrammar(
-                        context = context,
-                        title = topic.title,
-                        titlePersian = topic.titlePersian,
-                        explanation = topic.explanation,
-                        examples = topic.examples.map { it.english + " — " + it.persian }
-                    )
+        composable(
+            route = Routes.LESSON_LIST,
+            arguments = listOf(navArgument("level") { type = NavType.StringType })
+        ) { entry ->
+            val levelName = entry.arguments?.getString("level") ?: Level.BEGINNER.name
+            val level = Level.valueOf(levelName)
+            LessonListScreen(
+                level = level,
+                onBack = { navController.popBackStack() },
+                onLessonClick = { lessonId ->
+                    navController.navigate(Routes.lessonDetail(lessonId))
                 },
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF00695C))
-            ) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = "Share",
-                    tint = Color(0xFF00695C),
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("اشتراک‌گذاری این گرامر", fontWeight = FontWeight.Bold)
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            // توضیح
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(3.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF00695C), Color(0xFF26A69A))
-                            )
-                        )
-                        .padding(16.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("📖", fontSize = 26.sp)
-                        Spacer(Modifier.width(10.dp))
-                        Text(
-                            "توضیح",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
+                onGroupQuizClick = { groupIndex ->
+                    navController.navigate(Routes.groupQuiz(level, groupIndex))
                 }
+            )
+        }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        topic.explanation,
-                        fontSize = 14.sp,
-                        lineHeight = 24.sp,
-                        color = Color(0xFF424242)
-                    )
+        composable(
+            route = Routes.LESSON_DETAIL,
+            arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
+        ) { entry ->
+            val lessonId = entry.arguments?.getString("lessonId") ?: ""
+            LessonDetailScreen(
+                lessonId = lessonId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 📝 امتحان گروهی
+        composable(
+            route = Routes.GROUP_QUIZ,
+            arguments = listOf(
+                navArgument("level") { type = NavType.StringType },
+                navArgument("groupIndex") { type = NavType.IntType }
+            )
+        ) { entry ->
+            val levelName = entry.arguments?.getString("level") ?: Level.BEGINNER.name
+            val level = Level.valueOf(levelName)
+            val groupIndex = entry.arguments?.getInt("groupIndex") ?: 0
+            GroupQuizScreen(
+                level = level,
+                groupIndex = groupIndex,
+                onBack = { navController.popBackStack() },
+                onPassed = {
+                    navController.popBackStack()
                 }
-            }
+            )
+        }
 
-            Spacer(Modifier.height(16.dp))
-
-            // فرمول
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(3.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
-                            )
-                        )
-                        .padding(16.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🧮", fontSize = 26.sp)
-                        Spacer(Modifier.width(10.dp))
-                        Text(
-                            "فرمول",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
+        // 📖 گرامر
+        composable(Routes.GRAMMAR) {
+            GrammarScreen(
+                onStartQuiz = {
+                    navController.navigate(Routes.GRAMMAR_QUIZ)
                 }
+            )
+        }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFFFF8E1))
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        topic.formula,
-                        fontSize = 14.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFE65100)
-                    )
+        // 🏆 کوییز گرامر
+        composable(Routes.GRAMMAR_QUIZ) {
+            GrammarQuizScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.VOCABULARY_BANK) {
+            VocabularyBankScreen()
+        }
+
+        composable(Routes.LEVEL_TEST) {
+            LevelTestScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.STORY_BOOK) {
+            StoryBookScreen(
+                onStoryClick = { storyId ->
+                    navController.navigate(Routes.storyDetail(storyId))
                 }
-            }
+            )
+        }
 
-            Spacer(Modifier.height(16.dp))
+        composable(
+            route = Routes.STORY_DETAIL,
+            arguments = listOf(navArgument("storyId") { type = NavType.StringType })
+        ) { entry ->
+            val storyId = entry.arguments?.getString("storyId") ?: ""
+            StoryDetailScreen(
+                storyId = storyId,
+                onBack = { navController.popBackStack() }
+            )
+        }
 
-            // مثال‌ها
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("✏️", fontSize = 22.sp)
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    "مثال‌ها",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E)
-                )
-                Spacer(Modifier.weight(1f))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF00695C).copy(alpha = 0.12f))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        "👆 لمس کن",
-                        fontSize = 10.sp,
-                        color = Color(0xFF00695C),
-                        fontWeight = FontWeight.SemiBold
-                    )
+        composable(Routes.PROGRESS) {
+            ProgressScreen()
+        }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen()
+        }
+
+        composable(Routes.BOOKMARKED_WORDS) {
+            BookmarkedWordsScreen()
+        }
+
+        composable(Routes.AI_CHAT) {
+            AIChatScreen()
+        }
+
+        composable(Routes.SETTINGS) {
+            SettingsScreen()
+        }
+
+        composable(Routes.PODCAST) {
+            PodcastScreen(
+                onPodcastClick = { url, title ->
+                    val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
+                    val encodedTitle = java.net.URLEncoder.encode(title, "UTF-8")
+                    navController.navigate("podcast_player/$encodedUrl/$encodedTitle")
                 }
-            }
+            )
+        }
 
-            Spacer(Modifier.height(12.dp))
+        composable(
+            route = Routes.PODCAST_PLAYER,
+            arguments = listOf(
+                navArgument("url") { type = NavType.StringType },
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { entry ->
+            val encodedUrl = entry.arguments?.getString("url") ?: ""
+            val encodedTitle = entry.arguments?.getString("title") ?: ""
+            val url = java.net.URLDecoder.decode(encodedUrl, "UTF-8")
+            val title = java.net.URLDecoder.decode(encodedTitle, "UTF-8")
+            PodcastPlayerScreen(
+                podcastUrl = url,
+                podcastTitle = title,
+                onBack = { navController.popBackStack() }
+            )
+        }
 
-            topic.examples.forEachIndexed { index, example ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(14.dp),
-                    elevation = CardDefaults.cardElevation(2.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(14.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF00695C).copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "${index + 1}",
-                                color = Color(0xFF00695C),
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.width(10.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            ClickableStoryText(
-                                text = example.english,
-                                accent = Color(0xFF00695C),
-                                fontSize = 14,
-                                lineHeight = 22,
-                                showHint = false,
-                                baseColor = Color(0xFF1A237E)
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                example.persian,
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                                lineHeight = 18.sp
-                            )
-                        }
-                        IconButton(
-                            onClick = { speechHelper.speak(example.english) },
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF00695C).copy(alpha = 0.1f))
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.VolumeUp,
-                                contentDescription = "Play",
-                                tint = Color(0xFF00695C),
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        // 🎥 صفحه ویدیوهای آموزشی
+        composable(Routes.VIDEOS) {
+            VideoScreen()
+        }
 
-            Spacer(Modifier.height(30.dp))
+        // 💬 جملات روزمره
+        composable(Routes.DAILY_SENTENCES) {
+            DailySentencesScreen()
         }
     }
 }
