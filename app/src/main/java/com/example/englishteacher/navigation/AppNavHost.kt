@@ -12,6 +12,7 @@ import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
+import com.example.englishteacher.ui.screens.GroupQuizScreen
 import com.example.englishteacher.ui.screens.HomeScreen
 import com.example.englishteacher.ui.screens.LessonDetailScreen
 import com.example.englishteacher.ui.screens.LessonListScreen
@@ -44,11 +45,13 @@ object Routes {
     const val BOOKMARKED_WORDS = "bookmarked_words"
     const val VIDEOS = "videos"
     const val DAILY_SENTENCES = "daily_sentences"
+    const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
     fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
     fun storyDetail(storyId: String) = "story_detail/$storyId"
+    fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
 }
 
 @Composable
@@ -101,6 +104,9 @@ fun AppNavHost(
                 onBack = { navController.popBackStack() },
                 onLessonClick = { lessonId ->
                     navController.navigate(Routes.lessonDetail(lessonId))
+                },
+                onGroupQuizClick = { groupIndex ->
+                    navController.navigate(Routes.groupQuiz(level, groupIndex))
                 }
             )
         }
@@ -113,6 +119,28 @@ fun AppNavHost(
             LessonDetailScreen(
                 lessonId = lessonId,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 📝 امتحان گروهی
+        composable(
+            route = Routes.GROUP_QUIZ,
+            arguments = listOf(
+                navArgument("level") { type = NavType.StringType },
+                navArgument("groupIndex") { type = NavType.IntType }
+            )
+        ) { entry ->
+            val levelName = entry.arguments?.getString("level") ?: Level.BEGINNER.name
+            val level = Level.valueOf(levelName)
+            val groupIndex = entry.arguments?.getInt("groupIndex") ?: 0
+            GroupQuizScreen(
+                level = level,
+                groupIndex = groupIndex,
+                onBack = { navController.popBackStack() },
+                onPassed = {
+                    // بعد از قبولی، برمی‌گردیم به لیست درس‌ها (که حالا گروه بعدی بازه)
+                    navController.popBackStack()
+                }
             )
         }
 
