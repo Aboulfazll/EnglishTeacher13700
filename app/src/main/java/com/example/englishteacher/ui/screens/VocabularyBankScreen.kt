@@ -13,11 +13,13 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +35,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VocabularyBankScreen() {
+fun VocabularyBankScreen(
+    onStartFlashcard: (String) -> Unit = {}
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val speechHelper = remember { SpeechHelper(context) }
@@ -94,9 +98,101 @@ fun VocabularyBankScreen() {
                 .padding(padding)
         ) {
 
+            // ==================== کارت فلش‌کارت ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                            )
+                        )
+                        .padding(18.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.25f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.Style,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    "🎴 فلش‌کارت",
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "با کارت‌های چرخشی لغات رو حفظ کن",
+                                    fontSize = 11.sp,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(14.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(
+                                onClick = { onStartFlashcard("all") },
+                                modifier = Modifier.weight(1f).height(44.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color(0xFF6A1B9A)
+                                )
+                            ) {
+                                Text(
+                                    "همه (${allWords.size})",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Button(
+                                onClick = { onStartFlashcard("bookmarked") },
+                                modifier = Modifier.weight(1f).height(44.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White.copy(alpha = 0.85f),
+                                    contentColor = Color(0xFFFFA000)
+                                )
+                            ) {
+                                Text(
+                                    "ذخیره (${bookmarkedWords.size})",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             // نوار جستجو
             Card(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -117,6 +213,8 @@ fun VocabularyBankScreen() {
                     )
                 )
             }
+
+            Spacer(Modifier.height(10.dp))
 
             // فیلترها
             Row(
@@ -214,7 +312,6 @@ fun VocabularyBankScreen() {
                                 )
                             }
 
-                            // دکمه Bookmark
                             IconButton(
                                 onClick = {
                                     scope.launch {
@@ -231,7 +328,6 @@ fun VocabularyBankScreen() {
                                 )
                             }
 
-                            // دکمه Share
                             IconButton(
                                 onClick = {
                                     ShareHelper.shareWord(context, english, persian, pronunciation)
@@ -246,7 +342,6 @@ fun VocabularyBankScreen() {
                                 )
                             }
 
-                            // دکمه پخش
                             IconButton(
                                 onClick = { speechHelper.speak(english) },
                                 modifier = Modifier
