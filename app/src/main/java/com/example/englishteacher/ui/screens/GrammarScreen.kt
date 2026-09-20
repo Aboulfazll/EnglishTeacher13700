@@ -1,249 +1,434 @@
-package com.example.englishteacher.navigation
+package com.example.englishteacher.ui.screens
 
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.example.englishteacher.data.Level
-import com.example.englishteacher.ui.screens.AIChatScreen
-import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
-import com.example.englishteacher.ui.screens.DailySentencesScreen
-import com.example.englishteacher.ui.screens.GrammarQuizScreen
-import com.example.englishteacher.ui.screens.GrammarScreen
-import com.example.englishteacher.ui.screens.GroupQuizScreen
-import com.example.englishteacher.ui.screens.HomeScreen
-import com.example.englishteacher.ui.screens.LessonDetailScreen
-import com.example.englishteacher.ui.screens.LessonListScreen
-import com.example.englishteacher.ui.screens.LevelTestScreen
-import com.example.englishteacher.ui.screens.PodcastPlayerScreen
-import com.example.englishteacher.ui.screens.PodcastScreen
-import com.example.englishteacher.ui.screens.ProfileScreen
-import com.example.englishteacher.ui.screens.ProgressScreen
-import com.example.englishteacher.ui.screens.SettingsScreen
-import com.example.englishteacher.ui.screens.StoryBookScreen
-import com.example.englishteacher.ui.screens.StoryDetailScreen
-import com.example.englishteacher.ui.screens.VideoScreen
-import com.example.englishteacher.ui.screens.VocabularyBankScreen
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.englishteacher.data.GrammarRepository
+import kotlin.random.Random
 
-object Routes {
-    const val HOME = "home"
-    const val LESSON_LIST = "lessons/{level}"
-    const val LESSON_DETAIL = "lesson/{lessonId}"
-    const val PROGRESS = "progress"
-    const val AI_CHAT = "ai_chat"
-    const val SETTINGS = "settings"
-    const val PODCAST = "podcast"
-    const val PODCAST_PLAYER = "podcast_player/{url}/{title}"
-    const val GRAMMAR = "grammar"
-    const val GRAMMAR_QUIZ = "grammar_quiz"
-    const val STORY_BOOK = "story_book"
-    const val STORY_DETAIL = "story_detail/{storyId}"
-    const val VOCABULARY_BANK = "vocabulary_bank"
-    const val LEVEL_TEST = "level_test"
-    const val PROFILE = "profile"
-    const val BOOKMARKED_WORDS = "bookmarked_words"
-    const val VIDEOS = "videos"
-    const val DAILY_SENTENCES = "daily_sentences"
-    const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
+private val QUIZ_ACCENT = Color(0xFF00695C)
 
-    fun lessonList(level: Level) = "lessons/${level.name}"
-    fun lessonDetail(lessonId: String) = "lesson/$lessonId"
-    fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
-    fun storyDetail(storyId: String) = "story_detail/$storyId"
-    fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
-}
+data class GrammarQuestion(
+    val question: String,
+    val options: List<String>,
+    val correctIndex: Int,
+    val category: String
+)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    NavHost(
-        navController = navController,
-        startDestination = Routes.HOME,
-        modifier = modifier
-    ) {
-        composable(Routes.HOME) {
-            HomeScreen(
-                onLevelClick = { level ->
-                    navController.navigate(Routes.lessonList(level))
+fun GrammarQuizScreen(onBack: () -> Unit) {
+
+    val allQuestions: List<GrammarQuestion> = remember { generateQuestions() }
+
+    var currentQuestion by remember { mutableIntStateOf(0) }
+    var selectedOption by remember { mutableStateOf<Int?>(null) }
+    var score by remember { mutableIntStateOf(0) }
+    var showResult by remember { mutableStateOf(false) }
+
+    val total = allQuestions.size
+    val percentage = if (total > 0) (score.toFloat() / total * 100).toInt() else 0
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            "🏆 کوییز گرامر",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            "$total سؤال تصادفی",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.85f)
+                        )
+                    }
                 },
-                onGrammarClick = {
-                    navController.navigate(Routes.GRAMMAR)
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
                 },
-                onStoryBookClick = {
-                    navController.navigate(Routes.STORY_BOOK)
-                },
-                onVocabularyBankClick = {
-                    navController.navigate(Routes.VOCABULARY_BANK)
-                },
-                onLevelTestClick = {
-                    navController.navigate(Routes.LEVEL_TEST)
-                },
-                onBookmarkedWordsClick = {
-                    navController.navigate(Routes.BOOKMARKED_WORDS)
-                },
-                onVideoClick = {
-                    navController.navigate(Routes.VIDEOS)
-                },
-                onDailySentencesClick = {
-                    navController.navigate(Routes.DAILY_SENTENCES)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = QUIZ_ACCENT)
+            )
+        }
+    ) { padding ->
+
+        // ==================== نتیجه ====================
+        if (showResult) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF5F7FA))
+                    .padding(padding)
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.linearGradient(
+                                    when {
+                                        percentage >= 90 -> listOf(Color(0xFF11998E), Color(0xFF38EF7D))
+                                        percentage >= 70 -> listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
+                                        else -> listOf(Color(0xFFEF5350), Color(0xFFE57373))
+                                    }
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                when {
+                                    percentage >= 90 -> "🏆"
+                                    percentage >= 70 -> "👍"
+                                    else -> "💪"
+                                },
+                                fontSize = 46.sp
+                            )
+                            Text(
+                                "$percentage%",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(24.dp))
+
+                    Text(
+                        text = when {
+                            percentage >= 90 -> "🎉 عالی بود!"
+                            percentage >= 70 -> "خوب بود!"
+                            else -> "نیاز به تمرین بیشتر"
+                        },
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+
+                    Text("امتیاز شما", fontSize = 14.sp, color = Color.Gray)
+                    Text(
+                        "$score از $total",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = QUIZ_ACCENT
+                    )
+
+                    Spacer(Modifier.height(30.dp))
+
+                    Button(
+                        onClick = {
+                            currentQuestion = 0
+                            selectedOption = null
+                            score = 0
+                            showResult = false
+                        },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = QUIZ_ACCENT)
+                    ) {
+                        Text("تلاش مجدد", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = onBack,
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("بازگشت", color = QUIZ_ACCENT, fontWeight = FontWeight.Bold)
+                    }
                 }
-            )
+            }
+            return@Scaffold
         }
 
-        composable(
-            route = Routes.LESSON_LIST,
-            arguments = listOf(navArgument("level") { type = NavType.StringType })
-        ) { entry ->
-            val levelName = entry.arguments?.getString("level") ?: Level.BEGINNER.name
-            val level = Level.valueOf(levelName)
-            LessonListScreen(
-                level = level,
-                onBack = { navController.popBackStack() },
-                onLessonClick = { lessonId ->
-                    navController.navigate(Routes.lessonDetail(lessonId))
-                },
-                onGroupQuizClick = { groupIndex ->
-                    navController.navigate(Routes.groupQuiz(level, groupIndex))
+        // ==================== سوال ====================
+        if (allQuestions.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("سوالی موجود نیست")
+            }
+            return@Scaffold
+        }
+
+        val q = allQuestions[currentQuestion]
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F7FA))
+                .padding(padding)
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "سوال ${currentQuestion + 1} از $total",
+                    fontSize = 13.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "امتیاز: $score",
+                    fontSize = 13.sp,
+                    color = QUIZ_ACCENT,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            LinearProgressIndicator(
+                progress = { (currentQuestion + 1).toFloat() / total },
+                modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
+                color = QUIZ_ACCENT,
+                trackColor = QUIZ_ACCENT.copy(alpha = 0.15f)
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(QUIZ_ACCENT.copy(alpha = 0.12f))
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                Text(
+                    q.category,
+                    fontSize = 11.sp,
+                    color = QUIZ_ACCENT,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(QUIZ_ACCENT.copy(alpha = 0.08f), Color.White)
+                            )
+                        )
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        q.question,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 26.sp,
+                        color = Color(0xFF1A237E),
+                        textAlign = TextAlign.Start
+                    )
                 }
-            )
-        }
+            }
 
-        composable(
-            route = Routes.LESSON_DETAIL,
-            arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
-        ) { entry ->
-            val lessonId = entry.arguments?.getString("lessonId") ?: ""
-            LessonDetailScreen(
-                lessonId = lessonId,
-                onBack = { navController.popBackStack() }
-            )
-        }
+            Spacer(Modifier.height(20.dp))
 
-        // 📝 امتحان گروهی
-        composable(
-            route = Routes.GROUP_QUIZ,
-            arguments = listOf(
-                navArgument("level") { type = NavType.StringType },
-                navArgument("groupIndex") { type = NavType.IntType }
-            )
-        ) { entry ->
-            val levelName = entry.arguments?.getString("level") ?: Level.BEGINNER.name
-            val level = Level.valueOf(levelName)
-            val groupIndex = entry.arguments?.getInt("groupIndex") ?: 0
-            GroupQuizScreen(
-                level = level,
-                groupIndex = groupIndex,
-                onBack = { navController.popBackStack() },
-                onPassed = {
-                    navController.popBackStack()
+            q.options.forEachIndexed { index, option ->
+                val isSelected = selectedOption == index
+                val isCorrect = index == q.correctIndex
+                val showFeedback = selectedOption != null
+
+                val bgColor = when {
+                    !showFeedback -> Color.White
+                    isCorrect -> Color(0xFFC8E6C9)
+                    isSelected -> Color(0xFFFFCDD2)
+                    else -> Color.White
                 }
-            )
-        }
 
-        // 📖 گرامر
-        composable(Routes.GRAMMAR) {
-            GrammarScreen(
-                onStartQuiz = {
-                    navController.navigate(Routes.GRAMMAR_QUIZ)
+                val borderColor = when {
+                    !showFeedback -> Color.Transparent
+                    isCorrect -> Color(0xFF43A047)
+                    isSelected -> Color(0xFFD32F2F)
+                    else -> Color.Transparent
                 }
-            )
-        }
 
-        // 🏆 کوییز گرامر
-        composable(Routes.GRAMMAR_QUIZ) {
-            GrammarQuizScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(Routes.VOCABULARY_BANK) {
-            VocabularyBankScreen()
-        }
-
-        composable(Routes.LEVEL_TEST) {
-            LevelTestScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Routes.STORY_BOOK) {
-            StoryBookScreen(
-                onStoryClick = { storyId ->
-                    navController.navigate(Routes.storyDetail(storyId))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = bgColor),
+                    border = androidx.compose.foundation.BorderStroke(2.dp, borderColor),
+                    elevation = CardDefaults.cardElevation(if (isSelected) 4.dp else 2.dp),
+                    onClick = {
+                        if (selectedOption == null) {
+                            selectedOption = index
+                            if (isCorrect) score++
+                        }
+                    }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = isSelected,
+                            onClick = {
+                                if (selectedOption == null) {
+                                    selectedOption = index
+                                    if (isCorrect) score++
+                                }
+                            },
+                            colors = RadioButtonDefaults.colors(selectedColor = QUIZ_ACCENT)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            option,
+                            fontSize = 15.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = Color(0xFF1A237E)
+                        )
+                    }
                 }
-            )
-        }
+            }
 
-        composable(
-            route = Routes.STORY_DETAIL,
-            arguments = listOf(navArgument("storyId") { type = NavType.StringType })
-        ) { entry ->
-            val storyId = entry.arguments?.getString("storyId") ?: ""
-            StoryDetailScreen(
-                storyId = storyId,
-                onBack = { navController.popBackStack() }
-            )
-        }
+            Spacer(Modifier.height(24.dp))
 
-        composable(Routes.PROGRESS) {
-            ProgressScreen()
-        }
-
-        composable(Routes.PROFILE) {
-            ProfileScreen()
-        }
-
-        composable(Routes.BOOKMARKED_WORDS) {
-            BookmarkedWordsScreen()
-        }
-
-        composable(Routes.AI_CHAT) {
-            AIChatScreen()
-        }
-
-        composable(Routes.SETTINGS) {
-            SettingsScreen()
-        }
-
-        composable(Routes.PODCAST) {
-            PodcastScreen(
-                onPodcastClick = { url, title ->
-                    val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
-                    val encodedTitle = java.net.URLEncoder.encode(title, "UTF-8")
-                    navController.navigate("podcast_player/$encodedUrl/$encodedTitle")
+            if (selectedOption != null) {
+                Button(
+                    onClick = {
+                        if (currentQuestion < total - 1) {
+                            currentQuestion++
+                            selectedOption = null
+                        } else {
+                            showResult = true
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = QUIZ_ACCENT)
+                ) {
+                    Text(
+                        if (currentQuestion < total - 1) "سوال بعدی →" else "دیدن نتیجه 🎉",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                 }
-            )
-        }
+            }
 
-        composable(
-            route = Routes.PODCAST_PLAYER,
-            arguments = listOf(
-                navArgument("url") { type = NavType.StringType },
-                navArgument("title") { type = NavType.StringType }
-            )
-        ) { entry ->
-            val encodedUrl = entry.arguments?.getString("url") ?: ""
-            val encodedTitle = entry.arguments?.getString("title") ?: ""
-            val url = java.net.URLDecoder.decode(encodedUrl, "UTF-8")
-            val title = java.net.URLDecoder.decode(encodedTitle, "UTF-8")
-            PodcastPlayerScreen(
-                podcastUrl = url,
-                podcastTitle = title,
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        // 🎥 صفحه ویدیوهای آموزشی
-        composable(Routes.VIDEOS) {
-            VideoScreen()
-        }
-
-        // 💬 جملات روزمره
-        composable(Routes.DAILY_SENTENCES) {
-            DailySentencesScreen()
+            Spacer(Modifier.height(30.dp))
         }
     }
+}
+
+// ==================== ساخت سوالات ====================
+
+private fun generateQuestions(): List<GrammarQuestion> {
+    val allTopics = GrammarRepository.getAllTopics()
+    val questions = mutableListOf<GrammarQuestion>()
+
+    data class ExampleWithCategory(
+        val english: String,
+        val persian: String,
+        val category: String
+    )
+
+    val allExamples = allTopics.flatMap { topic ->
+        topic.examples.map { ex ->
+            ExampleWithCategory(ex.english, ex.persian, topic.category)
+        }
+    }
+
+    val candidateWords = listOf(
+        "am", "is", "are", "was", "were", "be", "been",
+        "have", "has", "had",
+        "do", "does", "did",
+        "will", "would", "can", "could", "should", "must", "may", "might",
+        "in", "on", "at", "to", "from", "with", "for", "about",
+        "the", "a", "an",
+        "and", "but", "or", "so", "because",
+        "not", "don't", "doesn't", "didn't",
+        "my", "your", "his", "her", "its", "our", "their",
+        "I", "you", "he", "she", "it", "we", "they"
+    )
+
+    val shuffledExamples = allExamples.shuffled(Random(System.currentTimeMillis())).take(15)
+
+    for (ex in shuffledExamples) {
+        val words = ex.english.split(Regex("\\s+"))
+        val deletableIndices = words.indices.filter { idx ->
+            val clean = words[idx].lowercase().trim('.', ',', '!', '?', '"', '\'')
+            clean in candidateWords
+        }
+
+        if (deletableIndices.isEmpty()) continue
+
+        val removeIdx = deletableIndices.random()
+        val correctWord = words[removeIdx].trim('.', ',', '!', '?', '"', '\'')
+
+        if (correctWord.length < 2) continue
+
+        val questionWords = words.toMutableList()
+        questionWords[removeIdx] = "______"
+        val questionSentence = questionWords.joinToString(" ")
+
+        val wrongOptions = candidateWords
+            .filter { it.lowercase() != correctWord.lowercase() }
+            .shuffled()
+            .take(3)
+
+        val allOptions = (wrongOptions + correctWord).shuffled()
+        val correctIndex = allOptions.indexOf(correctWord)
+
+        questions.add(
+            GrammarQuestion(
+                question = "$questionSentence\n\n«${ex.persian}»",
+                options = allOptions,
+                correctIndex = correctIndex,
+                category = ex.category
+            )
+        )
+    }
+
+    return questions.shuffled().take(10)
 }
