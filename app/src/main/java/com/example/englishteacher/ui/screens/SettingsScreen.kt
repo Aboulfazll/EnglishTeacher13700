@@ -25,8 +25,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.englishteacher.AchievementManager
+import com.example.englishteacher.BookmarkManager
 import com.example.englishteacher.NotificationHelper
 import com.example.englishteacher.NotificationScheduler
 import com.example.englishteacher.data.ProgressManager
@@ -48,11 +51,17 @@ fun SettingsScreen() {
     var totalStars by remember { mutableIntStateOf(0) }
     var notificationsEnabled by remember { mutableStateOf(false) }
     var notificationHour by remember { mutableIntStateOf(20) }
+    var vibrationEnabled by remember { mutableStateOf(true) }
+    var soundEffects by remember { mutableStateOf(true) }
+    var language by remember { mutableStateOf("fa") }
 
     var showResetDialog by remember { mutableStateOf(false) }
+    var showResetAchievementsDialog by remember { mutableStateOf(false) }
+    var showResetBookmarksDialog by remember { mutableStateOf(false) }
     var showApiDialog by remember { mutableStateOf(false) }
     var showTimeDialog by remember { mutableStateOf(false) }
     var tempApiKey by remember { mutableStateOf("") }
+    var showAboutDialog by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -68,6 +77,8 @@ fun SettingsScreen() {
 
     LaunchedEffect(Unit) {
         NotificationHelper.createNotificationChannel(context)
+    }
+    LaunchedEffect(Unit) {
         SettingsManager.getTextScale(context).collectLatest { textScale = it }
     }
     LaunchedEffect(Unit) {
@@ -90,6 +101,15 @@ fun SettingsScreen() {
     }
     LaunchedEffect(Unit) {
         SettingsManager.getNotificationHour(context).collectLatest { notificationHour = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getVibration(context).collectLatest { vibrationEnabled = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getSoundEffects(context).collectLatest { soundEffects = it }
+    }
+    LaunchedEffect(Unit) {
+        SettingsManager.getLanguage(context).collectLatest { language = it }
     }
 
     Scaffold(
@@ -119,7 +139,7 @@ fun SettingsScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // کارت امتیاز
+            // ==================== کارت امتیاز ====================
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -170,6 +190,7 @@ fun SettingsScreen() {
 
             Spacer(Modifier.height(8.dp))
 
+            // ==================== ظاهر و نمایش ====================
             SectionTitle("🎨 ظاهر و نمایش")
 
             SettingsSliderCard(
@@ -203,8 +224,7 @@ fun SettingsScreen() {
                 }
             )
 
-            Spacer(Modifier.height(8.dp))
-
+            // ==================== صدا و تلفظ ====================
             SectionTitle("🔊 صدا و تلفظ")
 
             SettingsSliderCard(
@@ -226,8 +246,34 @@ fun SettingsScreen() {
                 }
             )
 
-            Spacer(Modifier.height(8.dp))
+            SettingsSwitchCard(
+                icon = Icons.Filled.MusicNote,
+                iconColor = Color(0xFF7B1FA2),
+                title = "افکت صوتی",
+                subtitle = if (soundEffects) "صداهای اپ فعال" else "بی‌صدا",
+                checked = soundEffects,
+                onCheckedChange = { enabled ->
+                    soundEffects = enabled
+                    scope.launch { SettingsManager.setSoundEffects(context, enabled) }
+                }
+            )
 
+            // ==================== لرزش ====================
+            SectionTitle("📳 لرزش و بازخورد")
+
+            SettingsSwitchCard(
+                icon = Icons.Filled.Vibration,
+                iconColor = Color(0xFF00838F),
+                title = "لرزش",
+                subtitle = if (vibrationEnabled) "در تعاملات فعال" else "غیرفعال",
+                checked = vibrationEnabled,
+                onCheckedChange = { enabled ->
+                    vibrationEnabled = enabled
+                    scope.launch { SettingsManager.setVibration(context, enabled) }
+                }
+            )
+
+            // ==================== اعلان‌ها ====================
             SectionTitle("🔔 اعلان‌ها")
 
             SettingsSwitchCard(
@@ -246,7 +292,9 @@ fun SettingsScreen() {
                             notificationsEnabled = true
                             scope.launch {
                                 SettingsManager.setNotificationsEnabled(context, true)
-                                NotificationScheduler.scheduleDailyNotification(context, notificationHour, 0)
+                                NotificationScheduler.scheduleDailyNotification(
+                                    context, notificationHour, 0
+                                )
                             }
                         }
                     } else {
@@ -279,7 +327,11 @@ fun SettingsScreen() {
                                 .background(Color(0xFFE91E63).copy(alpha = 0.1f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Filled.Schedule, contentDescription = null, tint = Color(0xFFE91E63))
+                            Icon(
+                                Icons.Filled.Schedule,
+                                contentDescription = null,
+                                tint = Color(0xFFE91E63)
+                            )
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
@@ -289,15 +341,22 @@ fun SettingsScreen() {
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1A237E)
                             )
-                            Text("$notificationHour:00", fontSize = 12.sp, color = Color.Gray)
+                            Text(
+                                "${String.format("%02d:00", notificationHour)}",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
                         }
-                        Icon(Icons.Filled.ChevronLeft, contentDescription = null, tint = Color.Gray)
+                        Icon(
+                            Icons.Filled.ChevronLeft,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
                     }
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
-
+            // ==================== یادگیری ====================
             SectionTitle("📚 یادگیری")
 
             Card(
@@ -315,7 +374,11 @@ fun SettingsScreen() {
                                 .background(Color(0xFF1A237E).copy(alpha = 0.1f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Filled.Translate, contentDescription = null, tint = Color(0xFF1A237E))
+                            Icon(
+                                Icons.Filled.Translate,
+                                contentDescription = null,
+                                tint = Color(0xFF1A237E)
+                            )
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
@@ -325,7 +388,11 @@ fun SettingsScreen() {
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1A237E)
                             )
-                            Text("هدف یادگیری روزانه", fontSize = 12.sp, color = Color.Gray)
+                            Text(
+                                "هدف یادگیری روزانه",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
                         }
                         Text(
                             "$wordsPerDay",
@@ -344,7 +411,9 @@ fun SettingsScreen() {
                                 selected = wordsPerDay == count,
                                 onClick = {
                                     wordsPerDay = count
-                                    scope.launch { SettingsManager.setWordsPerDay(context, count) }
+                                    scope.launch {
+                                        SettingsManager.setWordsPerDay(context, count)
+                                    }
                                 },
                                 label = { Text("$count", fontSize = 12.sp) },
                                 colors = FilterChipDefaults.filterChipColors(
@@ -358,8 +427,75 @@ fun SettingsScreen() {
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            // ==================== زبان ====================
+            SectionTitle("🌐 زبان")
 
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF00695C).copy(alpha = 0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Language,
+                                contentDescription = null,
+                                tint = Color(0xFF00695C)
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "زبان اپلیکیشن",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF1A237E)
+                            )
+                            Text(
+                                if (language == "fa") "فارسی" else "English",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        listOf(
+                            "fa" to "🇮🇷 فارسی",
+                            "en" to "🇬🇧 English"
+                        ).forEach { (code, label) ->
+                            FilterChip(
+                                selected = language == code,
+                                onClick = {
+                                    language = code
+                                    scope.launch {
+                                        SettingsManager.setLanguage(context, code)
+                                    }
+                                },
+                                label = { Text(label, fontSize = 12.sp) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF00695C),
+                                    selectedLabelColor = Color.White
+                                ),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // ==================== هوش مصنوعی ====================
             SectionTitle("🤖 هوش مصنوعی")
 
             Card(
@@ -384,7 +520,11 @@ fun SettingsScreen() {
                             .background(Color(0xFF00838F).copy(alpha = 0.1f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Filled.Key, contentDescription = null, tint = Color(0xFF00838F))
+                        Icon(
+                            Icons.Filled.Key,
+                            contentDescription = null,
+                            tint = Color(0xFF00838F)
+                        )
                     }
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
@@ -400,14 +540,18 @@ fun SettingsScreen() {
                             color = if (apiKey.isEmpty()) Color(0xFFD32F2F) else Color(0xFF43A047)
                         )
                     }
-                    Icon(Icons.Filled.ChevronLeft, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        Icons.Filled.ChevronLeft,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
-
+            // ==================== مدیریت داده ====================
             SectionTitle("⚠️ مدیریت داده")
 
+            // ریست پیشرفت
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -427,7 +571,11 @@ fun SettingsScreen() {
                             .background(Color(0xFFD32F2F).copy(alpha = 0.15f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Filled.Delete, contentDescription = null, tint = Color(0xFFD32F2F))
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = null,
+                            tint = Color(0xFFD32F2F)
+                        )
                     }
                     Spacer(Modifier.width(12.dp))
                     Column {
@@ -437,22 +585,182 @@ fun SettingsScreen() {
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFD32F2F)
                         )
-                        Text("تمام پیشرفت و امتیازات پاک می‌شود", fontSize = 12.sp, color = Color.Gray)
+                        Text(
+                            "تمام پیشرفت و امتیازات پاک می‌شود",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
                     }
                 }
             }
+
+            // ریست دستاوردها
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showResetAchievementsDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE65100).copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.EmojiEvents,
+                            contentDescription = null,
+                            tint = Color(0xFFE65100)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            "ریست دستاوردها",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE65100)
+                        )
+                        Text(
+                            "همه‌ی مدال‌ها پاک می‌شود",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+
+            // پاک کردن بوکمارک‌ها
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showResetBookmarksDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFCE4EC)),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFC2185B).copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.BookmarkRemove,
+                            contentDescription = null,
+                            tint = Color(0xFFC2185B)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            "پاک کردن بوکمارک‌ها",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFC2185B)
+                        )
+                        Text(
+                            "لغات و داستان‌های ذخیره‌شده پاک می‌شود",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+
+            // ==================== درباره ====================
+            SectionTitle("ℹ️ درباره اپلیکیشن")
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showAboutDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF1A237E).copy(alpha = 0.1f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Info,
+                            contentDescription = null,
+                            tint = Color(0xFF1A237E)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "English Teacher",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A237E)
+                        )
+                        Text(
+                            "نسخه ۱.۰",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                    Icon(
+                        Icons.Filled.ChevronLeft,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(30.dp))
+
+            Text(
+                "ساخته شده با ❤️ برای یادگیری بهتر",
+                fontSize = 11.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(Modifier.height(20.dp))
         }
     }
 
-    // دیالوگ ریست
+    // ==================== دیالوگ‌ها ====================
+
+    // ریست پیشرفت
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            icon = { Icon(Icons.Filled.Warning, contentDescription = null, tint = Color(0xFFD32F2F)) },
+            icon = {
+                Icon(
+                    Icons.Filled.Warning,
+                    contentDescription = null,
+                    tint = Color(0xFFD32F2F)
+                )
+            },
             title = { Text("ریست کردن پیشرفت؟") },
-            text = { Text("آیا مطمئن هستی؟ تمام پیشرفت، امتیازات و نمرات کوییز پاک می‌شود.") },
+            text = {
+                Text("آیا مطمئن هستی؟ تمام پیشرفت، امتیازات و نمرات کوییز پاک می‌شود.")
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -460,7 +768,11 @@ fun SettingsScreen() {
                         showResetDialog = false
                     }
                 ) {
-                    Text("بله، ریست کن", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
+                    Text(
+                        "بله، ریست کن",
+                        color = Color(0xFFD32F2F),
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
@@ -469,14 +781,87 @@ fun SettingsScreen() {
         )
     }
 
-    // دیالوگ API
+    // ریست دستاوردها
+    if (showResetAchievementsDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetAchievementsDialog = false },
+            icon = {
+                Icon(
+                    Icons.Filled.EmojiEvents,
+                    contentDescription = null,
+                    tint = Color(0xFFE65100)
+                )
+            },
+            title = { Text("ریست دستاوردها؟") },
+            text = { Text("همه‌ی مدال‌ها و دستاوردهای باز شده پاک می‌شود.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch { AchievementManager.resetAll(context) }
+                        showResetAchievementsDialog = false
+                    }
+                ) {
+                    Text(
+                        "بله، ریست کن",
+                        color = Color(0xFFE65100),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetAchievementsDialog = false }) { Text("لغو") }
+            }
+        )
+    }
+
+    // پاک کردن بوکمارک‌ها
+    if (showResetBookmarksDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetBookmarksDialog = false },
+            icon = {
+                Icon(
+                    Icons.Filled.BookmarkRemove,
+                    contentDescription = null,
+                    tint = Color(0xFFC2185B)
+                )
+            },
+            title = { Text("پاک کردن بوکمارک‌ها؟") },
+            text = { Text("تمام لغات و داستان‌های ذخیره‌شده پاک می‌شود.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            BookmarkManager.clearAll(context)
+                            BookmarkManager.clearAllStories(context)
+                        }
+                        showResetBookmarksDialog = false
+                    }
+                ) {
+                    Text(
+                        "بله، پاک کن",
+                        color = Color(0xFFC2185B),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetBookmarksDialog = false }) { Text("لغو") }
+            }
+        )
+    }
+
+    // API
     if (showApiDialog) {
         AlertDialog(
             onDismissRequest = { showApiDialog = false },
             title = { Text("کلید API هوش مصنوعی") },
             text = {
                 Column {
-                    Text("کلید API خود را از Groq دریافت کنید (رایگان):", fontSize = 13.sp, color = Color.Gray)
+                    Text(
+                        "کلید API خود را از Groq دریافت کنید (رایگان):",
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
                         value = tempApiKey,
@@ -493,7 +878,9 @@ fun SettingsScreen() {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        scope.launch { SettingsManager.setApiKey(context, tempApiKey.trim()) }
+                        scope.launch {
+                            SettingsManager.setApiKey(context, tempApiKey.trim())
+                        }
                         showApiDialog = false
                     }
                 ) {
@@ -506,7 +893,7 @@ fun SettingsScreen() {
         )
     }
 
-    // دیالوگ ساعت
+    // ساعت
     if (showTimeDialog) {
         val hours = (0..23).toList()
         var tempHour by remember { mutableIntStateOf(notificationHour) }
@@ -532,12 +919,15 @@ fun SettingsScreen() {
                             RadioButton(
                                 selected = isSelected,
                                 onClick = { tempHour = h },
-                                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFE91E63))
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = Color(0xFFE91E63)
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 String.format("%02d:00", h),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                fontWeight = if (isSelected) FontWeight.Bold
+                                else FontWeight.Normal
                             )
                         }
                     }
@@ -550,7 +940,9 @@ fun SettingsScreen() {
                         SettingsManager.setNotificationHour(context, tempHour)
                         if (notificationsEnabled) {
                             NotificationScheduler.cancelDailyNotification(context)
-                            NotificationScheduler.scheduleDailyNotification(context, tempHour, 0)
+                            NotificationScheduler.scheduleDailyNotification(
+                                context, tempHour, 0
+                            )
                         }
                     }
                     showTimeDialog = false
@@ -562,6 +954,68 @@ fun SettingsScreen() {
                 TextButton(onClick = { showTimeDialog = false }) { Text("لغو") }
             }
         )
+    }
+
+    // درباره
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = { showAboutDialog = false },
+            icon = {
+                Text("🎓", fontSize = 48.sp)
+            },
+            title = {
+                Text(
+                    "English Teacher",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        "اپلیکیشن یادگیری زبان انگلیسی با محتوای فارسی",
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    InfoRow("📖", "۳۴ درس در ۳ سطح")
+                    InfoRow("📚", "۱۰۰ داستان")
+                    InfoRow("📝", "۶۰ موضوع گرامری")
+                    InfoRow("💬", "۲۰۰+ جمله روزمره")
+                    InfoRow("🎴", "فلش‌کارت پیشرفته")
+                    InfoRow("🏆", "۲۷ دستاورد")
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "نسخه ۱.۰",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAboutDialog = false }) {
+                    Text("بستن", color = Color(0xFF1A237E), fontWeight = FontWeight.Bold)
+                }
+            }
+        )
+    }
+}
+
+// ==================== کامپوننت‌های کمکی ====================
+
+@Composable
+private fun InfoRow(emoji: String, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(emoji, fontSize = 16.sp)
+        Spacer(Modifier.width(10.dp))
+        Text(text, fontSize = 13.sp, color = Color(0xFF1A237E))
     }
 }
 
@@ -578,7 +1032,12 @@ private fun SectionTitle(text: String) {
                 .background(Color(0xFF1A237E))
         )
         Spacer(Modifier.width(10.dp))
-        Text(text, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
+        Text(
+            text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1A237E)
+        )
     }
 }
 
@@ -612,7 +1071,12 @@ private fun SettingsSliderCard(
                 }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text(title, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
+                    Text(
+                        title,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
                     Text(subtitle, fontSize = 12.sp, color = Color.Gray)
                 }
             }
@@ -622,7 +1086,10 @@ private fun SettingsSliderCard(
                 onValueChange = onValueChange,
                 valueRange = valueRange,
                 steps = steps,
-                colors = SliderDefaults.colors(thumbColor = iconColor, activeTrackColor = iconColor)
+                colors = SliderDefaults.colors(
+                    thumbColor = iconColor,
+                    activeTrackColor = iconColor
+                )
             )
         }
     }
@@ -658,7 +1125,12 @@ private fun SettingsSwitchCard(
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
+                Text(
+                    title,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A237E)
+                )
                 Text(subtitle, fontSize = 12.sp, color = Color.Gray)
             }
             Switch(
