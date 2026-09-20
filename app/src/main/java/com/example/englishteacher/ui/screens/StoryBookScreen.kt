@@ -3,10 +3,8 @@ package com.example.englishteacher.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -28,7 +26,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -41,7 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.englishteacher.BookmarkManager
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.Story
@@ -165,7 +162,6 @@ fun StoryBookScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ==================== کارت آماری ====================
             item(span = { GridItemSpan(2) }) {
                 StoryStatsCard(
                     totalStories = allStories.size,
@@ -174,7 +170,6 @@ fun StoryBookScreen(
                 )
             }
 
-            // ==================== داستان‌های ویژه ====================
             if (searchQuery.isEmpty() && selectedLevel == null) {
                 item(span = { GridItemSpan(2) }) {
                     FeaturedSection(
@@ -185,7 +180,6 @@ fun StoryBookScreen(
                 }
             }
 
-            // ==================== فیلتر سطح ====================
             item(span = { GridItemSpan(2) }) {
                 LevelFilterRow(
                     selectedLevel = selectedLevel,
@@ -193,7 +187,6 @@ fun StoryBookScreen(
                 )
             }
 
-            // ==================== عنوان لیست ====================
             item(span = { GridItemSpan(2) }) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
@@ -218,7 +211,6 @@ fun StoryBookScreen(
                 }
             }
 
-            // ==================== لیست داستان‌ها ====================
             itemsIndexed(filteredStories, key = { _, story -> story.id }) { index, story ->
                 AnimatedStoryCard(
                     story = story,
@@ -242,7 +234,6 @@ fun StoryBookScreen(
     }
 }
 
-// ==================== کارت آماری ====================
 @Composable
 private fun StoryStatsCard(
     totalStories: Int,
@@ -373,7 +364,6 @@ private fun StatChip(emoji: String, value: String, label: String) {
     }
 }
 
-// ==================== بخش داستان‌های ویژه ====================
 @Composable
 private fun FeaturedSection(
     stories: List<Story>,
@@ -470,7 +460,6 @@ private fun FeaturedStoryCard(
                     )
             )
 
-            // نشان خونده‌شده
             if (isRead) {
                 Box(
                     modifier = Modifier
@@ -490,7 +479,6 @@ private fun FeaturedStoryCard(
                 }
             }
 
-            // برچسب سطح
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -507,7 +495,6 @@ private fun FeaturedStoryCard(
                 )
             }
 
-            // اطلاعات پایین
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -543,7 +530,6 @@ private fun FeaturedStoryCard(
     }
 }
 
-// ==================== فیلتر سطح ====================
 @Composable
 private fun LevelFilterRow(
     selectedLevel: Level?,
@@ -562,11 +548,6 @@ private fun LevelFilterRow(
     ) {
         filters.forEach { (label, level) ->
             val isSelected = selectedLevel == level
-            val chipColor by animateFloatAsState(
-                targetValue = if (isSelected) 1f else 0f,
-                animationSpec = tween(300),
-                label = "chipColor"
-            )
 
             FilterChip(
                 selected = isSelected,
@@ -590,7 +571,6 @@ private fun LevelFilterRow(
     }
 }
 
-// ==================== کارت داستان با انیمیشن ====================
 @Composable
 private fun AnimatedStoryCard(
     story: Story,
@@ -694,7 +674,6 @@ private fun StoryBookCard(
                         )
                 )
 
-                // برچسب سطح
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
@@ -711,7 +690,6 @@ private fun StoryBookCard(
                     )
                 }
 
-                // نشان‌های بالا راست
                 Row(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -747,7 +725,6 @@ private fun StoryBookCard(
                     }
                 }
 
-                // آیکون پخش وسط
                 Box(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -759,7 +736,6 @@ private fun StoryBookCard(
                     Text("▶️", fontSize = 16.sp)
                 }
 
-                // زمان تخمینی
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -817,7 +793,6 @@ private fun StoryBookCard(
     }
 }
 
-// ==================== حالت خالی ====================
 @Composable
 private fun EmptyStoriesState(searchQuery: String) {
     Box(
@@ -861,7 +836,6 @@ private fun EmptyStoriesState(searchQuery: String) {
     }
 }
 
-// ==================== تابع کمکی ====================
 private fun estimateReadingTime(text: String): Int {
     val wordCount = text.split(Regex("\\s+")).size
     return (wordCount / 150.0).toInt().coerceAtLeast(1)
