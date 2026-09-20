@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -75,7 +74,6 @@ fun ProgressScreen() {
         ProgressManager.getAllGroupScores(context).collectLatest { groupScores = it }
     }
 
-    // ==================== محاسبه پیشرفت ====================
     val beginnerLessons = LessonRepository.getLessonsByLevel(Level.BEGINNER)
     val intermediateLessons = LessonRepository.getLessonsByLevel(Level.INTERMEDIATE)
     val advancedLessons = LessonRepository.getLessonsByLevel(Level.ADVANCED)
@@ -124,7 +122,6 @@ fun ProgressScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // ==================== کارت پیشرفت کلی ====================
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -190,7 +187,6 @@ fun ProgressScreen() {
                 }
             }
 
-            // ==================== ۴ کارت آماری ====================
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -227,7 +223,6 @@ fun ProgressScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== پیشرفت محتوایی ====================
             Text(
                 "📚 محتوای مطالعه‌شده",
                 fontSize = 18.sp,
@@ -261,7 +256,6 @@ fun ProgressScreen() {
 
             Spacer(Modifier.height(8.dp))
 
-            // ==================== پیشرفت هر سطح ====================
             Text(
                 "🎯 پیشرفت هر سطح",
                 fontSize = 18.sp,
@@ -298,7 +292,6 @@ fun ProgressScreen() {
     }
 }
 
-// ==================== کارت آماری کوچک ====================
 @Composable
 private fun StatCard(
     modifier: Modifier = Modifier,
@@ -340,7 +333,6 @@ private fun StatCard(
     }
 }
 
-// ==================== کارت پیشرفت محتوا ====================
 @Composable
 private fun ContentProgressCard(
     icon: ImageVector,
@@ -412,7 +404,6 @@ private fun ContentProgressCard(
     }
 }
 
-// ==================== کارت پیشرفت سطح ====================
 @Composable
 private fun LevelProgressCard(
     title: String,
@@ -455,7 +446,7 @@ private fun LevelProgressCard(
             Spacer(Modifier.height(12.dp))
             LinearProgressIndicator(
                 progress = { progress },
-                modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
+                fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)) as Modifier,
                 color = color,
                 trackColor = color.copy(alpha = 0.15f)
             )
