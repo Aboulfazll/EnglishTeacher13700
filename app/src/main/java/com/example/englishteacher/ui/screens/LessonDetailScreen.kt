@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
@@ -36,7 +37,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
+fun LessonDetailScreen(
+    lessonId: String,
+    onBack: () -> Unit,
+    onStartReading: () -> Unit = {}
+) {
     val lesson = LessonRepository.getLessonById(lessonId)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -131,7 +136,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                     0 -> VocabularyTab(lesson.vocabulary, speechHelper, accent)
                     1 -> SpellingTab(lesson.spelling, speechHelper, accent)
                     2 -> GrammarTab(lesson.grammarTitle, lesson.grammarExplanation, lesson.grammarExamples, accent)
-                    3 -> ConversationTab(lesson.conversation, speechHelper, accent)
+                    3 -> ConversationTab(lesson.conversation, speechHelper, accent, onStartReading)
                     4 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
                     5 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
                     6 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
@@ -140,7 +145,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 when (selectedTab) {
                     0 -> VocabularyTab(lesson.vocabulary, speechHelper, accent)
                     1 -> GrammarTab(lesson.grammarTitle, lesson.grammarExplanation, lesson.grammarExamples, accent)
-                    2 -> ConversationTab(lesson.conversation, speechHelper, accent)
+                    2 -> ConversationTab(lesson.conversation, speechHelper, accent, onStartReading)
                     3 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
                     4 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
                     5 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
@@ -169,11 +174,7 @@ private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper, accent:
                     color = accent
                 )
                 Spacer(Modifier.weight(1f))
-                Text(
-                    "👆 روی کارت بزن",
-                    fontSize = 10.sp,
-                    color = Color.Gray
-                )
+                Text("👆 روی کارت بزن", fontSize = 10.sp, color = Color.Gray)
             }
         }
 
@@ -354,7 +355,7 @@ private fun SpellingTab(spellingList: List<SpellingExercise>, speechHelper: Spee
     }
 }
 
-// ==================== تب گرامر (قابل لمس) ====================
+// ==================== تب گرامر ====================
 @Composable
 private fun GrammarTab(title: String, explanation: String, examples: List<String>, accent: Color) {
     Column(
@@ -406,12 +407,7 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
         Spacer(Modifier.height(20.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "✏️ مثال‌ها:",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                color = accent
-            )
+            Text("✏️ مثال‌ها:", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = accent)
             Spacer(Modifier.weight(1f))
             Box(
                 modifier = Modifier
@@ -472,9 +468,14 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
     }
 }
 
-// ==================== تب مکالمه (قابل لمس) ====================
+// ==================== تب مکالمه ====================
 @Composable
-private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelper, accent: Color) {
+private fun ConversationTab(
+    conversation: Conversation,
+    speechHelper: SpeechHelper,
+    accent: Color,
+    onStartReading: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)
     ) {
@@ -485,7 +486,76 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
             color = Color(0xFF1A237E)
         )
         Text(conversation.titlePersian, fontSize = 13.sp, color = Color.Gray)
-        Spacer(Modifier.height(8.dp))
+
+        Spacer(Modifier.height(14.dp))
+
+        // ==================== دکمه حالت خوانش ====================
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onStartReading() },
+            shape = RoundedCornerShape(18.dp),
+            elevation = CardDefaults.cardElevation(6.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(accent, accent.copy(alpha = 0.7f))
+                        )
+                    )
+                    .padding(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Headphones,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "🎧 حالت خوانش",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            "جمله‌به‌جمله گوش کن و یاد بگیر",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "→",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -572,7 +642,7 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
     }
 }
 
-// ==================== تب داستان (قابل لمس) ====================
+// ==================== تب داستان ====================
 @Composable
 private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, accent: Color) {
     var isPlaying by remember { mutableStateOf(false) }
@@ -913,5 +983,81 @@ private fun QuizTab(
         }
 
         Spacer(Modifier.height(20.dp))
+    }
+}
+
+// ==================== تب گفتار ====================
+@Composable
+private fun SpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.1f))
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("🗣️", fontSize = 28.sp)
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            "تمرین گفتار",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = accent
+                        )
+                        Text(
+                            "گوش کن و تکرار کن",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+        }
+
+        items(words) { word ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { speechHelper.speak(word.english) },
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(3.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.VolumeUp,
+                        contentDescription = null,
+                        tint = accent,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            word.english,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color(0xFF1A237E)
+                        )
+                        Text(
+                            word.persian,
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                    Text("👆", fontSize = 18.sp)
+                }
+            }
+        }
     }
 }
