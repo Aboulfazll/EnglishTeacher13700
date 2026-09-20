@@ -23,23 +23,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.englishteacher.BookmarkManager
 import com.example.englishteacher.data.AchievementCategory
 import com.example.englishteacher.data.AchievementManager
-import com.example.englishteacher.data.DailySentencesRepository
-import com.example.englishteacher.data.GrammarRepository
-import com.example.englishteacher.data.Level
-import com.example.englishteacher.data.LessonRepository
+import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.ProgressManager
-import com.example.englishteacher.data.StoryBookRepository
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     var completedLessons by remember { mutableStateOf<Set<String>>(emptySet()) }
     var quizScores by remember { mutableStateOf<Set<String>>(emptySet()) }
@@ -91,31 +84,24 @@ fun AchievementsScreen(onBack: () -> Unit) {
         AchievementManager.getUnlockedDates(context).collectLatest { unlockedDates = it }
     }
 
-    // ==================== محاسبه‌ی مقادیر ====================
     val allAchievements = AchievementManager.getAllAchievements()
 
     fun getCurrentValue(achievementId: String): Int {
         return when (achievementId) {
-            // پیشرفت
             "first_lesson", "lessons_5", "lessons_10", "lessons_20", "lessons_all" -> completedLessons.size
-            // استمرار
             "streak_3", "streak_7", "streak_14", "streak_30", "streak_100", "perfect_streak_week" -> streak
-            // محتوا
             "stories_5", "stories_15", "stories_30", "stories_50", "stories_all" -> storiesRead.size
             "grammar_10", "grammar_30", "grammar_all" -> grammarViewed.size
             "sentences_5", "sentences_all" -> sentencesViewed.size
-            // مهارت
             "stars_100", "stars_500", "stars_1000" -> totalStars
             "perfect_quiz" -> if (quizScores.any { it.substringAfter(":").toIntOrNull() == 100 }) 1 else 0
             "quizzes_10" -> quizScores.size
-            // ویژه
             "groups_5", "groups_all" -> groupScores.count { it.value >= ProgressManager.PASSING_SCORE }
             "bookmarks_10" -> bookmarkedWords.size + bookmarkedStories.size
             else -> 0
         }
     }
 
-    // ==================== چک کردن دستاوردها و باز کردن ====================
     LaunchedEffect(
         completedLessons, streak, storiesRead, grammarViewed, sentencesViewed,
         totalStars, quizScores, groupScores, bookmarkedWords, bookmarkedStories
@@ -176,7 +162,6 @@ fun AchievementsScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
 
-            // ==================== کارت پیشرفت کلی ====================
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -245,7 +230,6 @@ fun AchievementsScreen(onBack: () -> Unit) {
                 }
             }
 
-            // ==================== دسته‌بندی‌ها ====================
             AchievementCategory.values().forEach { category ->
                 val categoryList = progressList.filter { it.first.category == category }
                 if (categoryList.isEmpty()) return@forEach
@@ -253,7 +237,6 @@ fun AchievementsScreen(onBack: () -> Unit) {
                 val categoryUnlocked = categoryList.count { it.third }
                 val categoryTotal = categoryList.size
 
-                // عنوان دسته
                 item {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -309,7 +292,6 @@ fun AchievementsScreen(onBack: () -> Unit) {
                     }
                 }
 
-                // کارت‌های دستاورد
                 items(categoryList, key = { it.first.id }) { (achievement, current, isUnlocked) ->
                     AchievementCard(
                         achievement = achievement,
@@ -325,7 +307,6 @@ fun AchievementsScreen(onBack: () -> Unit) {
     }
 }
 
-// ==================== کارت دستاورد ====================
 @Composable
 private fun AchievementCard(
     achievement: com.example.englishteacher.data.Achievement,
@@ -358,7 +339,6 @@ private fun AchievementCard(
         )
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            // نوار رنگی کنار
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -375,7 +355,6 @@ private fun AchievementCard(
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // آیکون
                 Box(
                     modifier = Modifier
                         .size(60.dp)
@@ -451,7 +430,6 @@ private fun AchievementCard(
                         }
                     } else if (!isUnlocked) {
                         Spacer(Modifier.height(8.dp))
-                        // نوار پیشرفت
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             LinearProgressIndicator(
                                 progress = { animatedProgress },
