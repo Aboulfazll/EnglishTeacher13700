@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
+import com.example.englishteacher.ui.screens.DailySentencesScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
 import com.example.englishteacher.ui.screens.HomeScreen
 import com.example.englishteacher.ui.screens.LessonDetailScreen
@@ -42,6 +43,7 @@ object Routes {
     const val PROFILE = "profile"
     const val BOOKMARKED_WORDS = "bookmarked_words"
     const val VIDEOS = "videos"
+    const val DAILY_SENTENCES = "daily_sentences"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -81,6 +83,9 @@ fun AppNavHost(
                 },
                 onVideoClick = {
                     navController.navigate(Routes.VIDEOS)
+                },
+                onDailySentencesClick = {
+                    navController.navigate(Routes.DAILY_SENTENCES)
                 }
             )
         }
@@ -193,6 +198,11 @@ fun AppNavHost(
         // 🎥 صفحه ویدیوهای آموزشی
         composable(Routes.VIDEOS) {
             VideoScreen()
+        }
+
+        // 💬 جملات روزمره
+        composable(Routes.DAILY_SENTENCES) {
+            DailySentencesScreen()
         }
     }
 }
