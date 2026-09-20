@@ -1,3 +1,4 @@
+
 package com.example.englishteacher.navigation
 
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import com.example.englishteacher.ui.screens.BookmarkedStoriesScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
 import com.example.englishteacher.ui.screens.DailyQuizScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
+import com.example.englishteacher.ui.screens.FlashcardScreen
 import com.example.englishteacher.ui.screens.GrammarQuizScreen
 import com.example.englishteacher.ui.screens.GrammarScreen
 import com.example.englishteacher.ui.screens.GroupQuizScreen
@@ -51,6 +53,7 @@ object Routes {
     const val VIDEOS = "videos"
     const val DAILY_SENTENCES = "daily_sentences"
     const val DAILY_QUIZ = "daily_quiz"
+    const val FLASHCARD = "flashcard/{mode}"
     const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
@@ -58,6 +61,7 @@ object Routes {
     fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
     fun storyDetail(storyId: String) = "story_detail/$storyId"
     fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
+    fun flashcard(mode: String) = "flashcard/$mode"
 }
 
 @Composable
@@ -166,7 +170,22 @@ fun AppNavHost(
         }
 
         composable(Routes.VOCABULARY_BANK) {
-            VocabularyBankScreen()
+            VocabularyBankScreen(
+                onStartFlashcard = { mode ->
+                    navController.navigate(Routes.flashcard(mode))
+                }
+            )
+        }
+
+        composable(
+            route = Routes.FLASHCARD,
+            arguments = listOf(navArgument("mode") { type = NavType.StringType })
+        ) { entry ->
+            val mode = entry.arguments?.getString("mode") ?: "all"
+            FlashcardScreen(
+                mode = mode,
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.LEVEL_TEST) {
