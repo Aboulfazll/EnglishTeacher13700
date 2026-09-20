@@ -53,7 +53,6 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
         return
     }
 
-    // رنگ بر اساس سطح
     val accent = when (lesson.level) {
         com.example.englishteacher.data.Level.BEGINNER -> Color(0xFF11998E)
         com.example.englishteacher.data.Level.INTERMEDIATE -> Color(0xFF8E2DE2)
@@ -62,7 +61,6 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
 
     var selectedTab by remember { mutableIntStateOf(0) }
 
-    // تب‌ها بر اساس داشتن spelling
     val tabs = if (lesson.spelling.isNotEmpty()) {
         listOf("لغات", "هجی", "گرامر", "مکالمه", "داستان", "کوییز", "🗣️ گفتار")
     } else {
@@ -128,7 +126,6 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
                 }
             }
 
-            // محتوا
             if (lesson.spelling.isNotEmpty()) {
                 when (selectedTab) {
                     0 -> VocabularyTab(lesson.vocabulary, speechHelper, accent)
@@ -153,7 +150,7 @@ fun LessonDetailScreen(lessonId: String, onBack: () -> Unit) {
     }
 }
 
-// ==================== تب لغات (با کلیک روی کارت = تلفظ) ====================
+// ==================== تب لغات ====================
 @Composable
 private fun VocabularyTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
     LazyColumn(
@@ -357,7 +354,7 @@ private fun SpellingTab(spellingList: List<SpellingExercise>, speechHelper: Spee
     }
 }
 
-// ==================== تب گرامر ====================
+// ==================== تب گرامر (قابل لمس) ====================
 @Composable
 private fun GrammarTab(title: String, explanation: String, examples: List<String>, accent: Color) {
     Column(
@@ -408,12 +405,28 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
 
         Spacer(Modifier.height(20.dp))
 
-        Text(
-            "✏️ مثال‌ها:",
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp,
-            color = accent
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "✏️ مثال‌ها:",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
+                color = accent
+            )
+            Spacer(Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(accent.copy(alpha = 0.12f))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    "👆 لمس کن",
+                    fontSize = 10.sp,
+                    color = accent,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
         Spacer(Modifier.height(10.dp))
 
         examples.forEachIndexed { index, example ->
@@ -425,7 +438,7 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
                     Box(
                         modifier = Modifier
@@ -442,12 +455,15 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
                         )
                     }
                     Spacer(Modifier.width(10.dp))
-                    Text(
-                        example,
-                        fontSize = 14.sp,
-                        lineHeight = 22.sp,
-                        color = Color(0xFF424242)
-                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        ClickableStoryText(
+                            text = example,
+                            accent = accent,
+                            fontSize = 14,
+                            lineHeight = 22,
+                            showHint = false
+                        )
+                    }
                 }
             }
         }
@@ -456,7 +472,7 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
     }
 }
 
-// ==================== تب مکالمه ====================
+// ==================== تب مکالمه (قابل لمس) ====================
 @Composable
 private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelper, accent: Color) {
     Column(
@@ -469,10 +485,25 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
             color = Color(0xFF1A237E)
         )
         Text(conversation.titlePersian, fontSize = 13.sp, color = Color.Gray)
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(8.dp))
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(accent.copy(alpha = 0.12f))
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(
+                "👆 روی هر کلمه بزن تا معنی‌اش رو ببینی",
+                fontSize = 10.sp,
+                color = accent,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+        Spacer(Modifier.height(16.dp))
 
         conversation.lines.forEach { line ->
             val isA = line.speaker == "A"
+            val bubbleAccent = if (isA) accent else Color(0xFF7B1FA2)
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
                 horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
@@ -484,13 +515,11 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
                         line.speaker,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (isA) accent else Color(0xFF7B1FA2)
+                        color = bubbleAccent
                     )
                     Spacer(Modifier.height(4.dp))
                     Card(
-                        modifier = Modifier
-                            .widthIn(max = 290.dp)
-                            .clickable { speechHelper.speak(line.english) },
+                        modifier = Modifier.widthIn(max = 300.dp),
                         shape = RoundedCornerShape(
                             topStart = 18.dp,
                             topEnd = 18.dp,
@@ -503,14 +532,17 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
                         elevation = CardDefaults.cardElevation(1.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
+                            ClickableStoryText(
+                                text = line.english,
+                                accent = bubbleAccent,
+                                fontSize = 14,
+                                lineHeight = 20,
+                                showHint = false,
+                                baseColor = Color(0xFF1A237E)
+                            )
+                            Spacer(Modifier.height(4.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    line.english,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.weight(1f),
-                                    lineHeight = 20.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Spacer(Modifier.weight(1f))
                                 IconButton(
                                     onClick = { speechHelper.speak(line.english) },
                                     modifier = Modifier.size(30.dp)
@@ -518,7 +550,7 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
                                     Icon(
                                         Icons.AutoMirrored.Filled.VolumeUp,
                                         contentDescription = "Play",
-                                        tint = if (isA) accent else Color(0xFF7B1FA2),
+                                        tint = bubbleAccent,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
@@ -540,7 +572,7 @@ private fun ConversationTab(conversation: Conversation, speechHelper: SpeechHelp
     }
 }
 
-// ==================== تب داستان ====================
+// ==================== تب داستان (قابل لمس) ====================
 @Composable
 private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, accent: Color) {
     var isPlaying by remember { mutableStateOf(false) }
@@ -557,35 +589,39 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1A237E)
             )
+            Spacer(Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(accent.copy(alpha = 0.12f))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    "👆 لمس کن",
+                    fontSize = 10.sp,
+                    color = accent,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 
         Spacer(Modifier.height(16.dp))
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { speechHelper.speak(text) },
+            modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = RoundedCornerShape(18.dp),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            Text(
-                text,
-                modifier = Modifier.padding(20.dp),
-                fontSize = 16.sp,
-                lineHeight = 28.sp,
-                color = Color(0xFF424242)
-            )
+            Box(modifier = Modifier.padding(20.dp)) {
+                ClickableStoryText(
+                    text = text,
+                    accent = accent,
+                    fontSize = 16,
+                    lineHeight = 28
+                )
+            }
         }
-
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            "👆 روی متن بزن تا پخش بشه",
-            fontSize = 11.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(start = 4.dp)
-        )
 
         Spacer(Modifier.height(20.dp))
 
