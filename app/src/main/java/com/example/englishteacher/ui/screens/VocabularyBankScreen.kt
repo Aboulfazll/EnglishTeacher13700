@@ -48,7 +48,6 @@ fun VocabularyBankScreen() {
         BookmarkManager.getBookmarkedWords(context).collectLatest { bookmarkedWords = it }
     }
 
-    // گرفتن همه لغات
     val allWords = remember {
         val list = mutableListOf<Triple<String, String, String>>()
         Level.values().forEach { level ->
@@ -63,7 +62,6 @@ fun VocabularyBankScreen() {
     }
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedLevel by remember { mutableStateOf<String?>(null) }
     var showOnlyBookmarked by remember { mutableStateOf(false) }
 
     val filteredWords = allWords.filter { (english, _, _) ->
