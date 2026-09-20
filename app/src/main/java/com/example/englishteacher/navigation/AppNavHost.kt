@@ -28,9 +28,9 @@ import com.example.englishteacher.ui.screens.ProfileScreen
 import com.example.englishteacher.ui.screens.ProgressScreen
 import com.example.englishteacher.ui.screens.ReadingModeScreen
 import com.example.englishteacher.ui.screens.SettingsScreen
+import com.example.englishteacher.ui.screens.SpeakingPracticeScreen
 import com.example.englishteacher.ui.screens.StoryBookScreen
 import com.example.englishteacher.ui.screens.StoryDetailScreen
-import com.example.englishteacher.ui.screens.VideoScreen
 import com.example.englishteacher.ui.screens.VocabularyBankScreen
 
 object Routes {
@@ -51,13 +51,13 @@ object Routes {
     const val PROFILE = "profile"
     const val BOOKMARKED_WORDS = "bookmarked_words"
     const val BOOKMARKED_STORIES = "bookmarked_stories"
-    const val VIDEOS = "videos"
     const val DAILY_SENTENCES = "daily_sentences"
     const val DAILY_QUIZ = "daily_quiz"
     const val FLASHCARD = "flashcard/{mode}"
     const val ACHIEVEMENTS = "achievements"
     const val READING_MODE = "reading_mode/{lessonId}/{categoryId}"
     const val GROUP_QUIZ = "group_quiz/{level}/{groupIndex}"
+    const val SPEAKING_PRACTICE = "speaking_practice"
 
     fun lessonList(level: Level) = "lessons/${level.name}"
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
@@ -99,9 +99,6 @@ fun AppNavHost(
                 onBookmarkedWordsClick = {
                     navController.navigate(Routes.BOOKMARKED_WORDS)
                 },
-                onVideoClick = {
-                    navController.navigate(Routes.VIDEOS)
-                },
                 onDailySentencesClick = {
                     navController.navigate(Routes.DAILY_SENTENCES)
                 },
@@ -110,6 +107,9 @@ fun AppNavHost(
                 },
                 onAchievementsClick = {
                     navController.navigate(Routes.ACHIEVEMENTS)
+                },
+                onSpeakingClick = {
+                    navController.navigate(Routes.SPEAKING_PRACTICE)
                 }
             )
         }
@@ -278,10 +278,6 @@ fun AppNavHost(
             )
         }
 
-        composable(Routes.VIDEOS) {
-            VideoScreen()
-        }
-
         composable(Routes.DAILY_SENTENCES) {
             DailySentencesScreen(
                 onStartQuiz = {
@@ -297,7 +293,6 @@ fun AppNavHost(
             DailyQuizScreen(onBack = { navController.popBackStack() })
         }
 
-        // حالت خوانش
         composable(
             route = Routes.READING_MODE,
             arguments = listOf(
@@ -310,6 +305,13 @@ fun AppNavHost(
             ReadingModeScreen(
                 lessonId = lessonId,
                 categoryId = categoryId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 🎤 صفحه‌ی تمرین گفتار
+        composable(Routes.SPEAKING_PRACTICE) {
+            SpeakingPracticeScreen(
                 onBack = { navController.popBackStack() }
             )
         }
