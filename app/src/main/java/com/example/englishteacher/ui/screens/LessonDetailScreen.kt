@@ -130,7 +130,7 @@ fun LessonDetailScreen(
                     3 -> ConversationTab(lesson.conversation, speechHelper, accent, onStartReading)
                     4 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
                     5 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
-                    6 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
+                    6 -> LessonSpeakingTab(lesson.vocabulary, speechHelper, accent)
                 }
             } else {
                 when (selectedTab) {
@@ -139,7 +139,7 @@ fun LessonDetailScreen(
                     2 -> ConversationTab(lesson.conversation, speechHelper, accent, onStartReading)
                     3 -> StoryTab(lesson.storyTitle, lesson.storyText, speechHelper, accent)
                     4 -> QuizTab(lesson.quiz, lesson.id, accent, scope, context, onBack)
-                    5 -> SpeakingTab(lesson.vocabulary, speechHelper, accent)
+                    5 -> LessonSpeakingTab(lesson.vocabulary, speechHelper, accent)
                 }
             }
         }
@@ -681,7 +681,7 @@ private fun QuizTab(
 }
 
 @Composable
-private fun SpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
+private fun LessonSpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
