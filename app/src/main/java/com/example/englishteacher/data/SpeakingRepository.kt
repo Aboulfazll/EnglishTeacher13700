@@ -52,7 +52,9 @@ object SpeakingRepository {
 
     private val sentences: List<SpeakingSentence> = listOf(
 
-        // ========== 🌱 مبتدی - احوال‌پرسی ==========
+        // ============================================================
+        // ========== 🌱 سطح مبتدی - احوال‌پرسی ==========
+        // ============================================================
         SpeakingSentence("b_gr_1", "Hello", "سلام", SpeakingCategory.GREETING, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 1"),
         SpeakingSentence("b_gr_2", "Hi", "سلام (دوستانه)", SpeakingCategory.GREETING, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 1"),
         SpeakingSentence("b_gr_3", "Good morning", "صبح بخیر", SpeakingCategory.GREETING, SpeakingDifficulty.PHRASE, SpeakingLevel.BEGINNER, "Lesson 1"),
@@ -97,7 +99,7 @@ object SpeakingRepository {
         SpeakingSentence("b_fam_11", "We always eat dinner together", "ما همیشه با هم شام می‌خوریم", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 3"),
         SpeakingSentence("b_fam_12", "Family is the most important thing", "خانواده مهم‌ترین چیزه", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 3"),
 
-        // ========== 🌱 غذا ==========
+        // ========== 🌱 غذا و رستوران ==========
         SpeakingSentence("b_food_1", "I'm hungry", "گرسنه‌ام", SpeakingCategory.FOOD, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 4"),
         SpeakingSentence("b_food_2", "I'm thirsty", "تشنه‌ام", SpeakingCategory.FOOD, SpeakingDifficulty.WORD, SpeakingLevel.BEGINNER, "Lesson 4"),
         SpeakingSentence("b_food_3", "I want some water", "یه کم آب می‌خوام", SpeakingCategory.FOOD, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 4"),
@@ -156,7 +158,7 @@ object SpeakingRepository {
         SpeakingSentence("b_tr_11", "I would like to extend my stay", "می‌خوام اقامتم رو تمدید کنم", SpeakingCategory.TRAVEL, SpeakingDifficulty.LONG, SpeakingLevel.BEGINNER, "Lesson 7"),
         SpeakingSentence("b_tr_12", "My luggage is missing", "چمدونم گم شده", SpeakingCategory.TRAVEL, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 7"),
 
-        // ========== 🌱 زمان ==========
+        // ========== 🌱 زمان و تاریخ ==========
         SpeakingSentence("b_tm_1", "What time is it?", "ساعت چنده؟", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
         SpeakingSentence("b_tm_2", "It's three o'clock", "ساعت سه‌ست", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
         SpeakingSentence("b_tm_3", "Today is Monday", "امروز دوشنبه‌ست", SpeakingCategory.TIME, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 8"),
@@ -192,7 +194,11 @@ object SpeakingRepository {
         SpeakingSentence("b_f_9", "You can do it", "تو می‌تونی", SpeakingCategory.FEELINGS, SpeakingDifficulty.SHORT, SpeakingLevel.BEGINNER, "Lesson 10"),
         SpeakingSentence("b_f_10", "Everything will be fine", "همه چیز خوب می‌شه", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.BEGINNER, "Lesson 10"),
 
-        // ========== 🚀 متوسط - احوال‌پرسی ==========
+        // ============================================================
+        // ========== 🚀 سطح متوسط ==========
+        // ============================================================
+
+        // ========== 🚀 احوال‌پرسی ==========
         SpeakingSentence("i_gr_1", "How's everything going?", "اوضاع چطور پیش می‌ره؟", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
         SpeakingSentence("i_gr_2", "What have you been up to?", "چه خبر؟ (این مدت چیکار می‌کردی؟)", SpeakingCategory.GREETING, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
         SpeakingSentence("i_gr_3", "I hope you're doing well", "امیدوارم حالت خوب باشه", SpeakingCategory.GREETING, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 1"),
@@ -224,7 +230,7 @@ object SpeakingRepository {
         SpeakingSentence("i_fam_7", "I value the time I spend with my family", "برای وقتی که با خانوادم می‌گذرونم ارزش قائلم", SpeakingCategory.FAMILY, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
         SpeakingSentence("i_fam_8", "Family means everything to me", "خانواده برای من همه چیزه", SpeakingCategory.FAMILY, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 3"),
 
-        // ========== 🚀 غذا ==========
+        // ========== 🚀 غذا و رستوران ==========
         SpeakingSentence("i_food_1", "I'd like to make a reservation for tonight", "می‌خوام برای امشب رزرو کنم", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
         SpeakingSentence("i_food_2", "Could you recommend something vegetarian?", "می‌تونی یه غذای گیاهی پیشنهاد کنی؟", SpeakingCategory.FOOD, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
         SpeakingSentence("i_food_3", "This dish is absolutely delicious", "این غذا کاملاً خوشمزه‌ست", SpeakingCategory.FOOD, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 4"),
@@ -284,7 +290,7 @@ object SpeakingRepository {
         SpeakingSentence("i_f_1", "I couldn't be happier right now", "الان نمی‌تونم خوشحال‌تر باشم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
         SpeakingSentence("i_f_2", "I'm really looking forward to the trip", "خیلی منتظر سفرم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
         SpeakingSentence("i_f_3", "I feel a bit under the weather today", "امروز یه کم حالم خوب نیست", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
-        SpeakingSentence("i_f_4", "That really made my day", "واقعاً روزمو ساخت", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
+        SpeakingSentence("i_f_4", "That really made my day", "واقعاً روزمو ساخت (خوشحالم کرد)", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
         SpeakingSentence("i_f_5", "I'm over the moon about the news", "از این خبر خیلی خوشحالم", SpeakingCategory.FEELINGS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
         SpeakingSentence("i_f_6", "I can't thank you enough", "نمی‌تونم به اندازه کافی ازت تشکر کنم", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
         SpeakingSentence("i_f_7", "I'm really stressed about the exam", "خیلی برای امتحان استرس دارم", SpeakingCategory.FEELINGS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 9"),
@@ -300,7 +306,9 @@ object SpeakingRepository {
         SpeakingSentence("i_op_7", "Let me see if I understand correctly", "بذار ببینم درست فهمیدم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
         SpeakingSentence("i_op_8", "That makes perfect sense to me", "این برای من کاملاً منطقیه", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
         SpeakingSentence("i_op_9", "I have mixed feelings about this", "درباره‌ی این احساسات متناقضی دارم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
-        SpeakingSentence("i_op_10", "We'll have to agree to disagree", "باید بپذیریم که نظر متفاوتی داریم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10")
+        SpeakingSentence("i_op_10", "We'll have to agree to disagree", "باید بپذیریم که نظر متفاوتی داریم", SpeakingCategory.OPINIONS, SpeakingDifficulty.LONG, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_11", "It depends on the situation", "بستگی به موقعیت داره", SpeakingCategory.OPINIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 10"),
+        SpeakingSentence("i_op_12", "On the one hand... on the other hand", "از یه طرف... از طرف دیگه", SpeakingCategory.OPINIONS, SpeakingDifficulty.MEDIUM, SpeakingLevel.INTERMEDIATE, "Lesson 10")
     )
 
     fun getAll(): List<SpeakingSentence> = sentences
