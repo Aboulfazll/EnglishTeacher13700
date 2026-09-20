@@ -15,11 +15,13 @@ object ProgressManager {
     private val COMPLETED_LESSONS_KEY = stringSetPreferencesKey("completed_lessons")
     private val QUIZ_SCORES_KEY = stringSetPreferencesKey("quiz_scores")
     private val GROUP_SCORES_KEY = stringSetPreferencesKey("group_scores")
+    private val STORIES_READ_KEY = stringSetPreferencesKey("stories_read")
+    private val GRAMMAR_VIEWED_KEY = stringSetPreferencesKey("grammar_viewed")
+    private val SENTENCES_VIEWED_KEY = stringSetPreferencesKey("sentences_viewed")
     private val TOTAL_STARS_KEY = intPreferencesKey("total_stars")
     private val STREAK_COUNT_KEY = intPreferencesKey("streak_count")
     private val LAST_ACTIVE_KEY = longPreferencesKey("last_active_day")
 
-    // ==================== ثابت‌های گروه ====================
     const val GROUP_SIZE = 3
     const val PASSING_SCORE = 90
 
@@ -35,7 +37,7 @@ object ProgressManager {
         updateStreak(context)
     }
 
-    // ==================== Quiz Scores (per lesson) ====================
+    // ==================== Quiz Scores ====================
     fun getQuizScores(context: Context): Flow<Set<String>> =
         context.dataStore.data.map { prefs -> prefs[QUIZ_SCORES_KEY] ?: emptySet() }
 
@@ -49,10 +51,6 @@ object ProgressManager {
     }
 
     // ==================== Group Scores ====================
-    /**
-     * ذخیره‌ی نمره‌ی امتحان گروه
-     * کلید: "LEVEL_gINDEX" → مقدار: nمره
-     */
     suspend fun saveGroupScore(context: Context, level: Level, groupIndex: Int, score: Int) {
         val key = "${level.name}_g$groupIndex"
         context.dataStore.edit { prefs ->
@@ -63,9 +61,6 @@ object ProgressManager {
         updateStreak(context)
     }
 
-    /**
-     * گرفتن نمره‌ی یه گروه مشخص (اگه داده نشده بود، null برمی‌گردونه)
-     */
     fun getGroupScore(context: Context, level: Level, groupIndex: Int): Flow<Int?> =
         context.dataStore.data.map { prefs ->
             val current = prefs[GROUP_SCORES_KEY] ?: emptySet()
@@ -75,9 +70,6 @@ object ProgressManager {
                 ?.toIntOrNull()
         }
 
-    /**
-     * همه‌ی نمره‌های گروه‌ها به صورت Map
-     */
     fun getAllGroupScores(context: Context): Flow<Map<String, Int>> =
         context.dataStore.data.map { prefs ->
             val raw = prefs[GROUP_SCORES_KEY] ?: emptySet()
@@ -90,28 +82,53 @@ object ProgressManager {
             }.toMap()
         }
 
-    /**
-     * چک می‌کنه که آیا این گروه پاس شده (نمره ≥ ۹۰)
-     */
     fun isGroupPassed(context: Context, level: Level, groupIndex: Int): Flow<Boolean> =
         getGroupScore(context, level, groupIndex).map { (it ?: 0) >= PASSING_SCORE }
 
-    /**
-     * چک می‌کنه که آیا گروه بازه یا نه.
-     * گروه ۰ همیشه بازه.
-     * گروه N بازه اگه گروه N-1 پاس شده باشه.
-     */
     fun isGroupUnlocked(context: Context, level: Level, groupIndex: Int): Flow<Boolean> {
         if (groupIndex == 0) return flowOf(true)
         return isGroupPassed(context, level, groupIndex - 1)
     }
 
-    /**
-     * چک می‌کنه که آیا یک درس (بر اساس ایندکس در لیست سطح) بازه یا نه.
-     */
     fun isLessonUnlocked(context: Context, level: Level, lessonIndex: Int): Flow<Boolean> {
         val groupIndex = lessonIndex / GROUP_SIZE
         return isGroupUnlocked(context, level, groupIndex)
+    }
+
+    // ==================== Stories Read ====================
+    fun getStoriesRead(context: Context): Flow<Set<String>> =
+        context.dataStore.data.map { prefs -> prefs[STORIES_READ_KEY] ?: emptySet() }
+
+    suspend fun markStoryRead(context: Context, storyId: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[STORIES_READ_KEY] ?: emptySet()
+            prefs[STORIES_READ_KEY] = current + storyId
+        }
+        updateStreak(context)
+    }
+
+    // ==================== Grammar Viewed ====================
+    fun getGrammarViewed(context: Context): Flow<Set<String>> =
+        context.dataStore.data.map { prefs -> prefs[GRAMMAR_VIEWED_KEY] ?: emptySet() }
+
+    suspend fun markGrammarViewed(context: Context, topicId: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[GRAMMAR_VIEWED_KEY] ?: emptySet()
+            prefs[GRAMMAR_VIEWED_KEY] = current + topicId
+        }
+        updateStreak(context)
+    }
+
+    // ==================== Sentences Viewed ====================
+    fun getSentencesCategoriesViewed(context: Context): Flow<Set<String>> =
+        context.dataStore.data.map { prefs -> prefs[SENTENCES_VIEWED_KEY] ?: emptySet() }
+
+    suspend fun markSentencesCategoryViewed(context: Context, categoryId: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[SENTENCES_VIEWED_KEY] ?: emptySet()
+            prefs[SENTENCES_VIEWED_KEY] = current + categoryId
+        }
+        updateStreak(context)
     }
 
     // ==================== Total Stars ====================
@@ -143,9 +160,7 @@ object ProgressManager {
                     prefs[STREAK_COUNT_KEY] = 1
                     prefs[LAST_ACTIVE_KEY] = today
                 }
-                lastDay == today -> {
-                    // امروز قبلاً ثبت شده
-                }
+                lastDay == today -> { }
                 lastDay == today - ONE_DAY_MS -> {
                     prefs[STREAK_COUNT_KEY] = currentStreak + 1
                     prefs[LAST_ACTIVE_KEY] = today
@@ -170,6 +185,9 @@ object ProgressManager {
             prefs[COMPLETED_LESSONS_KEY] = emptySet()
             prefs[QUIZ_SCORES_KEY] = emptySet()
             prefs[GROUP_SCORES_KEY] = emptySet()
+            prefs[STORIES_READ_KEY] = emptySet()
+            prefs[GRAMMAR_VIEWED_KEY] = emptySet()
+            prefs[SENTENCES_VIEWED_KEY] = emptySet()
             prefs[TOTAL_STARS_KEY] = 0
             prefs[STREAK_COUNT_KEY] = 0
             prefs[LAST_ACTIVE_KEY] = 0L
