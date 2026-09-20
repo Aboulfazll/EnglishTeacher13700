@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Stop
@@ -24,10 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.englishteacher.BookmarkManager
 import com.example.englishteacher.ShareHelper
 import com.example.englishteacher.SpeechHelper
 import com.example.englishteacher.data.Level
+import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.StoryBookRepository
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,11 +43,25 @@ fun StoryDetailScreen(
 ) {
     val story = StoryBookRepository.getAllStories().firstOrNull { it.id == storyId }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val speechHelper = remember { SpeechHelper(context) }
     var isPlaying by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose { speechHelper.close() }
+    }
+
+    // ثبت داستان به عنوان خونده‌شده
+    LaunchedEffect(storyId) {
+        ProgressManager.markStoryRead(context, storyId)
+    }
+
+    // چک کردن وضعیت بوکمارک
+    LaunchedEffect(storyId) {
+        BookmarkManager.isStoryBookmarked(context, storyId).collectLatest {
+            isBookmarked = it
+        }
     }
 
     if (story == null) {
@@ -91,6 +111,23 @@ fun StoryDetailScreen(
                     }
                 },
                 actions = {
+                    // 🔖 دکمه بوکمارک
+                    IconButton(onClick = {
+                        scope.launch {
+                            BookmarkManager.toggleStoryBookmark(context, storyId)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (isBookmarked)
+                                Icons.Filled.Bookmark
+                            else
+                                Icons.Filled.BookmarkBorder,
+                            contentDescription = "Bookmark",
+                            tint = Color.White
+                        )
+                    }
+
+                    // اشتراک‌گذاری
                     IconButton(onClick = {
                         ShareHelper.shareStory(
                             context = context,
@@ -119,7 +156,6 @@ fun StoryDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // تصویر جلد
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -180,7 +216,6 @@ fun StoryDetailScreen(
 
             Column(modifier = Modifier.padding(20.dp)) {
 
-                // دکمه‌های پخش و اشتراک‌گذاری
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -215,6 +250,27 @@ fun StoryDetailScreen(
 
                     OutlinedButton(
                         onClick = {
+                            scope.launch {
+                                BookmarkManager.toggleStoryBookmark(context, storyId)
+                            }
+                        },
+                        modifier = Modifier.height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = levelColor)
+                    ) {
+                        Icon(
+                            imageVector = if (isBookmarked)
+                                Icons.Filled.Bookmark
+                            else
+                                Icons.Filled.BookmarkBorder,
+                            contentDescription = "Bookmark",
+                            tint = levelColor,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = {
                             ShareHelper.shareStory(
                                 context = context,
                                 title = story.title,
@@ -233,14 +289,11 @@ fun StoryDetailScreen(
                             tint = levelColor,
                             modifier = Modifier.size(22.dp)
                         )
-                        Spacer(Modifier.width(6.dp))
-                        Text("اشتراک", fontWeight = FontWeight.Bold)
                     }
                 }
 
                 Spacer(Modifier.height(20.dp))
 
-                // ==================== متن داستان (قابل لمس) ====================
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -276,7 +329,6 @@ fun StoryDetailScreen(
                         }
                         Spacer(Modifier.height(14.dp))
 
-                        // 🎯 متن قابل لمس
                         ClickableStoryText(
                             text = story.text,
                             accent = levelColor,
@@ -288,7 +340,6 @@ fun StoryDetailScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // نتیجه اخلاقی
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
@@ -343,7 +394,6 @@ fun StoryDetailScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // کارت اطلاعات
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
