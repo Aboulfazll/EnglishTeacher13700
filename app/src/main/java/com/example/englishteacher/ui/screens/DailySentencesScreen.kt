@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,7 +32,7 @@ import com.example.englishteacher.data.SentenceCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailySentencesScreen() {
+fun DailySentencesScreen(onStartQuiz: () -> Unit = {}) {
     val context = LocalContext.current
     val speechHelper = remember { SpeechHelper(context) }
 
@@ -49,7 +51,8 @@ fun DailySentencesScreen() {
     } else {
         CategoriesListView(
             speechHelper = speechHelper,
-            onCategoryClick = { selectedCategory = it }
+            onCategoryClick = { selectedCategory = it },
+            onStartQuiz = onStartQuiz
         )
     }
 }
@@ -59,7 +62,8 @@ fun DailySentencesScreen() {
 @Composable
 private fun CategoriesListView(
     speechHelper: SpeechHelper,
-    onCategoryClick: (SentenceCategory) -> Unit
+    onCategoryClick: (SentenceCategory) -> Unit,
+    onStartQuiz: () -> Unit
 ) {
     val categories = DailySentencesRepository.getAllCategories()
     var searchQuery by remember { mutableStateOf("") }
@@ -84,6 +88,15 @@ private fun CategoriesListView(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = onStartQuiz) {
+                        Icon(
+                            Icons.Filled.Quiz,
+                            contentDescription = "کوییز",
+                            tint = Color.White
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF00695C)
                 )
@@ -97,11 +110,77 @@ private fun CategoriesListView(
                 .padding(padding)
         ) {
 
+            // ==================== کارت کوییز ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .clickable { onStartQuiz() },
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                            )
+                        )
+                        .padding(18.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.EmojiEvents,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "🎯 کوییز جملات روزمره",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "۱۰ سؤال تصادفی — خودت رو محک بزن!",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "→",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
             // ==================== نوار جستجو ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(3.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -140,7 +219,6 @@ private fun CategoriesListView(
 
             // ==================== نتایج جستجو یا دسته‌بندی‌ها ====================
             if (searchQuery.isNotBlank()) {
-                // حالت جستجو
                 if (searchResults.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -182,7 +260,6 @@ private fun CategoriesListView(
                     }
                 }
             } else {
-                // حالت لیست دسته‌بندی‌ها
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -388,12 +465,13 @@ private fun SentenceCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    sentence.english,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E),
-                    lineHeight = 22.sp
+                ClickableStoryText(
+                    text = sentence.english,
+                    accent = accent,
+                    fontSize = 15,
+                    lineHeight = 22,
+                    showHint = false,
+                    baseColor = Color(0xFF1A237E)
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
