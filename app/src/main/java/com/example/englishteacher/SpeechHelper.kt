@@ -5,13 +5,10 @@ import android.speech.tts.TextToSpeech
 import java.util.Locale
 
 class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
-
     private var tts: TextToSpeech? = null
     private var isReady = false
-
-    private var speed: Float = 1.0f
-    private var pitch: Float = 1.0f
-    private var gender: String = "female"
+    private var currentSpeed = 0.9f
+    private var isUK = false
 
     init {
         tts = TextToSpeech(context, this)
@@ -19,51 +16,35 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale.US
-            isReady = true
-            applySettings()
+            val locale = if (isUK) Locale.UK else Locale.US
+            val result = tts?.setLanguage(locale)
+            if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                isReady = true
+                tts?.setSpeechRate(currentSpeed)
+                tts?.setPitch(1.0f)
+            }
         }
     }
 
-    fun setSpeedAndPitch(speed: Float, pitch: Float) {
-        this.speed = speed.coerceIn(0.5f, 2.0f)
-        this.pitch = pitch.coerceIn(0.5f, 1.5f)
-        applySettings()
-    }
-
-    fun setVoiceGender(gender: String) {
-        this.gender = gender
-        applySettings()
-    }
-
-    private fun applySettings() {
-        if (!isReady) return
-        tts?.setSpeechRate(speed)
-        tts?.setPitch(
-            when (gender) {
-                "female" -> pitch + 0.15f
-                "male" -> (pitch - 0.2f).coerceAtLeast(0.5f)
-                else -> pitch
-            }
-        )
-    }
-
     fun speak(text: String) {
-        if (!isReady) return
-        tts?.stop()
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utt_${System.currentTimeMillis()}")
+        if (isReady && text.isNotBlank()) {
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
     }
 
-    fun stop() {
-        tts?.stop()
+    fun setSpeed(speed: Float) {
+        currentSpeed = speed
+        tts?.setSpeechRate(speed)
     }
 
-    fun isSpeaking(): Boolean = tts?.isSpeaking == true
+    fun setAccent(uk: Boolean) {
+        isUK = uk
+        val locale = if (uk) Locale.UK else Locale.US
+        tts?.setLanguage(locale)
+    }
 
     fun close() {
         tts?.stop()
         tts?.shutdown()
-        tts = null
-        isReady = false
     }
 }
