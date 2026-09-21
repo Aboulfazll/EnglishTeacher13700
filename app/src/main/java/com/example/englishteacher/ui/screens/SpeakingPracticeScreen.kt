@@ -1,5 +1,6 @@
 package com.example.englishteacher.ui.screens
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener
@@ -87,20 +88,65 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val speechHelper = remember { SpeechHelper(context) }
+    val prefs = remember { context.getSharedPreferences("app_settings", Context.MODE_PRIVATE) }
 
+    // ==================== خواندن تنظیمات ذخیره‌شده ====================
+    val savedMode = remember {
+        val modeStr = prefs.getString("speaking_mode", "PRACTICE") ?: "PRACTICE"
+        try { PracticeMode.valueOf(modeStr) } catch (_: Exception) { PracticeMode.PRACTICE }
+    }
+    val savedLevelName = remember {
+        prefs.getString("speaking_level", "ALL") ?: "ALL"
+    }
+    val savedLevel = remember {
+        when (savedLevelName) {
+            "BEGINNER" -> SpeakingLevel.BEGINNER
+            "INTERMEDIATE" -> SpeakingLevel.INTERMEDIATE
+            else -> null
+        }
+    }
+    val savedSessionSize = remember {
+        prefs.getInt("speaking_session_size", 25)
+    }
+    val savedAccent = remember {
+        prefs.getString("speaking_accent", "US") ?: "US"
+    }
+    val savedStrictness = remember {
+        prefs.getString("speaking_strictness", "NORMAL") ?: "NORMAL"
+    }
+    val autoPlayEnabled = remember {
+        prefs.getBoolean("speaking_auto_play", false)
+    }
+    val showTipsEnabled = remember {
+        prefs.getBoolean("speaking_show_tips", false)
+    }
+    val confettiEnabled = remember {
+        prefs.getBoolean("speaking_confetti", true)
+    }
+    val saveHistory = remember {
+        prefs.getBoolean("speaking_save_history", true)
+    }
+
+    // ==================== اعمال تنظیمات صوت ====================
     DisposableEffect(Unit) {
+        val rate = prefs.getFloat("speech_rate", 1.0f)
+        val pitch = prefs.getFloat("speech_pitch", 1.0f)
+        val gender = prefs.getString("voice_gender", "female") ?: "female"
+        speechHelper.setVoiceGender(gender)
+        speechHelper.setSpeedAndPitch(rate, pitch)
         onDispose { speechHelper.close() }
     }
 
-    var selectedLevel by remember { mutableStateOf<SpeakingLevel?>(SpeakingLevel.BEGINNER) }
+    // ==================== وضعیت‌ها ====================
+    var selectedLevel by remember { mutableStateOf<SpeakingLevel?>(savedLevel) }
     var selectedCategory by remember { mutableStateOf<SpeakingCategory?>(null) }
     var selectedDifficulty by remember { mutableStateOf<SpeakingDifficulty?>(null) }
-    var practiceMode by remember { mutableStateOf(PracticeMode.PRACTICE) }
+    var practiceMode by remember { mutableStateOf(savedMode) }
 
     val filteredSentences = remember(selectedLevel, selectedCategory, selectedDifficulty) {
         SpeakingRepository.getFiltered(selectedCategory, selectedDifficulty, selectedLevel)
             .shuffled()
-            .take(25)
+            .take(savedSessionSize)
     }
 
     var currentIndex by remember { mutableIntStateOf(0) }
@@ -121,7 +167,7 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
     var speakingSpeed by remember { mutableIntStateOf(0) }
     var sessionHistory by remember { mutableStateOf<List<SessionStat>>(emptyList()) }
     var startTime by remember { mutableLongStateOf(0L) }
-    var showPronunciationTips by remember { mutableStateOf(false) }
+    var showPronunciationTips by remember { mutableStateOf(showTipsEnabled) }
     var wrongSentenceIds by remember { mutableStateOf<Set<String>>(emptySet()) }
     var showHistorySheet by remember { mutableStateOf(false) }
 
@@ -131,16 +177,29 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
         lastScore = -1
     }
 
+    // ==================== پخش خودکار تلفظ ====================
+    LaunchedEffect(currentIndex, sessionStarted, autoPlayEnabled) {
+        if (sessionStarted && autoPlayEnabled && filteredSentences.isNotEmpty()) {
+            delay(500)
+            speechHelper.speak(filteredSentences[currentIndex].english)
+        }
+    }
+
+    // ==================== Speech Recognizer ====================
     val speechRecognizer = remember {
         if (SpeechRecognizer.isRecognitionAvailable(context)) {
             SpeechRecognizer.createSpeechRecognizer(context)
         } else null
     }
 
-    val recognizerIntent = remember {
+    val recognizerIntent = remember(savedAccent) {
         Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+            // اعمال لهجه انتخاب‌شده
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE,
+                if (savedAccent == "UK") "en-GB" else "en-US"
+            )
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         }
     }
@@ -177,11 +236,14 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                     val durationSec = (System.currentTimeMillis() - startTime) / 1000.0
                     if (text.isNotEmpty() && filteredSentences.isNotEmpty()) {
                         val target = filteredSentences[currentIndex]
-                        val newScore = calculateScore(target.english, text)
+                        // اعمال حساسیت
+                        val newScore = calculateScore(target.english, text, savedStrictness)
                         lastScore = newScore
                         totalScore += newScore
                         totalAttempts++
-                        sessionHistory = sessionHistory + SessionStat(newScore, System.currentTimeMillis())
+                        if (saveHistory) {
+                            sessionHistory = sessionHistory + SessionStat(newScore, System.currentTimeMillis())
+                        }
 
                         val wordCount = text.split(Regex("\\s+")).size
                         speakingSpeed = if (durationSec > 0)
@@ -199,8 +261,10 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                             perfectCount++
                             comboCount++
                             if (comboCount > maxCombo) maxCombo = comboCount
-                            showConfetti = true
-                            scope.launch { delay(2500); showConfetti = false }
+                            if (confettiEnabled) {
+                                showConfetti = true
+                                scope.launch { delay(2500); showConfetti = false }
+                            }
                             val bonus = if (newScore == 100) 20 else newScore / 10
                             scope.launch { ProgressManager.addStars(context, bonus) }
                             wrongSentenceIds = wrongSentenceIds - target.id
@@ -212,6 +276,17 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                         if (newScore < 70 && text.isNotEmpty()) {
                             aiFeedback = generateFeedback(newScore)
                             showAiFeedback = true
+                        }
+
+                        // پخش خودکار جمله بعدی در حالت FREESTYLE
+                        if (autoPlayEnabled && practiceMode == PracticeMode.FREESTYLE && currentIndex < filteredSentences.size - 1) {
+                            scope.launch {
+                                delay(1500)
+                                currentIndex++
+                                recognizedText = ""
+                                lastScore = -1
+                                showAiFeedback = false
+                            }
                         }
                     }
                 }
@@ -234,6 +309,9 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
             practiceMode = practiceMode,
             totalCount = filteredSentences.size,
             wrongCount = wrongSentenceIds.size,
+            sessionSize = savedSessionSize,
+            accent = savedAccent,
+            strictness = savedStrictness,
             onLevelChange = { selectedLevel = it },
             onCategoryChange = { selectedCategory = it },
             onDifficultyChange = { selectedDifficulty = it },
@@ -264,7 +342,13 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                 title = {
                     Column {
                         Text("🎤 ${practiceMode.title}", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.White)
-                        Text("${currentIndex + 1}/$total • میانگین: $avgScore%", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
+                        Text(
+                            "${currentIndex + 1}/$total • میانگین: $avgScore% • ${
+                                if (savedAccent == "UK") "🇬🇧" else "🇺🇸"
+                            }",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.85f)
+                        )
                     }
                 },
                 navigationIcon = {
@@ -500,7 +584,7 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                                 recognizedText = ""
                                 lastScore = -1
                                 showAiFeedback = false
-                                showPronunciationTips = false
+                                showPronunciationTips = showTipsEnabled
                             }
                         },
                         enabled = currentIndex > 0,
@@ -520,7 +604,7 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                                 recognizedText = ""
                                 lastScore = -1
                                 showAiFeedback = false
-                                showPronunciationTips = false
+                                showPronunciationTips = showTipsEnabled
                             }
                         },
                         enabled = currentIndex < total - 1,
@@ -537,7 +621,7 @@ fun SpeakingPracticeScreen(onBack: () -> Unit) {
                 Spacer(Modifier.height(20.dp))
             }
 
-            if (showConfetti) ConfettiOverlay()
+            if (showConfetti && confettiEnabled) ConfettiOverlay()
         }
     }
 
@@ -770,6 +854,9 @@ private fun SpeakingStartScreen(
     practiceMode: PracticeMode,
     totalCount: Int,
     wrongCount: Int,
+    sessionSize: Int,
+    accent: String,
+    strictness: String,
     onLevelChange: (SpeakingLevel?) -> Unit,
     onCategoryChange: (SpeakingCategory?) -> Unit,
     onDifficultyChange: (SpeakingDifficulty?) -> Unit,
@@ -815,6 +902,23 @@ private fun SpeakingStartScreen(
                         Text("Speaking", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
                         Spacer(Modifier.height(4.dp))
                         Text("تلفظت رو با AI بسنج", fontSize = 12.sp, color = Color.White.copy(alpha = 0.9f))
+
+                        Spacer(Modifier.height(10.dp))
+
+                        // نمایش تنظیمات فعلی
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            MiniBadge(if (accent == "UK") "🇬🇧 UK" else "🇺🇸 US")
+                            MiniBadge(
+                                when (strictness) {
+                                    "EASY" -> "😊 راحت"
+                                    "STRICT" -> "🎯 سخت‌گیر"
+                                    else -> "⚖️ عادی"
+                                }
+                            )
+                            MiniBadge("$sessionSize جمله")
+                        }
                     }
                 }
             }
@@ -964,6 +1068,18 @@ private fun SpeakingStartScreen(
 }
 
 @Composable
+private fun MiniBadge(text: String) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.White.copy(alpha = 0.25f))
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+    ) {
+        Text(text, fontSize = 9.sp, color = Color.White, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
 private fun SectionTitle(text: String) {
     Text(text, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
 }
@@ -1109,13 +1225,26 @@ private fun getPronunciationTips(text: String): List<String> {
     return tips.take(3)
 }
 
-private fun calculateScore(target: String, recognized: String): Int {
+/**
+ * محاسبه امتیاز با اعمال حساسیت
+ * - EASY: تحمل خطای بیشتر (levenshtein <= 2)
+ * - NORMAL: تحمل خطای معمولی (levenshtein <= 1)
+ * - STRICT: تحمل خطای کم (تطابق دقیق)
+ */
+private fun calculateScore(target: String, recognized: String, strictness: String): Int {
     if (recognized.isBlank()) return 0
     val t = target.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
     val r = recognized.lowercase().replace(Regex("[^a-z0-9\\s']"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
     if (t.isEmpty()) return 0
+
+    val tolerance = when (strictness) {
+        "EASY" -> 2
+        "STRICT" -> 0
+        else -> 1
+    }
+
     var m = 0
-    t.forEach { tw -> if (r.any { rw -> levenshtein(rw, tw) <= 1 }) m++ }
+    t.forEach { tw -> if (r.any { rw -> levenshtein(rw, tw) <= tolerance }) m++ }
     return (m.toFloat() / t.size * 100).toInt().coerceIn(0, 100)
 }
 
