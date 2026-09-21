@@ -288,13 +288,7 @@ fun AppNavHost(
         }
 
         composable(Routes.PODCAST) {
-            PodcastScreen(
-                onPodcastClick = { url, title ->
-                    val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
-                    val encodedTitle = java.net.URLEncoder.encode(title, "UTF-8")
-                    navController.navigate("podcast_player/$encodedUrl/$encodedTitle")
-                }
-            )
+            PodcastScreen()
         }
 
         composable(
