@@ -31,15 +31,7 @@ data class SpellingExercise(
     val persian: String
 )
 
-enum class Level(
-    val displayName: String,
-    val persianName: String,
-    val bookName: String
-) {
-    BEGINNER("Beginner", "مبتدی", "Top Notch Fundamentals"),
-    INTERMEDIATE("Intermediate", "متوسط", "Top Notch 1"),
-    ADVANCED("Advanced", "پیشرفته", "Top Notch 2")
-}
+// ⚠️ توجه: کلاس Level از این فایل حذف شد و به فایل Level.kt منتقل شد.
 
 data class Lesson(
     val id: String,
