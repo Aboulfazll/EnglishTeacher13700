@@ -12,8 +12,8 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "A Difficult Case", titlePersian = "پرونده دشوار",
-                    text = "In a small kingdom long ago, there lived a wise judge named Farid. People came from far and wide to ask for his help. He was known for his fairness and his sharp mind. One morning, two men arrived at his court. Both claimed to own the same beautiful black horse. The first man, a rich merchant, said the horse had been stolen from him. The second man, a poor farmer, insisted that he had raised the horse from a foal. The judge listened carefully to both sides. The court was crowded with people who had come to watch. Everyone whispered to each other, wondering how the judge would solve this impossible case.",
-                    textPersian = "در پادشاهی کوچک در زمان‌های دور، قاضی دانایی به نام فرید زندگی می‌کرد. مردم از دور و نزدیک برای کمک به او می‌آمدند. او به انصاف و ذهن تیزبینش معروف بود. یک صبح، دو مرد به دادگاهش آمدند. هر دو ادعا می‌کردند مالک همان اسب زیبای سیاه هستند. مرد اول، تاجری ثروتمند، گفت اسب از او دزدیده شده. مرد دوم، کشاورزی فقیر، اصرار داشت که اسب را از کره‌ای بزرگ کرده است. قاضی به دقت به هر دو طرف گوش داد. دادگاه پر از مردمی بود که برای تماشا آمده بودند. همه پچ‌پچ می‌کردند و می‌پرسیدند قاضی چطور این پرونده غیرممکن را حل می‌کند.",
+                    text = "In a small kingdom long ago, there lived a wise judge named Farid. People came from far and wide to ask for his help. He was known for his fairness and his sharp mind. One morning, two men arrived at his court. Both claimed to own the same beautiful black horse. The first man, a rich merchant, said the horse had been stolen from him. The second man, a poor farmer, insisted that he had raised the horse from a foal. The judge listened carefully to both sides.",
+                    textPersian = "در پادشاهی کوچک در زمان‌های دور، قاضی دانایی به نام فرید زندگی می‌کرد. مردم از دور و نزدیک برای کمک به او می‌آمدند. او به انصاف و ذهن تیزبینش معروف بود. یک صبح، دو مرد به دادگاهش آمدند. هر دو ادعا می‌کردند مالک همان اسب زیبای سیاه هستند. مرد اول تاجری ثروتمند بود و گفت اسب از او دزدیده شده. مرد دوم کشاورزی فقیر بود و اصرار داشت که اسب را از کره‌ای بزرگ کرده است.",
                     vocabulary = listOf(
                         Word("judge", "قاضی", "dʒʌdʒ"),
                         Word("kingdom", "پادشاهی", "ˈkɪŋdəm"),
@@ -47,8 +47,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "The Judge's Clever Plan", titlePersian = "نقشه هوشمندانه قاضی",
-                    text = "The judge thought for a long moment. He looked at the horse. He looked at the two men. Then he smiled and said, \"Bring the horse to the courtyard and release him. Let the horse decide.\" Everyone was confused. Release the horse? How could a horse decide? But the judge insisted. The guards brought the horse to the courtyard. The judge ordered both men to stand on opposite sides of the yard. Then he untied the horse. The horse stood still for a moment, looking around. Then, without hesitation, he walked slowly toward the poor farmer. He nuzzled the farmer's chest and made a soft sound. The farmer began to cry and hugged the horse. The judge declared, \"The horse knows his true master. The case is solved.\" The rich merchant was shocked. He tried to protest, but the judge silenced him with a single look.",
-                    textPersian = "قاضی لحظه‌ای طولانی فکر کرد. به اسب نگاه کرد. به دو مرد نگاه کرد. بعد لبخند زد و گفت: «اسب را به حیاط بیاورید و آزادش کنید. بگذارید اسب تصمیم بگیرد.» همه گیج شدند. اسب آزاد؟ اسب چطور می‌تواند تصمیم بگیرد؟ اما قاضی اصرار کرد. نگهبانان اسب را به حیاط آوردند. قاضی دستور داد هر دو مرد در دو طرف مخالف حیاط بایستند. بعد اسب را باز کرد. اسب لحظه‌ای ایستاد و اطراف را نگاه کرد. بعد بدون تردید، آرام به سمت کشاورز فقیر راه رفت. سینه کشاورز را با پوزه لمس کرد و صدای ملایمی درآورد. کشاورز شروع به گریه کرد و اسب را در آغوش گرفت. قاضی اعلام کرد: «اسب ارباب واقعی‌اش را می‌شناسد. پرونده حل شد.» تاجر ثروتمند شوکه شد.",
+                    text = "The judge thought for a long moment. Then he smiled and said, \"Bring the horse to the courtyard and release him. Let the horse decide.\" Everyone was confused. The guards brought the horse to the courtyard. The judge ordered both men to stand on opposite sides of the yard. Then he untied the horse. The horse stood still for a moment, looking around. Then, without hesitation, he walked slowly toward the poor farmer. He nuzzled the farmer's chest. The judge declared, \"The horse knows his true master.\" The rich merchant was shocked.",
+                    textPersian = "قاضی لحظه‌ای طولانی فکر کرد. بعد لبخند زد و گفت: «اسب را به حیاط بیاورید و آزادش کنید. بگذارید اسب تصمیم بگیرد.» همه گیج شدند. نگهبانان اسب را به حیاط آوردند. قاضی دستور داد هر دو مرد در دو طرف مخالف حیاط بایستند. اسب لحظه‌ای ایستاد و اطراف را نگاه کرد. بعد بدون تردید، آرام به سمت کشاورز فقیر راه رفت. قاضی اعلام کرد: «اسب ارباب واقعی‌اش را می‌شناسد.»",
                     vocabulary = listOf(
                         Word("courtyard", "حیاط", "ˈkɔːrtjɑːrd"),
                         Word("release", "آزاد کردن", "rɪˈliːs"),
@@ -82,8 +82,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "The Lesson of Wisdom", titlePersian = "درس خرد",
-                    text = "After the case was closed, the rich merchant stormed out of the court angrily. The poor farmer thanked the judge with tears in his eyes. \"How did you know?\" he asked. The judge smiled. \"A horse does not care about money or power. He cares about love and care. You raised him. You fed him. You loved him. He remembers. Animals are wiser than many men.\" The crowd applauded. The story of the wise judge spread throughout the kingdom and beyond. Years later, when the judge was very old, he was asked the secret of his wisdom. He said simply, \"I listen more than I speak. I watch more than I judge. And I always trust the truth.\"",
-                    textPersian = "بعد از بسته شدن پرونده، تاجر ثروتمند با عصبانیت از دادگاه بیرون رفت. کشاورز فقیر با چشمان پر از اشک از قاضی تشکر کرد. «چطور فهمیدید؟» پرسید. قاضی لبخند زد. «اسب به پول و قدرت اهمیت نمی‌دهد. به عشق و مراقبت اهمیت می‌دهد. تو او را بزرگ کردی. به او غذا دادی. دوستش داشتی. او به یاد می‌آورد. حیوانات از بسیاری از انسان‌ها عاقل‌ترند.» جمعیت تشویق کردند. داستان قاضی دانا در سراسر پادشاهی پخش شد. سال‌ها بعد، وقتی قاضی خیلی پیر شده بود، از او راز خردش را پرسیدند. او به سادگی گفت: «بیشتر از آنچه حرف می‌زنم گوش می‌دهم. بیشتر از آنچه قضاوت می‌کنم تماشا می‌کنم. و همیشه به حقیقت اعتماد می‌کنم.»",
+                    text = "After the case was closed, the poor farmer thanked the judge with tears in his eyes. \"How did you know?\" he asked. The judge smiled. \"A horse does not care about money or power. He cares about love and care. You raised him. You loved him. He remembers. Animals are wiser than many men.\" Years later, when the judge was very old, he was asked the secret of his wisdom. He said simply, \"I listen more than I speak. I watch more than I judge. And I always trust the truth.\"",
+                    textPersian = "بعد از بسته شدن پرونده، کشاورز فقیر با چشمان پر از اشک از قاضی تشکر کرد. «چطور فهمیدید؟» پرسید. قاضی لبخند زد. «اسب به پول و قدرت اهمیت نمی‌دهد. به عشق و مراقبت اهمیت می‌دهد. تو او را بزرگ کردی. حیوانات از بسیاری از انسان‌ها عاقل‌ترند.» سال‌ها بعد، از او راز خردش را پرسیدند. گفت: «بیشتر از آنچه حرف می‌زنم گوش می‌دهم. و همیشه به حقیقت اعتماد می‌کنم.»",
                     vocabulary = listOf(
                         Word("storm out", "با عصبانیت بیرون رفتن", ""),
                         Word("applaud", "تشویق کردن", "əˈplɔːd"),
@@ -104,7 +104,7 @@ object IntermediateStories {
                             questionPersian = "راز خرد قاضی چی بود؟",
                             options = listOf("To talk a lot", "To listen more than speak", "To be rich", "To be strong"),
                             correctIndex = 1,
-                            explanation = "He said: 'I listen more than I speak. I watch more than I judge. And I always trust the truth.'"
+                            explanation = "He said: 'I listen more than I speak. I watch more than I judge.'"
                         ),
                         ChapterQuizQuestion(
                             question = "What did the judge's name become a symbol of?",
@@ -127,8 +127,8 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "The Inheritance", titlePersian = "ارث",
-                    text = "When their father passed away, two brothers inherited his farm. The older brother, Karim, was strong and hardworking but also greedy. The younger brother, Nader, was gentle and fair. Their father's will said the farm should be divided equally. But Karim was not happy with this. \"I worked harder than you,\" he told Nader. \"I deserve the bigger part.\" Nader was hurt by his brother's words. \"Father loved us equally,\" he replied. \"Why should we fight over what he left us?\" But Karim would not listen. Days turned into weeks, and weeks into months. The two brothers stopped speaking to each other. They divided the land with a fence and refused to cross it.",
-                    textPersian = "وقتی پدرشان فوت کرد، دو برادر مزرعه‌اش را به ارث بردند. برادر بزرگتر، کریم، قوی و سخت‌کوش بود اما حریص هم بود. برادر کوچکتر، نادر، ملایم و منصف بود. وصیت پدرشان می‌گفت مزرعه باید به‌طور مساوی تقسیم شود. اما کریم راضی نبود. «من سخت‌تر از تو کار کردم،» به نادر گفت. نادر آزرده شد. «پدر ما را به‌طور مساوی دوست داشت.» اما کریم گوش نمی‌داد. دو برادر از حرف زدن با هم دست کشیدند. زمین را با حصار تقسیم کردند.",
+                    text = "When their father passed away, two brothers inherited his farm. The older brother, Karim, was strong and hardworking but also greedy. The younger brother, Nader, was gentle and fair. Their father's will said the farm should be divided equally. But Karim was not happy with this. \"I worked harder than you,\" he told Nader. \"I deserve the bigger part.\" Nader was hurt. \"Father loved us equally.\" But Karim would not listen. The two brothers stopped speaking. They divided the land with a fence and refused to cross it.",
+                    textPersian = "وقتی پدرشان فوت کرد، دو برادر مزرعه‌اش را به ارث بردند. برادر بزرگتر، کریم، قوی و سخت‌کوش بود اما حریص هم بود. برادر کوچکتر، نادر، ملایم و منصف بود. وصیت پدرشان می‌گفت مزرعه باید به‌طور مساوی تقسیم شود. اما کریم راضی نبود. «من سخت‌تر از تو کار کردم.» نادر آزرده شد. اما کریم گوش نمی‌داد. دو برادر از حرف زدن با هم دست کشیدند.",
                     vocabulary = listOf(
                         Word("inherit", "به ارث بردن", "ɪnˈherɪt"),
                         Word("greedy", "حریص", "ˈɡriːdi"),
@@ -156,14 +156,14 @@ object IntermediateStories {
                             questionPersian = "کریم چیکار کرد که نادر رو آزرد؟",
                             options = listOf("He sold the farm", "He said he deserved the bigger part", "He left home", "He broke the fence"),
                             correctIndex = 1,
-                            explanation = "Karim said: 'I worked harder than you. I deserve the bigger part.'"
+                            explanation = "Karim said: 'I deserve the bigger part.'"
                         )
                     )
                 ),
                 StoryChapter(
                     number = 2, title = "The Lonely Winter", titlePersian = "زمستان تنها",
-                    text = "That winter was the coldest in many years. Snow covered the entire valley. One night, Karim heard a strange sound from his brother's side of the farm. He listened carefully. It was coughing. Nader was sick. Karim tried to ignore it. \"He has his own land and his own life,\" he told himself. But the coughing continued for hours. Karim could not sleep. His father's words came back to him: \"Brothers are like two hands — one cannot survive without the other.\" Karim lay awake all night, torn between his pride and his heart. The next morning, he saw that no smoke was coming from Nader's chimney. Nader was too weak to light the fire. Karim's heart sank. He realized how foolish he had been.",
-                    textPersian = "آن زمستان سردترین زمستان سال‌های بسیاری بود. برف تمام دره را پوشاند. یک شب، کریم صدای عجیبی از طرف مزرعه‌ی برادرش شنید. سرفه بود. نادر بیمار بود. کریم سعی کرد نادیده بگیرد. «او زمین خودش و زندگی خودش را دارد.» اما سرفه‌ها ساعت‌ها ادامه یافت. کریم نمی‌توانست بخوابد. حرف پدرش به یادش آمد: «برادرها مثل دو دست هستند — یکی بدون دیگری نمی‌تواند زنده بماند.» صبح روز بعد، دید که هیچ دودی از دودکش نادر نمی‌آید. قلب کریم فرو ریخت.",
+                    text = "That winter was the coldest in many years. One night, Karim heard a strange sound from his brother's side of the farm. It was coughing. Nader was sick. Karim tried to ignore it. But the coughing continued for hours. Karim could not sleep. His father's words came back to him: \"Brothers are like two hands — one cannot survive without the other.\" The next morning, he saw that no smoke was coming from Nader's chimney. Nader was too weak to light the fire. Karim's heart sank. He realized how foolish he had been.",
+                    textPersian = "آن زمستان سردترین زمستان سال‌های بسیاری بود. یک شب، کریم صدای عجیبی از طرف برادرش شنید. سرفه بود. نادر بیمار بود. سرفه‌ها ساعت‌ها ادامه یافت. کریم نمی‌توانست بخوابد. حرف پدرش به یادش آمد: «برادرها مثل دو دست هستند — یکی بدون دیگری نمی‌تواند زنده بماند.» صبح روز بعد، دید که هیچ دودی از دودکش نادر نمی‌آید.",
                     vocabulary = listOf(
                         Word("valley", "دره", "ˈvæli"),
                         Word("cough", "سرفه", "kɔːf"),
@@ -191,14 +191,14 @@ object IntermediateStories {
                             questionPersian = "کریم صبح روز بعد چی متوجه شد؟",
                             options = listOf("No smoke from Nader's chimney", "Nader went away", "Someone stole from the farm", "It was warmer"),
                             correctIndex = 0,
-                            explanation = "No smoke was coming from Nader's chimney — Nader was too weak to light the fire."
+                            explanation = "No smoke was coming from Nader's chimney — Nader was too weak."
                         )
                     )
                 ),
                 StoryChapter(
                     number = 3, title = "Two Hands Together", titlePersian = "دو دست با هم",
-                    text = "Karim grabbed his coat and ran across the fence. He broke it down with his own hands. He ran to Nader's house and knocked. No answer. He pushed the door open. Nader was lying on the bed, pale and weak. Karim rushed to him. \"Nader! Nader! Wake up!\" Nader slowly opened his eyes. When he saw his brother, tears rolled down his cheeks. \"Karim... I thought you hated me.\" Karim shook his head and hugged his brother tightly. \"I was a fool,\" he whispered. \"I'm sorry. I'm so sorry.\" He built a fire, cooked hot soup, and stayed with Nader all week. Slowly, Nader recovered. \"Let's tear down the fence,\" said Karim. \"The farm was never ours to divide. It was father's gift to us — both of us. Together.\"",
-                    textPersian = "کریم کاپشنش را برداشت و از روی حصار دوید. با دستان خودش خرابش کرد. به خانه نادر دوید. نادر روی تخت دراز کشیده بود، رنگ‌پریده و ضعیف. کریم به سمتش دوید. «نادر! بیدار شو!» نادر آرام چشمانش را باز کرد. وقتی برادرش را دید، اشک روی گونه‌هایش غلتید. «کریم... فکر کردم از من متنفری.» کریم سر تکان داد و برادرش را محکم در آغوش گرفت. «احمق بودم.» آتش روشن کرد، سوپ گرم پخت و تمام هفته با نادر ماند. «بیایید حصار را خراب کنیم. مزرعه هرگز مال ما نبود که تقسیمش کنیم. هدیه پدر به ما بود — به هر دوی ما. با هم.»",
+                    text = "Karim grabbed his coat and ran across the fence. He broke it down with his own hands. He ran to Nader's house. Nader was lying on the bed, pale and weak. Karim rushed to him. \"Nader! Wake up!\" Nader slowly opened his eyes. When he saw his brother, tears rolled down his cheeks. Karim hugged his brother tightly. \"I was a fool,\" he whispered. \"I'm so sorry.\" He built a fire, cooked hot soup, and stayed with Nader all week. Slowly, Nader recovered. \"Let's tear down the fence,\" said Karim. \"The farm was never ours to divide. It was father's gift to us — together.\"",
+                    textPersian = "کریم کاپشنش را برداشت و از روی حصار دوید. با دستان خودش خرابش کرد. به خانه نادر دوید. نادر روی تخت دراز کشیده بود، رنگ‌پریده. کریم به سمتش دوید. «نادر! بیدار شو!» نادر آرام چشمانش را باز کرد. وقتی برادرش را دید، اشک روی گونه‌هایش غلتید. کریم برادرش را محکم در آغوش گرفت. «احمق بودم.» آتش روشن کرد، سوپ گرم پخت و تمام هفته با نادر ماند. «بیایید حصار را خراب کنیم. مزرعه هدیه پدر به ما بود — به هر دوی ما. با هم.»",
                     vocabulary = listOf(
                         Word("grab", "قاپیدن", "ɡræb"),
                         Word("pale", "رنگ‌پریده", "peɪl"),
@@ -242,8 +242,8 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "A Strange Seed", titlePersian = "دانه‌ای عجیب",
-                    text = "A young farmer named Behrouz lived in a small village. One day, an old traveler gave him a small bamboo seed. \"Plant this,\" the traveler said. \"Water it every day. But be patient — it will not grow quickly.\" Behrouz was curious. He had never grown bamboo before. He planted the seed in his garden and watered it every morning. After one month, nothing grew. His neighbors laughed. \"You're wasting your time!\" they said. But Behrouz kept watering. After six months, still nothing. After one year, still nothing. His wife began to worry. \"Maybe the seed is dead,\" she said. But Behrouz smiled and continued.",
-                    textPersian = "کشاورز جوانی به نام بهروز در دهکده‌ای کوچک زندگی می‌کرد. یک روز، مسافری پیر دانه‌ی کوچک بامبو به او داد. «این را بکار،» مسافر گفت. «هر روز آبش بده. اما صبور باش.» بهروز دانه را در باغش کاشت و هر صبح آب داد. بعد از یک ماه، چیزی رشد نکرد. همسایه‌ها خندیدند. بعد از شش ماه، هنوز هیچی. بعد از یک سال، هنوز هیچی. همسرش نگران شد. اما بهروز لبخند زد و ادامه داد.",
+                    text = "A young farmer named Behrouz lived in a small village. One day, an old traveler gave him a small bamboo seed. \"Plant this,\" the traveler said. \"Water it every day. But be patient — it will not grow quickly.\" Behrouz was curious. He had never grown bamboo before. He planted the seed in his garden and watered it every morning. After one month, nothing grew. His neighbors laughed. \"You're wasting your time!\" they said. But Behrouz kept watering. After one year, still nothing.",
+                    textPersian = "کشاورز جوانی به نام بهروز در دهکده‌ای کوچک زندگی می‌کرد. یک روز، مسافری پیر دانه‌ی کوچک بامبو به او داد. «این را بکار. هر روز آبش بده. اما صبور باش.» بهروز دانه را در باغش کاشت و هر صبح آب داد. بعد از یک ماه، چیزی رشد نکرد. همسایه‌ها خندیدند. بعد از یک سال، هنوز هیچی.",
                     vocabulary = listOf(
                         Word("bamboo", "بامبو", "ˌbæmˈbuː"),
                         Word("curious", "کنجکاو", "ˈkjʊriəs"),
@@ -277,8 +277,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "The Hidden Roots", titlePersian = "ریشه‌های پنهان",
-                    text = "Five years passed. Behrouz continued to water the seed every single day. He talked to it. He protected it from birds and insects. His neighbors had stopped laughing — now they felt sorry for him. \"Poor Behrouz,\" they whispered. \"He has wasted five years of his life.\" Behrouz's beard had grown long. His hands were rough from work. But his eyes still held hope. Then one spring morning, Behrouz went to his garden as usual. And he stopped. A small green shoot was pushing through the soil! It was tiny, but it was alive. Behrouz fell to his knees with tears of joy. \"It's growing!\" he shouted. But what he did not know was that under the ground, something amazing had been happening all those years. The bamboo roots had been growing deeper and deeper, spreading wider and wider.",
-                    textPersian = "پنج سال گذشت. بهروز هر روز دانه را آب داد. با آن حرف زد. از پرنده‌ها و حشرات محافظتش کرد. همسایه‌ها دیگر نمی‌خندیدند — حالا برایش دلسوزی می‌کردند. بعد یک صبح بهاری، بهروز طبق معمول به باغش رفت. جوانه‌ی سبز کوچکی از خاک بیرون می‌آمد! بهروز با اشک شوق زانو زد. اما نمی‌دانست زیر زمین، اتفاق شگفت‌انگیزی تمام آن سال‌ها افتاده. ریشه‌های بامبو عمیق‌تر و عمیق‌تر رشد می‌کردند.",
+                    text = "Five years passed. Behrouz continued to water the seed every single day. He talked to it. He protected it from birds and insects. His neighbors had stopped laughing — now they felt sorry for him. Then one spring morning, Behrouz went to his garden as usual. And he stopped. A small green shoot was pushing through the soil! It was tiny, but it was alive. Behrouz fell to his knees with tears of joy. But what he did not know was that under the ground, the bamboo roots had been growing deeper and deeper all those years.",
+                    textPersian = "پنج سال گذشت. بهروز هر روز دانه را آب داد. از پرنده‌ها و حشرات محافظتش کرد. همسایه‌ها دیگر نمی‌خندیدند. بعد یک صبح بهاری، جوانه‌ی سبز کوچکی از خاک بیرون آمد! بهروز با اشک شوق زانو زد. اما نمی‌دانست زیر زمین، ریشه‌های بامبو تمام آن سال‌ها عمیق‌تر رشد می‌کردند.",
                     vocabulary = listOf(
                         Word("rough", "زبر", "rʌf"),
                         Word("shoot", "جوانه", "ʃuːt"),
@@ -312,8 +312,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "A Forest of Bamboo", titlePersian = "جنگلی از بامبو",
-                    text = "In the weeks that followed, something incredible happened. The bamboo grew and grew — not slowly, but with astonishing speed. In six weeks, it reached thirty meters tall! Neighbors came from all over the village to see this miracle. They stood with open mouths, staring at the towering bamboo. \"How is this possible?\" they asked. Behrouz smiled. \"For five years, it was growing underground,\" he explained. \"The roots were preparing the way. When the time was right, it burst forth in just six weeks.\" An old wise man in the village nodded and said, \"This is the way of all great things. The most important growth happens invisibly, deep inside, before anyone can see it.\"",
-                    textPersian = "در هفته‌های بعد، اتفاق باورنکردنی افتاد. بامبو رشد کرد و رشد کرد. در شش هفته، به سی متر رسید! همسایه‌ها از سراسر دهکده آمدند. بهروز لبخند زد. «پنج سال زیر زمین رشد می‌کرد. ریشه‌ها راه را آماده می‌کردند.» پیرمرد دانایی گفت: «این راه همه چیزهای بزرگ است. مهم‌ترین رشد نامرئی اتفاق می‌افتد، در عمق، قبل از اینکه کسی ببیند.»",
+                    text = "In the weeks that followed, something incredible happened. The bamboo grew and grew — not slowly, but with astonishing speed. In six weeks, it reached thirty meters tall! Neighbors came from all over the village to see this miracle. Behrouz smiled. \"For five years, it was growing underground,\" he explained. \"The roots were preparing the way.\" An old wise man in the village nodded and said, \"This is the way of all great things. The most important growth happens invisibly, deep inside, before anyone can see it.\"",
+                    textPersian = "در هفته‌های بعد، اتفاق باورنکردنی افتاد. بامبو با سرعت حیرت‌انگیز رشد کرد. در شش هفته، به سی متر رسید! همسایه‌ها آمدند. بهروز لبخند زد: «پنج سال زیر زمین رشد می‌کرد. ریشه‌ها راه را آماده می‌کردند.» پیرمرد دانا گفت: «این راه همه چیزهای بزرگ است. مهم‌ترین رشد نامرئی اتفاق می‌افتد.»",
                     vocabulary = listOf(
                         Word("incredible", "باورنکردنی", "ɪnˈkredəbl"),
                         Word("astonishing", "حیرت‌انگیز", "əˈstɑːnɪʃɪŋ"),
@@ -358,7 +358,7 @@ object IntermediateStories {
                 StoryChapter(
                     number = 1, title = "The Kind King", titlePersian = "پادشاه مهربان",
                     text = "Long ago, in a beautiful kingdom surrounded by mountains, there ruled a king named Arman. King Arman was unlike any king before him. He did not care for gold or jewels. Instead, he used the kingdom's wealth to help the poor, feed the hungry, and educate the children. Every morning, he walked through the streets of his capital, talking to ordinary people. His advisors were worried. \"Your Majesty,\" they said, \"if you keep giving away the royal treasury, the kingdom will run out of money!\" The king smiled gently and replied, \"The more I give, the more I will receive.\"",
-                    textPersian = "زمان‌های دور، در پادشاهی زیبایی که توسط کوه‌ها احاطه شده بود، پادشاهی به نام آرمان حکومت می‌کرد. به طلا و جواهرات اهمیت نمی‌داد. از ثروت پادشاهی برای کمک به فقرا استفاده می‌کرد. مشاورانش نگران بودند. «اگر مدام خزانه سلطنتی را ببخشید، پادشاهی پول کم می‌آورد!» پادشاه لبخند زد و پاسخ داد: «هر چه بیشتر بدهم، بیشتر دریافت خواهم کرد.»",
+                    textPersian = "زمان‌های دور، پادشاهی به نام آرمان حکومت می‌کرد. به طلا و جواهرات اهمیت نمی‌داد. از ثروت پادشاهی برای کمک به فقرا استفاده می‌کرد. مشاورانش نگران بودند. «اگر مدام خزانه را ببخشید، پادشاهی پول کم می‌آورد!» پادشاه لبخند زد: «هر چه بیشتر بدهم، بیشتر دریافت خواهم کرد.»",
                     vocabulary = listOf(
                         Word("kingdom", "پادشاهی", "ˈkɪŋdəm"),
                         Word("treasury", "خزانه", "ˈtreʒəri"),
@@ -392,8 +392,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "The Test of Time", titlePersian = "آزمون زمان",
-                    text = "Years passed. King Arman continued to give generously. He built schools, hospitals, and libraries. He gave land to farmers and tools to craftsmen. He made sure no child went hungry. His advisors grew more and more worried. \"The treasury is getting smaller!\" they warned. But the king was not worried. He had noticed something they had not. The kingdom was changing. Children who had once been poor were now educated and working. Farmers who had once been struggling were now prosperous. Crime had gone down. Laughter had gone up. And strange as it seemed, the kingdom's economy was thriving.",
-                    textPersian = "سال‌ها گذشت. شاه آرمان به بخشندگی ادامه داد. مدرسه، بیمارستان و کتابخانه ساخت. مشاورانش بیشتر و بیشتر نگران شدند. اما پادشاه نگران نبود. پادشاهی در حال تغییر بود. جنایت کم شده بود. خنده بیشتر شده بود. مردم با هم مهربان‌تر بودند. و هرچند عجیب به نظر می‌رسید، اقتصاد پادشاهی شکوفا بود.",
+                    text = "Years passed. King Arman continued to give generously. He built schools, hospitals, and libraries. He gave land to farmers and tools to craftsmen. He made sure no child went hungry. His advisors grew more and more worried. \"The treasury is getting smaller!\" they warned. But the king was not worried. He had noticed something they had not. The kingdom was changing. Children who had once been poor were now educated. Farmers who had once been struggling were now prosperous. Crime had gone down. Laughter had gone up. And the kingdom's economy was thriving.",
+                    textPersian = "سال‌ها گذشت. شاه آرمان به بخشندگی ادامه داد. مدرسه، بیمارستان و کتابخانه ساخت. مشاورانش نگران شدند. اما پادشاه نگران نبود. پادشاهی در حال تغییر بود. جنایت کم شده بود. خنده بیشتر شده بود. و اقتصاد پادشاهی شکوفا بود.",
                     vocabulary = listOf(
                         Word("generously", "بخشنده", "ˈdʒenərəsli"),
                         Word("prosperous", "مرفه", "ˈprɑːspərəs"),
@@ -427,8 +427,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "The Richer Kingdom", titlePersian = "پادشاهی ثروتمندتر",
-                    text = "Twenty years after Arman became king, an ambassador from a neighboring kingdom visited. He was amazed by what he saw. \"Your kingdom is the wealthiest and happiest I have ever visited,\" he said. The king took the ambassador on a tour. He showed him the schools where children learned to read and write. The hospitals where the sick were healed for free. The farms where farmers grew more than enough food. \"When people feel safe and cared for,\" the king explained, \"they work harder, they create more, and they help each other. Everyone benefits.\" King Arman lived to be a very old man. The people built a statue of him with these words: \"The greatest wealth is not what you keep, but what you give.\"",
-                    textPersian = "بیست سال پس از پادشاهی آرمان، سفیری از پادشاهی همسایه بازدید کرد. «پادشاهی شما ثروتمندترین و شادترین جایی است که دیده‌ام.» پادشاه توضیح داد: «وقتی مردم احساس امنیت و مراقبت کنند، سخت‌تر کار می‌کنند، بیشتر می‌سازند و به هم کمک می‌کنند. همه سود می‌برند.» مردم مجسمه‌ای از او ساختند: «بزرگ‌ترین ثروت آن چیزی نیست که نگه می‌داری، بلکه آن چیزی است که می‌بخشی.»",
+                    text = "Twenty years after Arman became king, an ambassador from a neighboring kingdom visited. \"Your kingdom is the wealthiest and happiest I have ever visited,\" he said. The king took the ambassador on a tour. He showed him the schools, the hospitals, the farms where farmers grew more than enough food. \"When people feel safe and cared for,\" the king explained, \"they work harder, they create more, and they help each other. Everyone benefits.\" King Arman lived to be a very old man. The people built a statue of him with these words: \"The greatest wealth is not what you keep, but what you give.\"",
+                    textPersian = "بیست سال پس از پادشاهی آرمان، سفیری از پادشاهی همسایه بازدید کرد. «پادشاهی شما ثروتمندترین جایی است که دیده‌ام.» پادشاه توضیح داد: «وقتی مردم احساس امنیت کنند، سخت‌تر کار می‌کنند و همه سود می‌برند.» مردم مجسمه‌ای از او ساختند: «بزرگ‌ترین ثروت آن چیزی نیست که نگه می‌داری، بلکه آن چیزی است که می‌بخشی.»",
                     vocabulary = listOf(
                         Word("ambassador", "سفیر", "æmˈbæsədər"),
                         Word("mourn", "عزاداری کردن", "mɔːrn"),
@@ -449,7 +449,7 @@ object IntermediateStories {
                             questionPersian = "پادشاه درباره موفقیتش چی توضیح داد؟",
                             options = listOf("It was luck", "When people feel safe and cared for, everyone benefits", "It was magic", "It was from war"),
                             correctIndex = 1,
-                            explanation = "He said: 'When people feel safe and cared for, they work harder and everyone benefits.'"
+                            explanation = "He said: 'When people feel safe and cared for, everyone benefits.'"
                         ),
                         ChapterQuizQuestion(
                             question = "What was written on King Arman's statue?",
@@ -472,8 +472,8 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "The Teacher's Question", titlePersian = "سوال معلم",
-                    text = "Miss Fatima was a wise teacher at a small school in Tehran. Her students loved her because she made them think. One morning, she walked into the classroom and wrote a question on the blackboard: \"What is the most important thing in life?\" The students looked at each other. The class was silent. \"Take out your notebooks,\" said Miss Fatima, \"and write your answer. You have ten minutes.\" The students began to write. Some wrote quickly. Others sat and thought deeply. After ten minutes, Miss Fatima collected the papers. She read them one by one aloud.",
-                    textPersian = "خانم فاطمه معلم دانایی در مدرسه‌ای کوچک در تهران بود. دانش‌آموزانش دوستش داشتند چون به آن‌ها فکر کردن را یاد می‌داد. یک صبح، سؤالی روی تخته نوشت: «مهم‌ترین چیز در زندگی چیست؟» دانش‌آموزان به هم نگاه کردند. «دفترهایتان را دربیاورید و پاسخ را بنویسید. ده دقیقه وقت دارید.»",
+                    text = "Miss Fatima was a wise teacher at a small school in Tehran. Her students loved her because she made them think. One morning, she walked into the classroom and wrote a question on the blackboard: \"What is the most important thing in life?\" The students looked at each other. \"Take out your notebooks,\" said Miss Fatima, \"and write your answer. You have ten minutes.\" The students began to write. After ten minutes, Miss Fatima collected the papers. She read them one by one aloud.",
+                    textPersian = "خانم فاطمه معلم دانایی در مدرسه‌ای کوچک در تهران بود. دانش‌آموزانش دوستش داشتند چون به آن‌ها فکر کردن را یاد می‌داد. یک صبح، سؤالی روی تخته نوشت: «مهم‌ترین چیز در زندگی چیست؟» «دفترهایتان را دربیاورید و پاسخ را بنویسید. ده دقیقه وقت دارید.»",
                     vocabulary = listOf(
                         Word("wise", "دانا", "waɪz"),
                         Word("question", "سؤال پرسیدن", "ˈkwestʃən"),
@@ -506,8 +506,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "Many Answers", titlePersian = "پاسخ‌های متفاوت",
-                    text = "The first answer said, \"Money.\" Miss Fatima smiled and nodded. \"Money is useful,\" she said. The second answer said, \"Health.\" \"Health is precious.\" The third answer said, \"Family.\" Miss Fatima's eyes filled with warmth. Other answers followed: friendship, love, education, kindness, faith. Each answer was beautiful in its own way. But then Miss Fatima picked up one last paper. It was from a quiet girl named Zara. Miss Fatima read it slowly: \"Time.\" The class grew silent.",
-                    textPersian = "پاسخ اول گفت: «پول.» پاسخ دوم: «سلامتی.» پاسخ سوم: «خانواده.» پاسخ‌های دیگری آمد: دوستی، عشق، آموزش، مهربانی. اما بعد آخرین کاغذ را برداشت. از دختر ساکتی به نام زارا بود. آرام خواند: «زمان.» کلاس ساکت شد.",
+                    text = "The first answer said, \"Money.\" Miss Fatima smiled. \"Money is useful.\" The second answer said, \"Health.\" \"Health is precious.\" The third answer said, \"Family.\" Miss Fatima's eyes filled with warmth. Other answers followed: friendship, love, education, kindness, faith. But then Miss Fatima picked up one last paper. It was from a quiet girl named Zara. Miss Fatima read it slowly: \"Time.\" The class grew silent.",
+                    textPersian = "پاسخ اول: «پول.» پاسخ دوم: «سلامتی.» پاسخ سوم: «خانواده.» پاسخ‌های دیگری: دوستی، عشق، آموزش، مهربانی. اما بعد آخرین کاغذ را برداشت. از دختر ساکتی به نام زارا بود. آرام خواند: «زمان.» کلاس ساکت شد.",
                     vocabulary = listOf(
                         Word("comfortable", "راحت", "ˈkʌmftəbl"),
                         Word("foundation", "پایه", "faʊnˈdeɪʃn"),
@@ -540,8 +540,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "The Answer That Changed Everything", titlePersian = "پاسخی که همه چیز را تغییر داد",
-                    text = "Miss Fatima looked at Zara. \"Explain your answer,\" she said gently. Zara stood up slowly. \"Miss,\" she said, \"money can be lost. Health can fade. Family can pass away. But time is the one thing we can never get back. With time, we can earn money. With time, we can heal our bodies. With time, we can build families and friendships. Without time, we have nothing.\" She paused. \"The most important thing in life is how we use our time. Because time is the only thing that never comes back.\" The class was completely silent. Then Miss Fatima smiled. \"Zara is right,\" she said. \"Every second we have is a gift.\"",
-                    textPersian = "خانم فاطمه به زارا نگاه کرد. «پاسخت را توضیح بده.» زارا آرام بلند شد. «خانم، پول می‌تواند از دست برود. سلامتی می‌تواند تحلیل برود. خانواده می‌تواند فوت کند. اما زمان تنها چیزی است که هرگز نمی‌توانیم برگردانیم. مهم‌ترین چیز در زندگی این است که چطور از زمانمان استفاده می‌کنیم.» کلاس ساکت شد. بعد خانم فاطمه لبخند زد. «زارا درست می‌گوید. هر ثانیه‌ای که داریم هدیه است.»",
+                    text = "Miss Fatima looked at Zara. \"Explain your answer,\" she said gently. Zara stood up slowly. \"Money can be lost. Health can fade. Family can pass away. But time is the one thing we can never get back. With time, we can earn money. With time, we can heal our bodies. With time, we can build families and friendships. Without time, we have nothing. The most important thing in life is how we use our time.\" The class was completely silent. Then Miss Fatima smiled. \"Zara is right. Every second we have is a gift.\"",
+                    textPersian = "خانم فاطمه به زارا نگاه کرد. «پاسخت را توضیح بده.» زارا آرام بلند شد. «پول می‌تواند از دست برود. سلامتی می‌تواند تحلیل برود. خانواده می‌تواند فوت کند. اما زمان تنها چیزی است که هرگز نمی‌توانیم برگردانیم. مهم‌ترین چیز در زندگی این است که چطور از زمانمان استفاده می‌کنیم.» کلاس ساکت شد. بعد خانم فاطمه لبخند زد. «زارا درست می‌گوید. هر ثانیه‌ای که داریم هدیه است.»",
                     vocabulary = listOf(
                         Word("fade", "تحلیل رفتن", "feɪd"),
                         Word("pause", "مکث کردن", "pɔːz"),
@@ -585,7 +585,7 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "An Impossible Dream", titlePersian = "رویایی غیرممکن",
-                    text = "In a small town divided by a wide, dangerous river, there lived a young architect named Kian. Every day, Kian watched people struggle to cross the river. There was only one old wooden bridge, and it was always crowded and often broken. People had drowned trying to swim across. Farmers lost their crops because they couldn't reach the market. Kian dreamed of building a grand bridge. He drew sketches in his notebook. When he showed his plans to the town council, they laughed. \"It's impossible,\" they said. But Kian did not give up.",
+                    text = "In a small town divided by a wide, dangerous river, there lived a young architect named Kian. Every day, Kian watched people struggle to cross the river. There was only one old wooden bridge, and it was always crowded and often broken. People had drowned trying to swim across. Kian dreamed of building a grand bridge. He drew sketches in his notebook. When he showed his plans to the town council, they laughed. \"It's impossible,\" they said. But Kian did not give up.",
                     textPersian = "در شهر کوچکی که توسط رودخانه‌ای خطرناک تقسیم شده بود، معمار جوانی به نام کیان زندگی می‌کرد. فقط یک پل چوبی قدیمی بود که همیشه شلوغ و اغلب شکسته بود. کیان رویای ساختن پلی باشکوه را داشت. وقتی نقشه‌هایش را به شورای شهر نشان داد، خندیدند. «غیرممکن است.» اما کیان تسلیم نشد.",
                     vocabulary = listOf(
                         Word("architect", "معمار", "ˈɑːrkɪtekt"),
@@ -620,7 +620,7 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "Years of Struggle", titlePersian = "سال‌های تلاش",
-                    text = "Kian spent years working on his bridge design. He worked during the day as a carpenter to earn money. At night, he studied engineering, physics, and mathematics by candlelight. He wrote letters to engineers around the world asking for advice. One old engineer from Germany wrote: \"Your design is ambitious, but not impossible. The secret is in the foundation.\" These words inspired Kian. He refined his design. After seven years of work, he presented his new plan to the town council. This time, they did not laugh.",
+                    text = "Kian spent years working on his bridge design. He worked during the day as a carpenter to earn money. At night, he studied engineering and mathematics by candlelight. He wrote letters to engineers around the world asking for advice. One old engineer from Germany wrote: \"Your design is ambitious, but not impossible. The secret is in the foundation.\" These words inspired Kian. He refined his design. After seven years of work, he presented his new plan to the town council. This time, they did not laugh.",
                     textPersian = "کیان سال‌ها روی طراحی پلش کار کرد. روزها نجار بود. شب‌ها مهندسی می‌خواند. یک مهندس پیر آلمانی نوشت: «راز در پایه است.» این کلمات کیان را الهام بخشید. بعد از هفت سال کار، طرح جدیدش را به شورا ارائه داد. این بار نخندیدند.",
                     vocabulary = listOf(
                         Word("carpenter", "نجار", "ˈkɑːrpəntər"),
@@ -700,8 +700,8 @@ object IntermediateStories {
             chapters = listOf(
                 StoryChapter(
                     number = 1, title = "The Strange Teacher", titlePersian = "معلم عجیب",
-                    text = "Everyone in the village talked about the strange teacher who lived at the top of the hill. His name was Master Behzad. Students came from far away to learn from him. But when they arrived, they were confused. Master Behzad rarely spoke. When a student asked a question, he would not answer. Instead, he would ask another question. \"Why do you want to know that?\" he might ask. Or, \"What do you think the answer is?\" At first, many students were frustrated. Some students gave up and left. But the ones who stayed began to notice something strange. They were learning more than they ever had before — not from being told, but from discovering.",
-                    textPersian = "همه در دهکده درباره معلم عجیبی که بالای تپه زندگی می‌کرد حرف می‌زدند. اسمش استاد بهزاد بود. وقتی دانش‌آموزی سؤال می‌پرسید، پاسخ نمی‌داد. در عوض سؤال دیگری می‌پرسید. اولش خیلی از دانش‌آموزان کلافه می‌شدند. اما آن‌هایی که ماندند شروع کردند به توجه به چیز عجیبی. بیشتر از هر وقت دیگری یاد می‌گرفتند — نه از گفتن، بلکه از کشف کردن.",
+                    text = "Everyone in the village talked about the strange teacher who lived at the top of the hill. His name was Master Behzad. Students came from far away to learn from him. But when they arrived, they were confused. Master Behzad rarely spoke. When a student asked a question, he would not answer. Instead, he would ask another question. \"Why do you want to know that?\" he might ask. Or, \"What do you think the answer is?\" At first, many students were frustrated. Some students gave up and left. But the ones who stayed began to notice something strange. They were learning more than they ever had before.",
+                    textPersian = "همه در دهکده درباره معلم عجیبی که بالای تپه زندگی می‌کرد حرف می‌زدند. اسمش استاد بهزاد بود. وقتی دانش‌آموزی سؤال می‌پرسید، پاسخ نمی‌داد. در عوض سؤال دیگری می‌پرسید. اولش خیلی از دانش‌آموزان کلافه می‌شدند. اما آن‌هایی که ماندند شروع کردند به توجه به چیز عجیبی. بیشتر از هر وقت دیگری یاد می‌گرفتند.",
                     vocabulary = listOf(
                         Word("rarely", "به‌ندرت", "ˈreərli"),
                         Word("frustrated", "کلافه", "ˈfrʌstreɪtɪd"),
@@ -734,8 +734,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "The Lesson of the Empty Cup", titlePersian = "درس فنجان خالی",
-                    text = "One day, a wealthy young man came to learn from Master Behzad. He had studied at the best schools. He had read hundreds of books. He thought he knew almost everything. Master Behzad listened quietly. When the young man finished, Master Behzad poured tea into his cup. He kept pouring until the cup was full. Then he kept pouring. Tea spilled over the cup and onto the table. The young man jumped up. \"Stop! The cup is full!\" Master Behzad smiled. \"You are like this cup,\" he said. \"You are so full of your own ideas that nothing new can enter. Come back when your cup is empty.\"",
-                    textPersian = "یک روز، مرد جوان ثروتمندی برای یادگیری از استاد بهزاد آمد. وقتی مرد جوان تمام کرد، استاد چای در فنجانش ریخت. تا فنجان پر شد ریخت. بعد ادامه داد. چای از فنجان روی میز ریخت. استاد لبخند زد. «تو مثل این فنجانی. آنقدر از ایده‌های خودت پر هستی که هیچ چیز جدیدی نمی‌تواند وارد شود. وقتی فنجانت خالی شد برگرد.»",
+                    text = "One day, a wealthy young man came to learn from Master Behzad. He had studied at the best schools. He thought he knew almost everything. When the young man finished, Master Behzad poured tea into his cup. He kept pouring until the cup was full. Then he kept pouring. Tea spilled over the cup and onto the table. The young man jumped up. \"Stop! The cup is full!\" Master Behzad smiled. \"You are like this cup. You are so full of your own ideas that nothing new can enter. Come back when your cup is empty.\"",
+                    textPersian = "یک روز، مرد جوان ثروتمندی برای یادگیری از استاد بهزاد آمد. استاد چای در فنجانش ریخت. تا فنجان پر شد ریخت. بعد ادامه داد. چای از فنجان روی میز ریخت. استاد لبخند زد. «تو مثل این فنجانی. آنقدر از ایده‌های خودت پر هستی که هیچ چیز جدیدی نمی‌تواند وارد شود. وقتی فنجانت خالی شد برگرد.»",
                     vocabulary = listOf(
                         Word("confidently", "با اعتماد به نفس", "ˈkɑːnfɪdəntli"),
                         Word("pour", "ریختن", "pɔːr"),
@@ -769,7 +769,7 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "The Teacher's Secret", titlePersian = "راز معلم",
-                    text = "The young man studied with Master Behzad for five years. Every question led to more questions. He learned to think from different angles. At the end of five years, the young man had become a wise teacher himself. On his last day, he asked Master Behzad one final question. \"Master, why did you never give me direct answers?\" Master Behzad said, \"Because the answers you discover yourself are the ones you truly own. If I gave you answers, you would simply memorize them and forget them. But the truths you find through your own thinking — those become part of your soul.\" The young man bowed deeply. \"You taught me not what to think, but how to think.\"",
+                    text = "The young man studied with Master Behzad for five years. Every question led to more questions. At the end of five years, the young man had become a wise teacher himself. On his last day, he asked Master Behzad one final question. \"Master, why did you never give me direct answers?\" Master Behzad said, \"Because the answers you discover yourself are the ones you truly own. If I gave you answers, you would simply memorize them and forget them. But the truths you find through your own thinking — those become part of your soul.\" The young man bowed deeply. \"You taught me not what to think, but how to think.\"",
                     textPersian = "مرد جوان پنج سال با استاد بهزاد درس خواند. در پایان پنج سال، خودش معلم دانایی شده بود. روز آخر پرسید: «استاد، چرا هرگز پاسخ مستقیم ندادید؟» استاد گفت: «چون پاسخ‌هایی که خودت کشف می‌کنی، آن‌هایی هستند که واقعاً مالکشان می‌شوی. اما حقیقت‌هایی که از فکر خودت پیدا می‌کنی، بخشی از روحت می‌شوند.» مرد جوان گفت: «به من یاد دادید چه فکر نکنم، بلکه چطور فکر کنم.»",
                     vocabulary = listOf(
                         Word("uncertainty", "عدم قطعیت", "ʌnˈsɜːrtnti"),
@@ -815,7 +815,7 @@ object IntermediateStories {
                 StoryChapter(
                     number = 1, title = "One Bottle of Water", titlePersian = "یک بطری آب",
                     text = "Two friends, Amir and Kamran, were traveling across a vast desert. The journey was long and dangerous. They had prepared well — food, maps, and supplies. But they had made one mistake. They had brought only one bottle of water. They had planned to refill at a well halfway through, but when they reached it, the well was dry. Amir said, \"We should save the water.\" Kamran said, \"We should drink it now.\" The two friends argued back and forth.",
-                    textPersian = "دو دوست، امیر و کامران، در حال عبور از صحرایی وسیع بودند. فقط یک بطری آب آورده بودند. برنامه داشتند در نیمه راه از چاهی پر کنند، اما چاه خشک بود. امیر گفت: «باید آب را ذخیره کنیم.» کامران گفت: «باید حالا بنوشیم.» دو دوست بحث کردند.",
+                    textPersian = "دو دوست، امیر و کامران، در حال عبور از صحرایی وسیع بودند. فقط یک بطری آب آورده بودند. برنامه داشتند از چاهی پر کنند، اما چاه خشک بود. امیر گفت: «باید آب را ذخیره کنیم.» کامران گفت: «باید حالا بنوشیم.» دو دوست بحث کردند.",
                     vocabulary = listOf(
                         Word("vast", "وسیع", "væst"),
                         Word("desert", "بیابان", "ˈdezərt"),
@@ -918,7 +918,7 @@ object IntermediateStories {
                     )
                 )
             )
-        ),
+        )        ,
 
         Story(
             id = "s_i9", title = "The Lost Kingdom", titlePersian = "پادشاهی گمشده",
@@ -964,7 +964,7 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 2, title = "The Old Hermit", titlePersian = "زاهد پیر",
-                    text = "After a year of searching, Prince Kaveh was exhausted. His men had given up and returned home. Only he remained. One evening, he came across a small hut in the mountains. An old hermit opened the door. \"Welcome, Prince,\" the hermit said, \"I have been expecting you.\" Kaveh was shocked. \"You know me?\" The hermit smiled. \"I know many things. You seek the lost kingdom. But tell me — what do you truly seek?\" Kaveh thought for a moment. \"I seek its wisdom,\" he said. The hermit nodded slowly. \"Then you have already found it.\" Kaveh was confused. \"What do you mean?\" The hermit gestured to the world around them. \"Look,\" he said, \"at the journey you have taken. Look at the courage you have shown, the lessons you have learned, the man you have become.\"",
+                    text = "After a year of searching, Prince Kaveh was exhausted. His men had given up and returned home. Only he remained. One evening, he came across a small hut in the mountains. An old hermit opened the door. \"Welcome, Prince,\" the hermit said, \"I have been expecting you.\" Kaveh was shocked. \"You know me?\" The hermit smiled. \"I know many things. You seek the lost kingdom. But tell me — what do you truly seek?\" Kaveh thought for a moment. \"I seek its wisdom,\" he said. The hermit nodded slowly. \"Then you have already found it.\" Kaveh was confused. The hermit gestured to the world around them. \"Look at the journey you have taken. Look at the courage you have shown, the lessons you have learned, the man you have become.\"",
                     textPersian = "بعد از یک سال جستجو، شاهزاده کاوه خسته بود. یک عصر، کلبه کوچکی دید. زاهد پیری در را باز کرد. «خوش آمدی شاهزاده، منتظرت بودم.» کاوه شوکه شد. «مرا می‌شناسی؟» زاهد لبخند زد. «به دنبال پادشاهی گمشده هستی. اما بگو — واقعاً چه می‌خواهی؟» کاوه فکر کرد. «خردش را می‌خواهم.» زاهد سر تکان داد. «پس قبلاً پیدایش کرده‌ای.»",
                     vocabulary = listOf(
                         Word("hermit", "زاهد", "ˈhɜːrmɪt"),
@@ -1114,7 +1114,7 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "Home at Last", titlePersian = "بالاخره خانه",
-                    text = "Sadegh turned around and walked home. It took him almost a year to return. When he finally reached his village, his heart was beating fast. He knocked. His wife opened it. She was older now. She stared at him for a long moment. Then she burst into tears and threw her arms around him. His children — now young adults — ran out and hugged him. That night, they sat together around the kitchen table. And then he said, \"I was looking for treasure. But I already had it. It was here, all along. The real treasure is the people who love you, the home you come back to, the family that waits for you.\" From that day on, Sadegh never left again.",
+                    text = "Sadegh turned around and walked home. It took him almost a year to return. When he finally reached his village, his heart was beating fast. He knocked. His wife opened it. She was older now. She stared at him for a long moment. Then she burst into tears and threw her arms around him. His children — now young adults — ran out and hugged him. That night, they sat together around the kitchen table. And then he said, \"I was looking for treasure. But I already had it. It was here, all along. The real treasure is the people who love you, the home you come back to, the family that waits for you.\"",
                     textPersian = "صادق برگشت و به خانه رفت. تقریباً یک سال طول کشید تا برگردد. در زد. زنش بازش کرد. حالا مسن‌تر بود. لحظه‌ای به او خیره شد. بعد اشک ریخت و دستانش را دور او پیچید. صادق گفت: «دنبال گنج می‌گشتم. اما قبلاً داشتمش. گنج واقعی کسانی هستند که تو را دوست دارند، خانه‌ای که به آن برمی‌گردی، خانواده‌ای که منتظرت می‌ماند.»",
                     vocabulary = listOf(
                         Word("line", "چین و چروک", "laɪn"),
@@ -1459,8 +1459,8 @@ object IntermediateStories {
                 ),
                 StoryChapter(
                     number = 3, title = "A Legacy of Forests", titlePersian = "میراثی از جنگل‌ها",
-                    text = "Fifty years later, Arash was an old man himself. He had become a gardener, inspired by Baba Reza. Now he sat under a massive oak tree — one that Baba Reza had planted. The tree was enormous. Children played beneath it. Birds nested in it. Arash looked up and saw his own grandchildren climbing its branches. He smiled and thought of Baba Reza. The old man had been right. The trees he had planted were not just trees. They were shadows for grandchildren he would never meet. Arash looked at his own young trees. He knew he would never see them grow tall. But that was okay. Because the best things in life are not for us. They are for those who come after us.",
-                    textPersian = "پنجاه سال بعد، آرش خودش پیرمردی بود. باغبان شده بود. زیر یک درخت بلوط عظیم نشسته بود — درختی که بابا رضا کاشته بود. بچه‌ها زیرش بازی می‌کردند. پرندگان در آن لانه داشتند. آرش نوه‌هایش را در حال بالا رفتن از شاخه‌ها دید. لبخند زد و به بابا رضا فکر کرد. بهترین چیزهای زندگی برای ما نیستند. برای کسانی هستند که بعد از ما می‌آیند.",
+                    text = "Fifty years later, Arash was an old man himself. He had become a gardener, inspired by Baba Reza. Now he sat under a massive oak tree — one that Baba Reza had planted. The tree was enormous. Children played beneath it. Birds nested in it. Arash looked up and saw his own grandchildren climbing its branches. He smiled and thought of Baba Reza. The trees he had planted were not just trees. They were shadows for grandchildren he would never meet. Arash looked at his own young trees. He knew he would never see them grow tall. But that was okay. Because the best things in life are not for us. They are for those who come after us.",
+                    textPersian = "پنجاه سال بعد، آرش خودش پیرمردی بود. باغبان شده بود. زیر یک درخت بلوط عظیم نشسته بود — درختی که بابا رضا کاشته بود. بچه‌ها زیرش بازی می‌کردند. پرندگان در آن لانه داشتند. آرش نوه‌هایش را در حال بالا رفتن از شاخه‌ها دید. بهترین چیزهای زندگی برای ما نیستند. برای کسانی هستند که بعد از ما می‌آیند.",
                     vocabulary = listOf(
                         Word("massive", "عظیم", "ˈmæsɪv"),
                         Word("nest", "لانه", "nest"),
@@ -1674,4 +1674,163 @@ object IntermediateStories {
                         ChapterQuizQuestion(
                             question = "Why was the light so important?",
                             questionPersian = "چرا نور اینقدر مهم بود؟",
-                            options = listOf("
+                            options = listOf("For decoration", "It was the only guide for ships", "To keep him warm", "For visitors"),
+                            correctIndex = 1,
+                            explanation = "His light would be the only guide for the ships."
+                        ),
+                        ChapterQuizQuestion(
+                            question = "What did Hossein see in the morning?",
+                            questionPersian = "حسین صبح چی دید؟",
+                            options = listOf("Three ships anchored safely", "A wrecked ship", "Nothing", "More storm"),
+                            correctIndex = 0,
+                            explanation = "He saw three ships anchored safely in the harbor."
+                        )
+                    )
+                ),
+                StoryChapter(
+                    number = 3, title = "Purpose in Isolation", titlePersian = "هدف در انزوا",
+                    text = "Years passed. Hossein grew older and weaker. Finally, the time came for him to retire. A young man named Farid arrived to take his place. Farid was nervous. \"How did you survive it for forty years?\" he asked. Hossein smiled. He led Farid to the top of the lighthouse. \"Look,\" Hossein said. \"Every night, hundreds of ships pass this coast. Every night, thousands of people are traveling home. They don't know me. But my light guides them. My work saves their lives.\" Farid looked at the sea. \"How can I be lonely,\" Hossein continued, \"when I am saving lives every night?\" Farid nodded slowly. He understood. Purpose is what gives life meaning. It does not matter how small your world is. What matters is the impact of your work. Hossein passed away a few years later, on the island, in his sleep. In his will, he asked that his ashes be scattered from the top of the lighthouse.",
+                    textPersian = "سال‌ها گذشت. حسین پیرتر و ضعیف‌تر شد. وقت بازنشستگی رسید. مرد جوانی به نام فرید آمد. فرید مضطرب بود. «چطور چهل سال تحملش کردی؟» حسین لبخند زد. فرید را به بالای فانوس برد. «نگاه کن. هر شب، صدها کشتی از این ساحل می‌گذرند. هزاران نفر به خانه سفر می‌کنند. مرا نمی‌شناسند. اما نور من هدایتشان می‌کند. کار من زندگی‌شان را نجات می‌دهد.» فرید آرام سر تکان داد. فهمید. هدف چیزی است که به زندگی معنا می‌دهد. حسین چند سال بعد در خواب از دنیا رفت.",
+                    vocabulary = listOf(
+                        Word("retire", "بازنشسته شدن", "rɪˈtaɪər"),
+                        Word("isolated", "منزوی", "ˈaɪsəleɪtɪd"),
+                        Word("impact", "تأثیر", "ˈɪmpækt"),
+                        Word("will", "وصیت‌نامه", "wɪl"),
+                        Word("scatter", "پخش کردن", "ˈskætər")
+                    ),
+                    quiz = listOf(
+                        ChapterQuizQuestion(
+                            question = "Who came to replace Hossein?",
+                            questionPersian = "کی آمد تا جایگزین حسین بشه؟",
+                            options = listOf("A captain", "A young man named Farid", "A sailor", "A priest"),
+                            correctIndex = 1,
+                            explanation = "A young man named Farid arrived to take his place."
+                        ),
+                        ChapterQuizQuestion(
+                            question = "What did Hossein say about loneliness?",
+                            questionPersian = "حسین درباره تنهایی چی گفت؟",
+                            options = listOf("It was unbearable", "How can I be lonely when I am saving lives every night", "He missed people", "It was hard"),
+                            correctIndex = 1,
+                            explanation = "He said: 'How can I be lonely when I am saving lives every night?'"
+                        ),
+                        ChapterQuizQuestion(
+                            question = "What did Hossein ask in his will?",
+                            questionPersian = "حسین در وصیتش چی خواست؟",
+                            options = listOf("To be buried on the mainland", "His ashes be scattered from the lighthouse", "To give the lighthouse away", "Nothing"),
+                            correctIndex = 1,
+                            explanation = "He asked that his ashes be scattered from the top of the lighthouse."
+                        )
+                    )
+                )
+            )
+        ),
+
+        // ==================== داستان‌های بدون فصل (s_i16 تا s_i30) ====================
+
+        Story(
+            id = "s_i16", title = "The Two Wolves", titlePersian = "دو گرگ",
+            level = Level.INTERMEDIATE,
+            text = "An old Cherokee told his grandson: Inside every person, there is a battle between two wolves. One is evil — anger, greed, jealousy. The other is good — love, kindness, compassion. The grandson asked: Which wolf wins? The grandfather replied: The one you feed.",
+            moral = "You become what you nurture inside.", moralPersian = "تو همان می‌شوی که درون خود پرورش می‌دهی.",
+            coverUrl = "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400"
+        ),
+        Story(
+            id = "s_i17", title = "The Perfect Cup", titlePersian = "فنجان بی‌نقص",
+            level = Level.INTERMEDIATE,
+            text = "A pottery teacher split her class into two groups. The first group had to make one perfect cup. The second group had to make as many cups as possible. At the end, the second group made better cups. Perfection came through practice, not through aiming for perfection. Quantity leads to quality.",
+            moral = "Practice makes perfect, not intention.", moralPersian = "تمرین کامل می‌کند، نه نیت.",
+            coverUrl = "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400"
+        ),
+        Story(
+            id = "s_i18", title = "The Missing Puzzle Piece", titlePersian = "قطعه گمشده پازل",
+            level = Level.INTERMEDIATE,
+            text = "A man spent years searching for one missing puzzle piece. He found it in his own pocket. He had carried it with him all along. The lesson: Sometimes what we search for is already within us. The answer to our questions lives in our own hearts.",
+            moral = "What you seek is often within you.", moralPersian = "آنچه می‌جویی اغلب درون توست.",
+            coverUrl = "https://images.unsplash.com/photo-1494059980473-813e73ee784b?w=400"
+        ),
+        Story(
+            id = "s_i19", title = "The Prince and the Beggar", titlePersian = "شاهزاده و گدا",
+            level = Level.INTERMEDIATE,
+            text = "A prince and a beggar switched clothes for a day. The prince lived as a beggar and discovered hunger, cold, and humiliation. The beggar lived as a prince and discovered boredom, loneliness, and pressure. That night, they met again. Both agreed that every life has its own struggles. You cannot judge what you have not lived.",
+            moral = "Never judge another's life.", moralPersian = "هرگز زندگی دیگری را قضاوت نکن.",
+            coverUrl = "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400"
+        ),
+        Story(
+            id = "s_i20", title = "The Book That Never Ended", titlePersian = "کتابی که تمام نشد",
+            level = Level.INTERMEDIATE,
+            text = "A writer spent his whole life writing a book. On his deathbed, he asked his daughter to read the last page. It was empty. He said: I never finished because life is the story that never ends. There is always a new page waiting to be written. Keep writing your own story.",
+            moral = "Your story is always being written.", moralPersian = "داستان تو همیشه در حال نوشته شدن است.",
+            coverUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400"
+        ),
+        Story(
+            id = "s_i21", title = "The River and the Rock", titlePersian = "رودخانه و صخره",
+            level = Level.INTERMEDIATE,
+            text = "A river flowed gently. It met a giant rock in its path. The rock said: You cannot pass me. I am strong. The river did not fight. It went around. It wore the rock down with patience over centuries. Finally, the rock became sand. The river continued to the sea. Flexibility beats rigidity.",
+            moral = "Flexibility overcomes brute force.", moralPersian = "انعطاف بر زور خالص پیروز می‌شود.",
+            coverUrl = "https://images.unsplash.com/photo-1439405326854-014607f694d7?w=400"
+        ),
+        Story(
+            id = "s_i22", title = "The Father's Advice", titlePersian = "توصیه پدر",
+            level = Level.INTERMEDIATE,
+            text = "Before a young man left home, his father gave him two pieces of advice. First: Keep your word, even when it's hard. Second: Always be kinder than necessary. Years later, the son was known as the most trusted and loved man in his city. Two simple rules built a great life.",
+            moral = "Simple virtues create great lives.", moralPersian = "فضیلت‌های ساده زندگی‌های بزرگ می‌سازند.",
+            coverUrl = "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400"
+        ),
+        Story(
+            id = "s_i23", title = "The Blind Man and the Lantern", titlePersian = "مرد کور و فانوس",
+            level = Level.INTERMEDIATE,
+            text = "A blind man carried a lantern at night. People laughed: Why do you carry a lantern when you cannot see? He replied: I carry it for others. So they can see me and not bump into me. Wisdom sees what eyes cannot.",
+            moral = "Wisdom is deeper than sight.", moralPersian = "خرد عمیق‌تر از بینایی است.",
+            coverUrl = "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400"
+        ),
+        Story(
+            id = "s_i24", title = "The Tailor's Mistake", titlePersian = "اشتباه خیاط",
+            level = Level.INTERMEDIATE,
+            text = "A tailor cut the cloth too short. Instead of giving up, he redesigned the outfit. It became even more beautiful than the original plan. He realized: Every mistake is an opportunity to create something new. Creativity turns failures into masterpieces.",
+            moral = "Mistakes can become masterpieces.", moralPersian = "اشتباهات می‌توانند به شاهکار تبدیل شوند.",
+            coverUrl = "https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=400"
+        ),
+        Story(
+            id = "s_i25", title = "The Sailor's Compass", titlePersian = "قطب‌نمای ملوان",
+            level = Level.INTERMEDIATE,
+            text = "A sailor lost his compass in a storm. He panicked at first, but then he used the stars to guide him. He realized: When you lose one way, another appears. Life always gives alternatives. Trust the universe to show you the way.",
+            moral = "When one door closes, another opens.", moralPersian = "وقتی دری بسته می‌شود، دری دیگر باز می‌شود.",
+            coverUrl = "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=400"
+        ),
+        Story(
+            id = "s_i26", title = "The Old Photograph", titlePersian = "عکس قدیمی",
+            level = Level.INTERMEDIATE,
+            text = "A woman found an old photograph of her great-grandmother. She was young, smiling, and full of dreams. The woman realized: She was me. I am her. Our dreams are the same. Our hopes are the same. We are connected across time by the thread of humanity.",
+            moral = "We are connected across generations.", moralPersian = "ما در طول نسل‌ها به هم متصل هستیم.",
+            coverUrl = "https://images.unsplash.com/photo-1516575334481-f85287c2c82d?w=400"
+        ),
+        Story(
+            id = "s_i27", title = "The Power of One Voice", titlePersian = "قدرت یک صدا",
+            level = Level.INTERMEDIATE,
+            text = "One person wrote a letter to a newspaper about pollution. Others read it and joined. Soon, a whole movement started. One voice became many. The world changed because one person refused to stay silent. Never underestimate the power of your voice.",
+            moral = "One voice can change the world.", moralPersian = "یک صدا می‌تواند دنیا را تغییر دهد.",
+            coverUrl = "https://images.unsplash.com/photo-1591543620767-582b2e76369e?w=400"
+        ),
+        Story(
+            id = "s_i28", title = "The Gift of Time", titlePersian = "هدیه زمان",
+            level = Level.INTERMEDIATE,
+            text = "A busy executive learned his son had only a few months to live. He dropped everything to be with him. In those months, he discovered the son he never knew. After his son passed, he said: I gave him my time — the most valuable gift I ever gave. Time is the greatest gift.",
+            moral = "Time is the greatest gift you can give.", moralPersian = "زمان بزرگ‌ترین هدیه‌ای است که می‌توانی بدهی.",
+            coverUrl = "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400"
+        ),
+        Story(
+            id = "s_i29", title = "The Seven Wonders", titlePersian = "هفت عجایب",
+            level = Level.INTERMEDIATE,
+            text = "A teacher asked her students to list the Seven Wonders of the World. One girl hesitated. The teacher asked: What's wrong? She said: I can't decide — to see, to hear, to touch, to taste, to feel, to laugh, to love. The class fell silent. Those are the real wonders.",
+            moral = "The greatest wonders are within us.", moralPersian = "بزرگ‌ترین عجایب درون ما هستند.",
+            coverUrl = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+        ),
+        Story(
+            id = "s_i30", title = "The Last Conversation", titlePersian = "آخرین گفتگو",
+            level = Level.INTERMEDIATE,
+            text = "A man called his father after years of silence. They talked for hours about everything. The next day, his father passed away. The man realized: That phone call was a gift from fate. Never delay forgiveness. Never assume there is more time. Say what you need to say today.",
+            moral = "Never delay saying what matters.", moralPersian = "هرگز گفتن آنچه مهم است را به تأخیر نینداز.",
+            coverUrl = "https://images.unsplash.com/photo-1516575334481-f85287c2c82d?w=400"
+        )
+    )
+}
