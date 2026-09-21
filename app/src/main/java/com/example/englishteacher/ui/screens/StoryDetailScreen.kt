@@ -73,12 +73,14 @@ fun StoryDetailScreen(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
+        else -> Color(0xFFE91E63) // اضافه شد
     }
 
     val emoji = when (story.level) {
         Level.BEGINNER -> "🌱"
         Level.INTERMEDIATE -> "🚀"
         Level.ADVANCED -> "🏆"
+        else -> "📖" // اضافه شد
     }
 
     Scaffold(
