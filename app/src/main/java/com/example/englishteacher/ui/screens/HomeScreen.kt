@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -42,7 +43,8 @@ fun HomeScreen(
     onDailySentencesClick: () -> Unit = {},
     onBookmarkedStoriesClick: () -> Unit = {},
     onAchievementsClick: () -> Unit = {},
-    onSpeakingClick: () -> Unit = {}
+    onSpeakingClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -565,6 +567,60 @@ fun HomeScreen(
                             )
                             Text(
                                 "کلمات مهمی که ذخیره کردی",
+                                fontSize = 10.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            // ==================== تنظیمات ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(75.dp)
+                    .clickable { onSettingsClick() },
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF546E7A), Color(0xFF78909C))
+                            )
+                        )
+                        .padding(14.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(46.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Settings,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                "تنظیمات",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "شخصی‌سازی اپلیکیشن",
                                 fontSize = 10.sp,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
