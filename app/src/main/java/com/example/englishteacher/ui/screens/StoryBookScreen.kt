@@ -415,6 +415,7 @@ private fun FeaturedStoryCard(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
+        else -> Color(0xFFE91E63) // اضافه شد تا خطای exhaustive برطرف شود
     }
 
     var pressed by remember { mutableStateOf(false) }
@@ -624,6 +625,7 @@ private fun StoryBookCard(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
+        else -> Color(0xFFE91E63) // اضافه شد تا خطای exhaustive برطرف شود
     }
 
     var pressed by remember { mutableStateOf(false) }
