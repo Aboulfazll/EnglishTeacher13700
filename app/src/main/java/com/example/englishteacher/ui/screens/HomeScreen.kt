@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,7 +34,7 @@ import com.example.englishteacher.data.ProgressManager
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Calendar
 
-// ==================== مدل‌های کمکی ====================
+// ==================== داده‌های محلی ====================
 private data class DailyWord(
     val english: String,
     val persian: String,
@@ -60,6 +59,16 @@ private val dailyQuotes = listOf(
     "Don't watch the clock; do what it does. Keep going." to "به ساعت نگاه نکن؛ کاری که او می‌کند را انجام بده. ادامه بده."
 )
 
+private val backgroundImages = listOf(
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800",
+    "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800",
+    "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800",
+    "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800",
+    "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800",
+    "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800",
+    "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"
+)
+
 @Composable
 fun HomeScreen(
     onLevelClick: (Level) -> Unit,
@@ -74,17 +83,15 @@ fun HomeScreen(
     onSpeakingClick: () -> Unit = {},
     onAiChatClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onPodcastClick: () -> Unit = {},
+    onDailyQuizClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences("app_settings", Context.MODE_PRIVATE) }
 
-    // ==================== خواندن اسم کاربر ====================
-    var userName by remember {
-        mutableStateOf(prefs.getString("user_name", "") ?: "")
-    }
+    var userName by remember { mutableStateOf(prefs.getString("user_name", "") ?: "") }
 
-    // ==================== خواندن داده‌های پیشرفت ====================
     var completedCount by remember { mutableIntStateOf(0) }
     var totalStars by remember { mutableIntStateOf(0) }
     var streak by remember { mutableIntStateOf(0) }
@@ -107,7 +114,8 @@ fun HomeScreen(
         ProgressManager.getQuizScores(context).collectLatest { quizCount = it.size }
     }
 
-    // ==================== سلام هوشمند بر اساس ساعت ====================
+    val dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+
     val greeting = remember {
         when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
             in 5..11 -> "صبح بخیر ☀️"
@@ -117,12 +125,14 @@ fun HomeScreen(
         }
     }
 
-    // ==================== کلمه و نقل قول روز ====================
-    val dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
     val todayWord = dailyWords[dayOfYear % dailyWords.size]
     val todayQuote = dailyQuotes[dayOfYear % dailyQuotes.size]
+    val todayBg = backgroundImages[dayOfYear % backgroundImages.size]
 
-    // ==================== انیمیشن ورود ====================
+    // پیشرفت کلی (درس‌های کامل شده / مجموع کل درس‌ها = ۳۴)
+    val totalLessons = 34
+    val overallProgress = (completedCount.toFloat() / totalLessons).coerceIn(0f, 1f)
+
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
     val headerAlpha by animateFloatAsState(
@@ -138,14 +148,14 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
     ) {
 
-        // ==================== هدر پویا ====================
+        // ==================== هدر ====================
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp)
+                .height(280.dp)
         ) {
             AsyncImage(
-                model = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800",
+                model = todayBg,
                 contentDescription = "Banner",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -171,7 +181,6 @@ fun HomeScreen(
                     .padding(12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // پروفایل
                 IconButton(
                     onClick = onProfileClick,
                     modifier = Modifier
@@ -187,7 +196,6 @@ fun HomeScreen(
                     )
                 }
 
-                // تنظیمات
                 IconButton(
                     onClick = onSettingsClick,
                     modifier = Modifier
@@ -204,16 +212,13 @@ fun HomeScreen(
                 }
             }
 
-            // محتوای هدر
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(24.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // آواتار با هاله نورانی
                     Box(contentAlignment = Alignment.Center) {
-                        // هاله نورانی چرخان
                         val infiniteTransition = rememberInfiniteTransition(label = "halo")
                         val rotation by infiniteTransition.animateFloat(
                             initialValue = 0f,
@@ -273,17 +278,47 @@ fun HomeScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                Text(
-                    text = "بیا امروز یه قدم به هدفت نزدیک‌تر شیم! 🚀",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.85f)
-                )
+                // نوار پیشرفت روزانه
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "پیشرفت کلی",
+                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.85f)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(Color.White.copy(alpha = 0.25f))
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(overallProgress)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(
+                                    Brush.horizontalGradient(
+                                        listOf(Color(0xFFFFD54F), Color(0xFFFFA726))
+                                    )
+                                )
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "${(overallProgress * 100).toInt()}%",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFFD54F)
+                    )
+                }
             }
         }
 
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // ==================== آمار سریع ====================
+            // ==================== آمار ====================
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -316,6 +351,8 @@ fun HomeScreen(
             Spacer(Modifier.height(4.dp))
 
             // ==================== کلمه روز ====================
+            SectionHeader(emoji = "📖", title = "کلمه امروز", accent = Color(0xFF00838F))
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -332,25 +369,6 @@ fun HomeScreen(
                         .padding(18.dp)
                 ) {
                     Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.25f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("📖", fontSize = 20.sp)
-                            }
-                            Spacer(Modifier.width(10.dp))
-                            Text(
-                                "کلمه امروز",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        Spacer(Modifier.height(12.dp))
                         Text(
                             todayWord.english,
                             fontSize = 26.sp,
@@ -360,8 +378,7 @@ fun HomeScreen(
                         Text(
                             todayWord.pronunciation,
                             fontSize = 13.sp,
-                            color = Color.White.copy(alpha = 0.85f),
-                            fontWeight = FontWeight.Light
+                            color = Color.White.copy(alpha = 0.85f)
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
@@ -374,9 +391,11 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(20.dp))
 
-            // ==================== معلم هوشمند AI ====================
+            // ==================== AI ====================
+            SectionHeader(emoji = "🤖", title = "معلم هوشمند", accent = Color(0xFF1E88E5))
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -400,7 +419,6 @@ fun HomeScreen(
                 ) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // ربات شناور
                             val infiniteTransition = rememberInfiniteTransition(label = "bot")
                             val botOffset by infiniteTransition.animateFloat(
                                 initialValue = -3f,
@@ -450,29 +468,27 @@ fun HomeScreen(
                                 )
                             }
                         }
-
                         Spacer(Modifier.height(12.dp))
-
                         Text(
                             "سوالات پیشنهادی:",
                             fontSize = 10.sp,
                             color = Color.White.copy(alpha = 0.85f)
                         )
                         Spacer(Modifier.height(6.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            SuggestedQuestionChip("فرق do و does؟")
-                            SuggestedQuestionChip("زمان حال ساده")
-                            SuggestedQuestionChip("لغت جدید")
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            SuggestedChip("فرق do و does؟")
+                            SuggestedChip("زمان حال ساده")
+                            SuggestedChip("لغت جدید")
                         }
                     }
                 }
             }
 
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(20.dp))
 
             // ==================== چالش روزانه ====================
+            SectionHeader(emoji = "🎯", title = "چالش امروز", accent = Color(0xFFFF6F00))
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -497,14 +513,13 @@ fun HomeScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "چالش امروز",
-                            fontSize = 15.sp,
+                            "یک درس جدید رو کامل کن",
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF1A237E)
                         )
                         Text(
-                            if (streak > 0) "یک درس جدید رو کامل کن"
-                            else "با یه درس شروع کن!",
+                            if (streak > 0) "استریکت رو حفظ کن!" else "امروز شروع کن!",
                             fontSize = 11.sp,
                             color = Color.Gray
                         )
@@ -538,40 +553,6 @@ fun HomeScreen(
                 storiesRead = storiesRead,
                 quizCount = quizCount
             )
-
-            Spacer(Modifier.height(20.dp))
-
-            // ==================== بخش اصلی ====================
-            SectionHeader(emoji = "✨", title = "بخش‌های اصلی", accent = Color(0xFFE91E63))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                MainSectionCard(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.AutoMirrored.Filled.MenuBook,
-                    title = "کتاب داستان",
-                    subtitle = "$storiesRead خوانده",
-                    gradient = listOf(Color(0xFFE91E63), Color(0xFFF06292))
-                ) { onStoryBookClick() }
-
-                MainSectionCard(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Filled.School,
-                    title = "گرامر",
-                    subtitle = "قواعد",
-                    gradient = listOf(Color(0xFF00ACC1), Color(0xFF26C6DA))
-                ) { onGrammarClick() }
-
-                MainSectionCard(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Filled.LibraryBooks,
-                    title = "لغات",
-                    subtitle = "بانک کلمات",
-                    gradient = listOf(Color(0xFF00695C), Color(0xFF26A69A))
-                ) { onVocabularyBankClick() }
-            }
 
             Spacer(Modifier.height(20.dp))
 
@@ -609,33 +590,88 @@ fun HomeScreen(
             Spacer(Modifier.height(20.dp))
 
             // ==================== ویژه ====================
-            SectionHeader(emoji = "⚡", title = "بخش‌های ویژه", accent = Color(0xFFFF6F00))
+            SectionHeader(emoji = "✨", title = "بخش‌های ویژه", accent = Color(0xFFE91E63))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                SpecialSmallCard(
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    title = "کتاب داستان",
+                    gradient = listOf(Color(0xFFE91E63), Color(0xFFF06292))
+                ) { onStoryBookClick() }
+
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.School,
+                    title = "گرامر",
+                    gradient = listOf(Color(0xFF00ACC1), Color(0xFF26C6DA))
+                ) { onGrammarClick() }
+
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.LibraryBooks,
+                    title = "لغات",
+                    gradient = listOf(Color(0xFF00695C), Color(0xFF26A69A))
+                ) { onVocabularyBankClick() }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                MainSectionCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.Mic,
                     title = "تمرین گفتار",
-                    gradient = listOf(Color(0xFF7B1FA2), Color(0xFFAB47BC)),
-                    onClick = onSpeakingClick
-                )
-                SpecialSmallCard(
+                    gradient = listOf(Color(0xFF7B1FA2), Color(0xFFAB47BC))
+                ) { onSpeakingClick() }
+
+                MainSectionCard(
                     modifier = Modifier.weight(1f),
-                    icon = Icons.Filled.Quiz,
-                    title = "تست سطح",
-                    gradient = listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC)),
-                    onClick = onLevelTestClick
-                )
-                SpecialSmallCard(
+                    icon = Icons.Filled.Headphones,
+                    title = "پادکست",
+                    gradient = listOf(Color(0xFFEF6C00), Color(0xFFFFB74D))
+                ) { onPodcastClick() }
+
+                MainSectionCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.EmojiEvents,
                     title = "دستاوردها",
-                    gradient = listOf(Color(0xFFFFA000), Color(0xFFFFD54F)),
-                    onClick = onAchievementsClick
-                )
+                    gradient = listOf(Color(0xFFFFA000), Color(0xFFFFD54F))
+                ) { onAchievementsClick() }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.Quiz,
+                    title = "آزمون روزانه",
+                    gradient = listOf(Color(0xFFD32F2F), Color(0xFFEF5350))
+                ) { onDailyQuizClick() }
+
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.CheckCircle,
+                    title = "تست سطح",
+                    gradient = listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                ) { onLevelTestClick() }
+
+                MainSectionCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.Bookmark,
+                    title = "ذخیره‌شده‌ها",
+                    gradient = listOf(Color(0xFF1A237E), Color(0xFF3949AB))
+                ) { onBookmarkedStoriesClick() }
             }
 
             Spacer(Modifier.height(20.dp))
@@ -788,7 +824,7 @@ private fun QuickStatCard(
 }
 
 @Composable
-private fun SuggestedQuestionChip(text: String) {
+private fun SuggestedChip(text: String) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -810,7 +846,6 @@ private fun WeeklyChartCard(
     storiesRead: Int,
     quizCount: Int
 ) {
-    // داده‌های نمایشی برای نمودار (اگر داده واقعی نداری، به صورت تقریبی)
     val baseActivity = (completedCount + storiesRead + quizCount).coerceAtLeast(1)
     val dayValues = remember {
         val seed = baseActivity
@@ -841,8 +876,6 @@ private fun WeeklyChartCard(
             ) {
                 dayValues.forEachIndexed { index, value ->
                     val heightFraction = value.toFloat() / maxValue
-
-                    // انیمیشن رشد ستون
                     var animate by remember { mutableStateOf(false) }
                     LaunchedEffect(Unit) {
                         kotlinx.coroutines.delay(index * 80L)
@@ -945,9 +978,7 @@ private fun LevelCard(
                 ) {
                     Text(emoji, fontSize = 28.sp)
                 }
-
                 Spacer(Modifier.width(14.dp))
-
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
@@ -984,7 +1015,6 @@ private fun LevelCard(
                         )
                     }
                 }
-
                 Box(
                     modifier = Modifier
                         .size(34.dp)
@@ -1001,65 +1031,6 @@ private fun LevelCard(
 
 @Composable
 private fun MainSectionCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    gradient: List<Color>,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier
-            .height(120.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Brush.verticalGradient(gradient)),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.25f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = title,
-                        tint = Color.White,
-                        modifier = Modifier.size(26.dp)
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = title,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    maxLines = 1
-                )
-                Text(
-                    text = subtitle,
-                    fontSize = 9.sp,
-                    color = Color.White.copy(alpha = 0.85f),
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun SpecialSmallCard(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     title: String,
