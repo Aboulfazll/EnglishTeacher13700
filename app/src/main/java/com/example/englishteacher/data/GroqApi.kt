@@ -50,6 +50,13 @@ object GroqClient {
     const val MODEL_LLAMA_33 = "llama-3.3-70b-versatile"
     const val MODEL_MIXTRAL = "mixtral-8x7b-32768"
 
+    private const val DEFAULT_SYSTEM_PROMPT =
+        "You are an English teacher for Persian speakers. " +
+        "Answer questions about English grammar, vocabulary, and pronunciation. " +
+        "Keep answers short, friendly, and helpful. " +
+        "You can use Persian to explain. " +
+        "Always provide clear examples when teaching grammar."
+
     // 🔑 کلید API
     var apiKey: String = ""
 
@@ -67,9 +74,6 @@ object GroqClient {
             .create(GroqApi::class.java)
     }
 
-    /**
-     * ارسال سوال به AI و دریافت پاسخ
-     */
     suspend fun askAI(
         userMessage: String,
         history: List<ChatMessage> = emptyList(),
@@ -80,7 +84,6 @@ object GroqClient {
         }
 
         val system = ChatMessage(role = "system", content = systemPrompt)
-
         val allMessages = listOf(system) + history + ChatMessage(role = "user", content = userMessage)
 
         val request = ChatRequest(
@@ -114,9 +117,6 @@ object GroqClient {
         }
     }
 
-    /**
-     * چک کردن معتبر بودن کلید API
-     */
     suspend fun testApiKey(): Boolean {
         if (apiKey.isEmpty()) return false
         return try {
@@ -133,14 +133,5 @@ object GroqClient {
         } catch (e: Exception) {
             false
         }
-    }
-
-    companion object {
-        private const val DEFAULT_SYSTEM_PROMPT =
-            "You are an English teacher for Persian speakers. " +
-            "Answer questions about English grammar, vocabulary, and pronunciation. " +
-            "Keep answers short, friendly, and helpful. " +
-            "You can use Persian to explain. " +
-            "Always provide clear examples when teaching grammar."
     }
 }
