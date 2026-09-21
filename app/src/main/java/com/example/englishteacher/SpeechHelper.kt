@@ -32,6 +32,11 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
         }
     }
 
+    // 👇 جدید - برای StoryDetail, ReadingMode, LessonDetail
+    fun stop() {
+        tts?.stop()
+    }
+
     fun setSpeed(speed: Float) {
         currentSpeed = speed
         tts?.setSpeechRate(speed)
@@ -41,6 +46,19 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
         isUK = uk
         val locale = if (uk) Locale.UK else Locale.US
         tts?.setLanguage(locale)
+    }
+
+    // 👇 جدید - برای SettingsScreen و SpeakingPracticeScreen
+    fun setVoiceGender(gender: String) {
+        val pitch = if (gender.lowercase() == "male") 0.8f else 1.2f
+        tts?.setPitch(pitch)
+    }
+
+    // 👇 جدید - برای SettingsScreen و SpeakingPracticeScreen
+    fun setSpeedAndPitch(speed: Float, pitch: Float) {
+        currentSpeed = speed
+        tts?.setSpeechRate(speed)
+        tts?.setPitch(pitch)
     }
 
     fun close() {
