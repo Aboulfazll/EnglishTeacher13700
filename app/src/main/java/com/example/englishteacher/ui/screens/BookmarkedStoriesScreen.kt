@@ -17,18 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.Story
 import com.example.englishteacher.data.StoryBookRepository
+import com.example.englishteacher.ui.components.StoryCover
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -130,7 +129,7 @@ fun BookmarkedStoriesScreen(
                             Level.BEGINNER -> Color(0xFF11998E)
                             Level.INTERMEDIATE -> Color(0xFF8E2DE2)
                             Level.ADVANCED -> Color(0xFFF12711)
-                            else -> Color(0xFFE91E63) // این خط اضافه شد
+                            else -> Color(0xFFE91E63)
                         }
 
                         Card(
@@ -150,11 +149,10 @@ fun BookmarkedStoriesScreen(
                                         .size(80.dp)
                                         .clip(RoundedCornerShape(14.dp))
                                 ) {
-                                    AsyncImage(
-                                        model = story.coverUrl,
-                                        contentDescription = story.title,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
+                                    StoryCover(
+                                        coverUrl = story.coverUrl,
+                                        title = story.title,
+                                        modifier = Modifier.fillMaxSize()
                                     )
                                     Box(
                                         modifier = Modifier
