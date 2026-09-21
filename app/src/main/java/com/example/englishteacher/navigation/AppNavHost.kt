@@ -116,6 +116,15 @@ fun AppNavHost(
                 },
                 onSettingsClick = {
                     navController.navigate(Routes.SETTINGS)
+                },
+                onProfileClick = {
+                    navController.navigate(Routes.PROFILE)
+                },
+                onPodcastClick = {
+                    navController.navigate(Routes.PODCAST)
+                },
+                onDailyQuizClick = {
+                    navController.navigate(Routes.DAILY_QUIZ)
                 }
             )
         }
