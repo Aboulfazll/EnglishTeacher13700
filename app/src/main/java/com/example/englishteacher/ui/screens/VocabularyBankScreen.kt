@@ -7,7 +7,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.stickyHeader
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,13 +34,15 @@ import com.example.englishteacher.data.LessonRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-data class WordEntry(
+// ================= دیتا کلاس اختصاصی برای نگهداری سطح کلمه =================
+data class VocabWord(
     val english: String,
     val persian: String,
     val pronunciation: String,
     val level: Level
 )
 
+// توابع کمکی برای رنگ و نام فارسی سطح
 fun levelToPersian(level: Level): String = when (level.name.lowercase()) {
     "beginner" -> "مبتدی"
     "intermediate" -> "متوسط"
@@ -75,15 +76,15 @@ fun VocabularyBankScreen(
         BookmarkManager.getBookmarkedWords(context).collectLatest { bookmarkedWords = it }
     }
 
-    // ساخت لیست کلمات با سطح
+    // ساخت لیست کلمات به همراه سطح
     val allWords = remember {
-        val list = mutableListOf<WordEntry>()
+        val list = mutableListOf<VocabWord>()
         Level.values().forEach { level ->
             val lessons = LessonRepository.getLessonsByLevel(level)
             lessons.forEach { lesson ->
                 lesson.vocabulary.forEach { word ->
                     list.add(
-                        WordEntry(
+                        VocabWord(
                             english = word.english,
                             persian = word.persian,
                             pronunciation = word.pronunciation,
@@ -98,22 +99,23 @@ fun VocabularyBankScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var showOnlyBookmarked by remember { mutableStateOf(false) }
-    var sortByLevel by remember { mutableStateOf(true) }
+    
+    // ⚙️ متغیرهای جدید برای فیلتر سطح و تنظیمات TTS
+    var selectedLevel by remember { mutableStateOf<Level?>(null) }
     var ttsSpeed by remember { mutableStateOf(0.9f) }
     var isUK by remember { mutableStateOf(false) }
-    var selectedWord by remember { mutableStateOf<WordEntry?>(null) }
+    var selectedWord by remember { mutableStateOf<VocabWord?>(null) } // برای دیالوگ جزئیات
 
-    // اعمال تنظیمات TTS
+    // اعمال تنظیمات TTS (توجه: SpeechHelper باید آپدیت شده باشه)
     LaunchedEffect(ttsSpeed) { speechHelper.setSpeed(ttsSpeed) }
     LaunchedEffect(isUK) { speechHelper.setAccent(isUK) }
 
+    // فیلتر کردن کلمات
     val filteredWords = allWords.filter { word ->
         val matchesSearch = searchQuery.isEmpty() || word.english.contains(searchQuery, ignoreCase = true)
         val matchesBookmark = !showOnlyBookmarked || bookmarkedWords.contains(word.english)
-        matchesSearch && matchesBookmark
-    }.let { list ->
-        if (sortByLevel) list.sortedBy { it.level.ordinal }
-        else list.sortedBy { it.english.lowercase() }
+        val matchesLevel = selectedLevel == null || word.level == selectedLevel
+        matchesSearch && matchesBookmark && matchesLevel
     }
 
     Scaffold(
@@ -139,7 +141,8 @@ fun VocabularyBankScreen(
                 .background(Color(0xFFF5F7FA))
                 .padding(padding)
         ) {
-            // کارت فلش‌کارت
+
+            // ==================== کارت فلش‌کارت ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -264,7 +267,7 @@ fun VocabularyBankScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // فیلترها و مرتب‌سازی
+            // فیلترهای سطح و ذخیره‌شده
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -279,32 +282,34 @@ fun VocabularyBankScreen(
                     )
                 )
                 FilterChip(
-                    selected = !showOnlyBookmarked,
-                    onClick = { showOnlyBookmarked = false },
-                    label = { Text("همه", fontSize = 11.sp) },
+                    selected = selectedLevel == null,
+                    onClick = { selectedLevel = null },
+                    label = { Text("همه سطوح", fontSize = 11.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF00695C),
                         selectedLabelColor = Color.White
                     )
                 )
-                FilterChip(
-                    selected = sortByLevel,
-                    onClick = { sortByLevel = !sortByLevel },
-                    label = { Text(if (sortByLevel) "🔠 بر اساس سطح" else "🔤 الفبا", fontSize = 11.sp) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF6A1B9A),
-                        selectedLabelColor = Color.White
+                Level.values().forEach { level ->
+                    FilterChip(
+                        selected = selectedLevel == level,
+                        onClick = { selectedLevel = if (selectedLevel == level) null else level },
+                        label = { Text(levelToPersian(level), fontSize = 11.sp) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = levelColor(level),
+                            selectedLabelColor = Color.White
+                        )
                     )
-                )
+                }
             }
 
             Spacer(Modifier.height(8.dp))
 
-            // تنظیمات TTS
+            // 🎙️ تنظیمات TTS (سرعت و لهجه)
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text("🎙️ سرعت:", fontSize = 12.sp, color = Color.Gray)
                 listOf(0.6f to "آهسته", 0.9f to "معمولی", 1.2f to "سریع").forEach { (speed, label) ->
@@ -319,20 +324,22 @@ fun VocabularyBankScreen(
                     )
                 }
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = { isUK = !isUK }) {
-                    Icon(
-                        Icons.Filled.Language,
-                        contentDescription = "Accent",
-                        tint = if (isUK) Color(0xFF00695C) else Color.Gray
+                // دکمه تغییر لهجه
+                FilterChip(
+                    selected = isUK,
+                    onClick = { isUK = !isUK },
+                    label = { Text(if (isUK) "🇬🇧 UK" else "🇺🇸 US", fontSize = 10.sp) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color(0xFF00695C),
+                        selectedLabelColor = Color.White
                     )
-                }
-                Text(if (isUK) "🇬🇧 UK" else "🇺🇸 US", fontSize = 11.sp, color = Color.Gray)
+                )
             }
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "${filteredWords.size} لغت",
+                text = "${filteredWords.size} لغت یافت شد",
                 fontSize = 12.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(horizontal = 20.dp)
@@ -340,65 +347,58 @@ fun VocabularyBankScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            // لیست لغات (گروه‌بندی شده)
+            // لیست لغات
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (sortByLevel) {
-                    filteredWords.groupBy { it.level }.forEach { (level, words) ->
-                        stickyHeader(key = "header_${level.name}") {
-                            LevelHeader(level = level, count = words.size)
-                        }
-                        items(words, key = { it.english }) { word ->
-                            WordItem(
-                                word = word,
-                                isBookmarked = bookmarkedWords.contains(word.english),
-                                searchQuery = searchQuery,
-                                onSpeakClick = { speechHelper.speak(word.english) },
-                                onLongClick = { selectedWord = word },
-                                onBookmarkToggle = {
-                                    scope.launch {
-                                        BookmarkManager.toggleBookmark(context, word.english)
-                                    }
-                                },
-                                onShareClick = {
-                                    ShareHelper.shareWord(context, word.english, word.persian, word.pronunciation)
-                                }
-                            )
-                        }
-                    }
-                } else {
-                    items(filteredWords, key = { it.english }) { word ->
-                        WordItem(
-                            word = word,
-                            isBookmarked = bookmarkedWords.contains(word.english),
-                            searchQuery = searchQuery,
-                            onSpeakClick = { speechHelper.speak(word.english) },
-                            onLongClick = { selectedWord = word },
-                            onBookmarkToggle = {
-                                scope.launch {
-                                    BookmarkManager.toggleBookmark(context, word.english)
-                                }
-                            },
-                            onShareClick = {
-                                ShareHelper.shareWord(context, word.english, word.persian, word.pronunciation)
+                items(filteredWords, key = { it.english }) { word ->
+                    val isBookmarked = bookmarkedWords.contains(word.english)
+
+                    WordItem(
+                        word = word,
+                        isBookmarked = isBookmarked,
+                        searchQuery = searchQuery,
+                        onSpeakClick = { speechHelper.speak(word.english) },
+                        onLongClick = { selectedWord = word },
+                        onBookmarkToggle = {
+                            scope.launch {
+                                BookmarkManager.toggleBookmark(context, word.english)
                             }
-                        )
-                    }
+                        },
+                        onShareClick = {
+                            ShareHelper.shareWord(context, word.english, word.persian, word.pronunciation)
+                        }
+                    )
                 }
 
                 if (filteredWords.isEmpty()) {
                     item {
-                        EmptyState(searchQuery = searchQuery)
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                Icons.Filled.SearchOff,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = Color.LightGray
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                "لغتی با این مشخصات یافت نشد",
+                                color = Color.Gray,
+                                fontSize = 14.sp
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    // دیالوگ جزئیات کلمه
+    // دیالوگ جزئیات کلمه (با نگه داشتن طولانی باز میشه)
     selectedWord?.let { word ->
         WordDetailDialog(
             word = word,
@@ -417,35 +417,10 @@ fun VocabularyBankScreen(
     }
 }
 
-@Composable
-fun LevelHeader(level: Level, count: Int) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFF5F7FA))
-            .padding(vertical = 8.dp, horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(width = 4.dp, height = 20.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(levelColor(level))
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = "${levelToPersian(level)} ($count)",
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp,
-            color = levelColor(level)
-        )
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WordItem(
-    word: WordEntry,
+    word: VocabWord,
     isBookmarked: Boolean,
     searchQuery: String,
     onSpeakClick: () -> Unit,
@@ -486,7 +461,7 @@ fun WordItem(
             Spacer(Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                // هایلایت کلمه جستجو شده
+                // هایلایت کردن متن جستجو شده
                 Text(
                     text = buildAnnotatedString {
                         val startIndex = word.english.indexOf(searchQuery, ignoreCase = true)
@@ -511,15 +486,28 @@ fun WordItem(
                         color = Color.Gray
                     )
                 }
-                Text(
-                    word.persian,
-                    fontSize = 12.sp,
-                    color = Color(0xFF00695C),
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        word.persian,
+                        fontSize = 12.sp,
+                        color = Color(0xFF00695C),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    // نشانگر سطح
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(levelColor(word.level))
+                    )
+                }
             }
 
-            IconButton(onClick = onBookmarkToggle, modifier = Modifier.size(36.dp)) {
+            IconButton(
+                onClick = onBookmarkToggle,
+                modifier = Modifier.size(36.dp)
+            ) {
                 Icon(
                     imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
                     contentDescription = "Bookmark",
@@ -528,7 +516,10 @@ fun WordItem(
                 )
             }
 
-            IconButton(onClick = onShareClick, modifier = Modifier.size(36.dp)) {
+            IconButton(
+                onClick = onShareClick,
+                modifier = Modifier.size(36.dp)
+            ) {
                 Icon(
                     Icons.Filled.Share,
                     contentDescription = "Share",
@@ -556,29 +547,8 @@ fun WordItem(
 }
 
 @Composable
-fun EmptyState(searchQuery: String) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            Icons.Filled.SearchOff,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = Color.LightGray
-        )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            if (searchQuery.isEmpty()) "لغتی یافت نشد" else "نتیجه‌ای برای \"$searchQuery\" یافت نشد",
-            color = Color.Gray,
-            fontSize = 14.sp
-        )
-    }
-}
-
-@Composable
 fun WordDetailDialog(
-    word: WordEntry,
+    word: VocabWord,
     isBookmarked: Boolean,
     onDismiss: () -> Unit,
     onSpeakClick: () -> Unit,
@@ -589,7 +559,12 @@ fun WordDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(word.english, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFF1A237E))
+                Text(
+                    word.english,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFF1A237E)
+                )
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = onSpeakClick) {
                     Icon(
