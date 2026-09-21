@@ -1,99 +1,712 @@
-package com.example.englishteacher.data
+package com.example.englishteacher.ui.screens
 
-object StoryBookRepository {
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.englishteacher.ShareHelper
+import com.example.englishteacher.SpeechHelper
+import com.example.englishteacher.data.BookmarkManager
+import com.example.englishteacher.data.Level
+import com.example.englishteacher.data.ProgressManager
+import com.example.englishteacher.data.StoryBookRepository
+import com.example.englishteacher.data.StoryChapters
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-    fun getAllStories(): List<Story> = listOf(
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StoryDetailScreen(
+    storyId: String,
+    onBack: () -> Unit
+) {
+    val story = StoryBookRepository.getAllStories().firstOrNull { it.id == storyId }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val speechHelper = remember { SpeechHelper(context) }
+    var isPlaying by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(false) }
+    var expandedChapter by remember { mutableIntStateOf(0) }
 
-        // ============ ۱۰ داستان فصل‌دار ============
+    DisposableEffect(Unit) {
+        onDispose { speechHelper.close() }
+    }
 
-        Story(
-            id = "s_b1",
-            title = "The Lost Cat",
-            titlePersian = "گربه گمشده",
-            level = Level.BEGINNER,
-            text = "A little girl named Sara has a cat...",
-            moral = "Never give up hope.",
-            moralPersian = "هرگز امید خود را از دست ندهید.",
-            coverUrl = "",
-            chapters = listOf(
-                StoryChapter("Sara and Mimi", "سارا و میمی", "Sara is a little girl. She is seven years old. She lives in a small house with her parents. Sara has a beautiful cat. The cat's name is Mimi. Mimi is white and soft. She has big green eyes. Sara loves Mimi very much. Every day, they play together in the garden. Mimi likes to chase butterflies. Sara laughs and claps her hands. They are the best of friends.", "سارا یه دختر کوچیکه. هفت سالشه. توی یه خونه‌ی کوچیک با پدر و مادرش زندگی می‌کنه. سارا یه گربه‌ی قشنگ داره. اسم گربه میمیه. میمی سفید و نرمه. چشم‌های سبز بزرگی داره. سارا خیلی میمی رو دوست داره. هر روز با هم توی باغ بازی می‌کنن. میمی دوست داره پروانه‌ها رو تعقیب کنه. سارا می‌خنده و دست می‌زنه. اون‌ها بهترین دوست هم هستن.", "🐱"),
-                StoryChapter("Mimi Disappears", "میمی ناپدید می‌شه", "One sunny morning, Mimi goes out to play. The door is open. Mimi walks into the street. She sees a butterfly. She follows it. The butterfly flies far away. Mimi runs and runs. Suddenly, she does not know where she is. She is lost! Back at home, Sara calls: Mimi! Mimi! But no one answers. Sara is worried. She starts to cry. Where is Mimi?", "یه صبح آفتابی، میمی می‌ره بیرون که بازی کنه. در بازه. میمی می‌ره توی خیابون. یه پروانه می‌بینه. دنبالش می‌ره. پروانه خیلی دور پرواز می‌کنه. میمی می‌دوه و می‌دوه. یهو نمی‌دونه کجاست. گم شده! خونه، سارا صدا می‌زنه: میمی! میمی! ولی هیچ‌کس جواب نمی‌ده. سارا نگرانه. شروع می‌کنه به گریه. میمی کجاست؟", "🚪"),
-                StoryChapter("Looking Everywhere", "همه‌جا رو می‌گرده", "Sara looks for Mimi everywhere. She looks under the bed. No Mimi. She looks in the kitchen. No Mimi. She looks behind the sofa. No Mimi. Sara asks her mother: Have you seen Mimi? Her mother says no. Sara asks her father. He says no too. Sara asks her neighbors. They have not seen Mimi. Sara feels very sad. Will she ever see her cat again?", "سارا همه‌جا دنبال میمی می‌گرده. زیر تخت نگاه می‌کنه. میمی نیست. توی آشپزخونه نگاه می‌کنه. میمی نیست. پشت مبل نگاه می‌کنه. میمی نیست. سارا از مامانش می‌پرسه: میمی رو دیدی؟ مامانش می‌گه نه. از باباش می‌پرسه. اونم می‌گه نه. از همسایه‌ها می‌پرسه. اون‌ها میمی رو ندیدن. سارا خیلی ناراحت می‌شه. آیا دوباره گربش رو می‌بینه؟", "🔍"),
-                StoryChapter("A Happy Reunion", "دیدار شاد", "Sara goes to the big park near her house. She looks under every tree. Then she hears a small sound. Meow! Meow! Sara runs to the sound. Under a big tree, she sees Mimi! Mimi is sleeping on a soft bed of leaves. Sara picks her up and hugs her. Mimi purrs happily. Sara says: Never run away again, Mimi! Let's go home. And they walk home together, very happy.", "سارا می‌ره به پارک بزرگ نزدیک خونشون. زیر هر درختی نگاه می‌کنه. بعد یه صدای کوچیک می‌شنوه. میو! میو! سارا به سمت صدا می‌دوه. زیر یه درخت بزرگ، میمی رو می‌بینه! میمی روی یه بستر نرم از برگ‌ها خوابیده. سارا بلندش می‌کنه و بغلش می‌کنه. میمی با خوشحالی خرخر می‌کنه. سارا می‌گه: دیگه فرار نکن میمی! بیا بریم خونه. و با هم خونه می‌رن، خیلی خوشحال.", "🎉")
+    LaunchedEffect(storyId) {
+        ProgressManager.markStoryRead(context, storyId)
+    }
+
+    LaunchedEffect(storyId) {
+        BookmarkManager.isStoryBookmarked(context, storyId).collectLatest {
+            isBookmarked = it
+        }
+    }
+
+    if (story == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("داستان پیدا نشد")
+        }
+        return
+    }
+
+    // فصل‌های داستان
+    val chapters = remember(storyId) {
+        StoryChapters.getChaptersForStory(storyId)
+    }
+
+    val levelColor = when (story.level) {
+        Level.BEGINNER -> Color(0xFF11998E)
+        Level.INTERMEDIATE -> Color(0xFF8E2DE2)
+        Level.ADVANCED -> Color(0xFFF12711)
+    }
+
+    val emoji = when (story.level) {
+        Level.BEGINNER -> "🌱"
+        Level.INTERMEDIATE -> "🚀"
+        Level.ADVANCED -> "🏆"
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            story.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            maxLines = 1
+                        )
+                        Text(
+                            story.titlePersian,
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.85f)
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            BookmarkManager.toggleStoryBookmark(context, storyId)
+                        }
+                    }) {
+                        Icon(
+                            if (isBookmarked) Icons.Filled.Bookmark
+                            else Icons.Filled.BookmarkBorder,
+                            "Bookmark",
+                            tint = Color.White
+                        )
+                    }
+                    IconButton(onClick = {
+                        ShareHelper.shareStory(
+                            context = context,
+                            title = story.title,
+                            titlePersian = story.titlePersian,
+                            text = story.text,
+                            moral = story.moral
+                        )
+                    }) {
+                        Icon(Icons.Filled.Share, "Share", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = levelColor)
             )
-        ),
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F7FA))
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+        ) {
 
-        Story(
-            id = "s_b2",
-            title = "The Kind Baker",
-            titlePersian = "نانوای مهربان",
-            level = Level.BEGINNER,
-            text = "There is a bakery in a small town...",
-            moral = "Kindness is always rewarded.",
-            moralPersian = "مهربانی همیشه پاداش داده می‌شود.",
-            coverUrl = "",
-            chapters = listOf(
-                StoryChapter("The Little Bakery", "نانوایی کوچک", "In a small town, there is a little bakery. The bakery is on a quiet street. Every morning, the smell of fresh bread fills the air. The baker is an old man. His name is Mr. Brown. He has white hair and a warm smile. He wakes up at four o'clock every morning. He makes bread, cakes, and cookies. Everyone in town loves his bread.", "توی یه شهر کوچیک، یه نانوایی کوچیک هست. نانوایی توی یه خیابون آرومه. هر صبح، بوی نون تازه هوا رو پر می‌کنه. نانوا یه پیرمرده. اسمش آقای براونه. موهای سفید و لبخند گرمی داره. هر صبح ساعت چهار بیدار می‌شه. نون، کیک و کلوچه درست می‌کنه. همه‌ی شهر نونش رو دوست دارن.", "🥖"),
-                StoryChapter("Bread for the Children", "نون برای بچه‌ها", "Every morning, some poor children come to the bakery. They have no money. Mr. Brown gives them free bread. The children smile and say: Thank you, Mr. Brown! He says: You are welcome, my dears. Eat well and grow strong. The children run to school with warm bread in their hands. They feel happy and loved. Mr. Brown feels happy too.", "هر صبح، چند تا بچه‌ی فقیر می‌یان نانوایی. پول ندارن. آقای براون بهشون نون رایگان می‌ده. بچه‌ها لبخند می‌زنن و می‌گن: ممنون آقای براون! اون می‌گه: خواهش می‌کنم عزیزانم. خوب بخورید و قوی بشید. بچه‌ها با نون گرم توی دستشون به مدرسه می‌دون. احساس خوشحالی و دوست‌داشته شدن می‌کنن. آقای براون هم خوشحاله.", "👦"),
-                StoryChapter("The Rich Man's Visit", "دیدار مرد ثروتمند", "One day, a rich man comes to the bakery. He wears a fine suit and a gold watch. He buys some bread. Then he sees Mr. Brown giving bread to a poor girl. The rich man is surprised. He asks: Why do you give free bread? You will lose money! Mr. Brown smiles and says: I do not lose. I gain happiness. The rich man thinks about this. He feels something new in his heart.", "یه روز، یه مرد ثروتمند میاد نانوایی. کت‌شلوار شیک و ساعت طلا داره. چند تا نون می‌خره. بعد می‌بینه آقای براون داره به یه دختر فقیر نون می‌ده. مرد ثروتمند تعجب می‌کنه. می‌پرسه: چرا نون رایگان می‌دی؟ پولت رو از دست می‌دی! آقای براون لبخند می‌زنه و می‌گه: من ضرر نمی‌کنم. من خوشحالی به دست می‌یارم. مرد ثروتمند در این باره فکر می‌کنه. چیز جدیدی توی قلبش حس می‌کنه.", "💰"),
-                StoryChapter("Kindness Comes Back", "مهربانی برمی‌گرده", "The rich man thinks for a long time. Then he makes a decision. He gives Mr. Brown a big bag of gold coins. He says: Use this to help more children. Mr. Brown is very surprised. He says: Thank you, sir! You have a good heart. Now the bakery can help many more children. Every day, more children come. The whole town becomes kinder and happier. Kindness always comes back.", "مرد ثروتمند مدت طولانی فکر می‌کنه. بعد تصمیم می‌گیره. یه کیسه‌ی بزرگ سکه‌ی طلا به آقای براون می‌ده. می‌گه: از این برای کمک به بچه‌های بیشتر استفاده کن. آقای براون خیلی تعجب می‌کنه. می‌گه: ممنون قربان! قلب خوبی داری. حالا نانوایی می‌تونه به خیلی بچه‌های بیشتر کمک کنه. هر روز بچه‌های بیشتری می‌یان. تمام شهر مهربون‌تر و شادتر می‌شه. مهربانی همیشه برمی‌گرده.", "🎁")
-            )
-        ),
+            // ==================== تصویر جلد ====================
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+            ) {
+                if (story.coverUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = story.coverUrl,
+                        contentDescription = story.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(levelColor, levelColor.copy(alpha = 0.7f))
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(getStoryEmoji(story.id), fontSize = 90.sp)
+                    }
+                }
 
-        Story(
-            id = "s_b3",
-            title = "The Three Friends",
-            titlePersian = "سه دوست",
-            level = Level.BEGINNER,
-            text = "Three friends live in a small village...",
-            moral = "Friends help each other in hard times.",
-            moralPersian = "دوستان در سختی‌ها به هم کمک می‌کنند.",
-            coverUrl = "",
-            chapters = listOf(
-                StoryChapter("Three Good Friends", "سه دوست خوب", "Tom, Sam, and Max are best friends. They live in a small village. Tom is tall and strong. Sam is short and smart. Max is funny and kind. Every day, they walk to school together. They play football in the afternoon. They help each other with homework. Everyone in the village says: These three are true friends!", "تام، سام و مکس بهترین دوست‌ها هستن. توی یه روستای کوچیک زندگی می‌کنن. تام قدبلند و قویه. سام کوتاه و باهوشه. مکس بامزه و مهربونه. هر روز با هم به مدرسه می‌رن. بعدازظهر با هم فوتبال بازی می‌کنن. توی تکالیف به هم کمک می‌کنن. همه‌ی اهالی روستا می‌گن: این سه تا دوستان واقعی هستن!", "👬"),
-                StoryChapter("The Storm", "طوفان", "One night, a big storm comes to the village. The wind is strong. The rain is heavy. Trees fall down. Thunder is loud. Tom, Sam, and Max are scared. They look outside their windows. They see the damage. Sam's roof is broken. Max's yard is flooded. Tom's garden is destroyed. The three friends meet in the morning. What can they do?", "یه شب، طوفان بزرگی به روستا میاد. باد شدیده. بارون سنگینه. درخت‌ها می‌افتن. رعد بلنده. تام، سام و مکس می‌ترسن. از پنجره بیرون رو نگاه می‌کنن. خرابی رو می‌بینن. سقف سام خرابه. حیاط مکس پر از آب شده. باغ تام نابود شده. سه دوست صبح با هم ملاقات می‌کنن. چی‌کار می‌تونن بکنن؟", "⛈️"),
-                StoryChapter("Working Together", "با هم کار کردن", "Tom says: Let's help each other. First, they fix Sam's roof. Tom climbs the ladder. Sam holds the hammer. Max brings the wood. Then they clean Max's yard. They pull out the water. They fix the fence. They plant new flowers. Then they work on Tom's garden. They plant new seeds. They fix the fence. By evening, all three houses look good again.", "تام می‌گه: بیایید به هم کمک کنیم. اول سقف سام رو درست می‌کنن. تام از نردبون بالا می‌ره. سام چکش رو نگه می‌داره. مکس چوب میاره. بعد حیاط مکس رو تمیز می‌کنن. آب رو خالی می‌کنن. حصار رو درست می‌کنن. گل‌های جدید می‌کارن. بعد روی باغ تام کار می‌کنن. دانه‌های جدید می‌کارن. حصار رو درست می‌کنن. تا غروب، هر سه خونه دوباره خوب به نظر می‌رسن.", "🔨"),
-                StoryChapter("Stronger Than Before", "قوی‌تر از قبل", "That night, the three friends sit together. They eat warm soup. They talk about the storm. Sam says: We could not fix everything alone. Tom says: But together, we did it! Max says: That's what friends are for. They laugh and share stories. The village is dark outside, but their hearts are full of light. They know that whatever happens, they will always help each other.", "اون شب، سه دوست با هم می‌شینن. سوپ گرم می‌خورن. درباره‌ی طوفان صحبت می‌کنن. سام می‌گه: نمی‌تونستیم همه چیز رو تنهایی درست کنیم. تام می‌گه: ولی با هم، انجامش دادیم! مکس می‌گه: دوست‌ها برای همین هستن. می‌خندن و داستان‌ها رو به اشتراک می‌ذارن. بیرون روستا تاریکه، ولی قلب‌هاشون پر از نوره. می‌دونن هر اتفاقی بیفته، همیشه به هم کمک می‌کنن.", "💪")
-            )
-        ),
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.85f))
+                            )
+                        )
+                )
 
-        Story(
-            id = "s_b4",
-            title = "The Magic Garden",
-            titlePersian = "باغ جادویی",
-            level = Level.BEGINNER,
-            text = "A poor farmer has a small garden...",
-            moral = "Sharing brings happiness.",
-            moralPersian = "بخشش شادی می‌آورد.",
-            coverUrl = "",
-            chapters = listOf(
-                StoryChapter("The Poor Farmer", "کشاورز فقیر", "There is a poor farmer in a small village. His name is Amir. He has a small piece of land. Every spring, he plants seeds. He waters them every day. He waits and waits. But the plants never grow. The soil is dry. The sun is too hot. Amir is very sad. How will he feed his family? He prays every night. Please, help me.", "توی یه روستای کوچیک یه کشاورز فقیر هست. اسمش امیره. یه تیکه زمین کوچیک داره. هر بهار دانه می‌کاره. هر روز آبشون می‌ده. صبر می‌کنه و صبر می‌کنه. ولی گیاه‌ها هیچ‌وقت رشد نمی‌کنن. خاک خشکه. خورشید خیلی داغه. امیر خیلی غمگینه. چطور به خانوادش غذا بده؟ هر شب دعا می‌کنه. لطفاً کمکم کن.", "👨‍🌾"),
-                StoryChapter("The Kind Fairy", "پری مهربان", "One night, something magical happens. A soft light fills the garden. A beautiful fairy appears. She has golden wings and a silver dress. She smiles at Amir. She says: I have seen your hard work. I will help you. But you must make a promise. When your garden grows, you must share the food with everyone. Can you do that? Amir says: Yes, I promise!", "یه شب، یه چیز جادویی اتفاق میفته. یه نور ملایم باغ رو پر می‌کنه. یه پری زیبا ظاهر می‌شه. بال‌های طلایی و لباس نقره‌ای داره. به امیر لبخند می‌زنه. می‌گه: کار سختت رو دیدم. کمکت می‌کنم. ولی باید یه قول بدی. وقتی باغت رشد کرد، باید غذا رو با همه قسمت کنی. می‌تونی این کار رو بکنی؟ امیر می‌گه: بله، قول می‌دم!", "🧚"),
-                StoryChapter("A Wonderful Morning", "یه صبح فوق‌العاده", "The next morning, Amir wakes up early. He goes to the garden. He cannot believe his eyes! Beautiful vegetables are everywhere. Red tomatoes. Green cucumbers. Orange carrots. Purple eggplants. Big watermelons. Amir runs to his family. Look! Look! The garden is full! His children dance with joy. His wife cries with happiness. Today is a wonderful day!", "صبح بعد، امیر زود بیدار می‌شه. می‌ره باغ. باور چشماش نمی‌شه! سبزیجات زیبا همه‌جا هستن. گوجه‌ی قرمز. خیار سبز. هویج نارنجی. بادمجان بنفش. هندونه‌های بزرگ. امیر می‌دوه سمت خانوادش. نگاه کنید! نگاه کنید! باغ پره! بچه‌هاش از خوشحالی می‌رقصن. زنش از شادی گریه می‌کنه. امروز یه روز فوق‌العاده‌ست!", "🌱"),
-                StoryChapter("Sharing with Everyone", "قسمت کردن با همه", "Amir remembers his promise. He fills baskets with vegetables. He goes to every house in the village. He gives food to the old, the sick, and the poor. Everyone smiles and says: Thank you, Amir! God bless you! The children get fruits. The old people get soft vegetables. Everyone has a warm meal that night. The village feels like one big family. Sharing truly brings happiness.", "امیر قولش یادش میاد. سبدها رو با سبزیجات پر می‌کنه. به هر خونه‌ای توی روستا می‌ره. به پیرها، مریض‌ها و فقیرها غذا می‌ده. همه لبخند می‌زنن و می‌گن: ممنون امیر! خدا خیرت بده! بچه‌ها میوه می‌گیرن. پیرها سبزیجات نرم می‌گیرن. اون شب همه یه وعده‌ی گرم دارن. روستا مثل یه خانواده‌ی بزرگ می‌شه. بخشش واقعاً شادی می‌آره.", "🤝")
-            )
-        ),
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(20.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(levelColor)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            "$emoji ${story.level.persianName}",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        story.title,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        story.titlePersian,
+                        fontSize = 15.sp,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                }
+            }
 
-        Story(
-            id = "s_b5",
-            title = "The Honest Boy",
-            titlePersian = "پسر راستگو",
-            level = Level.BEGINNER,
-            text = "A boy named Ali finds a wallet...",
-            moral = "Honesty is the best policy.",
-            moralPersian = "صداقت بهترین سیاست است.",
-            coverUrl = "",
-            chapters = listOf(
-                StoryChapter("A Wallet on the Ground", "یه کیف روی زمین", "One afternoon, Ali walks home from school. He is ten years old. He has a small bag on his back. Suddenly, he sees something on the ground. It is a brown leather wallet. Ali picks it up. He opens it. There is a lot of money inside. Also some cards and a photo. Ali's eyes become big. What should he do?", "یه بعدازظهر، علی از مدرسه به خونه می‌ره. ده سالشه. یه کیف کوچیک روی پشتشه. یهو یه چیزی روی زمین می‌بینه. یه کیف چرمی قهوه‌ای هست. علی برداشتش می‌کنه. بازش می‌کنه. کلی پول توش هست. همچنین چند تا کارت و یه عکس. چشم‌های علی بزرگ می‌شن. باید چیکار کنه؟", "👝"),
-                StoryChapter("A Hard Choice", "یه انتخاب سخت", "Ali thinks for a moment. The money is a lot. He could buy new shoes. He could buy a video game. He could help his mother. But then he thinks: This money is not mine. Someone lost it. They must be very sad. Ali remembers what his mother says: Always be honest. Ali makes a decision. He walks to the police station.", "علی یه لحظه فکر می‌کنه. پول زیاده. می‌تونه کفش جدید بخره. می‌تونه یه بازی ویدیویی بخره. می‌تونه به مامانش کمک کنه. ولی بعد فکر می‌کنه: این پول مال من نیست. یه کسی گمش کرده. اون باید خیلی ناراحت باشه. علی یادش میاد مامانش چی می‌گه: همیشه صادق باش. علی تصمیم می‌گیره. به سمت کلانتری می‌ره.", "🤔"),
-                StoryChapter("The Grateful Owner", "صاحب سپاسگزار", "At the police station, an officer calls the owner. A rich man comes quickly. He is very worried. He checks the wallet. Everything is there! He looks at Ali with big eyes. He says: You are an honest boy. Please take this money as a reward. Ali shakes his head. He says: No, sir. I only did what is right. But the man insists. Ali takes a small amount.", "توی کلانتری، یه افسر به صاحبش زنگ می‌زنه. یه مرد ثروتمند سریع میاد. خیلی نگرانه. کیف رو چک می‌کنه. همه چیز اونجاست! با چشم‌های بزرگ به علی نگاه می‌کنه. می‌گه: تو یه پسر صادقی. لطفاً این پول رو به عنوان پاداش بگیر. علی سرش رو تکون می‌ده. می‌گه: نه قربان. من فقط کاری که درست بود انجام دادم. ولی مرد اصرار می‌کنه. علی یه مقدار کوچیک می‌گیره.", "👨‍💼"),
-                StoryChapter("A Hero in Town", "یه قهرمان در شهر", "The next day, the rich man tells everyone about Ali. He says: This boy is a hero. He could keep my money, but he did not. The story spreads fast. Soon, everyone in town knows Ali. His teacher praises him. His friends respect him. His mother hugs him. Ali smiles. He did not become rich, but he became a hero. Honesty is the best reward.", "روز بعد، مرد ثروتمند به همه درباره‌ی علی می‌گه. می‌گه: این پسر یه قهرمانه. می‌تونست پولم رو نگه داره، ولی این کار رو نکرد. داستان سریع پخش می‌شه. به‌زودی همه‌ی شهر علی رو می‌شناسن. معلمش تحسینش می‌کنه. دوستاش بهش احترام می‌ذارن. مامانش بغلش می‌کنه. علی لبخند می‌زنه. ثروتمند نشد، ولی قهرمان شد. صداقت بهترین پاداشه.", "🌟")
-            )
-        ),
+            Column(modifier = Modifier.padding(20.dp)) {
 
-        // ⬇️ بقیه‌ی داستان‌ها (s_b6 تا s_b50) از نسخه‌ی قبلی بمونن — دست نزن
-        // ⬇️ داستان‌های متوسط (s_i1 تا s_i30) هم بدون تغییر بمونن
-        // ⬇️ داستان‌های پیشرفته (s_a1 تا s_a20) هم بدون تغییر بمونن
+                // ==================== دکمه‌های پخش ====================
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            val fullText = if (chapters.isNotEmpty()) {
+                                chapters.joinToString(" ") { it.text }
+                            } else story.text
+                            if (isPlaying) speechHelper.stop() else speechHelper.speak(fullText)
+                            isPlaying = !isPlaying
+                        },
+                        modifier = Modifier.weight(1f).height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = levelColor)
+                    ) {
+                        Icon(
+                            if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                            null,
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            if (isPlaying) "توقف" else "پخش کامل",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    }
 
-    )
+                    OutlinedButton(
+                        onClick = {
+                            ShareHelper.shareStory(
+                                context = context,
+                                title = story.title,
+                                titlePersian = story.titlePersian,
+                                text = story.text,
+                                moral = story.moral
+                            )
+                        },
+                        modifier = Modifier.height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = levelColor)
+                    ) {
+                        Icon(Icons.Filled.Share, "Share", tint = levelColor, modifier = Modifier.size(22.dp))
+                    }
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                // ==================== فصل‌ها یا متن ساده ====================
+                if (chapters.isNotEmpty()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("📖", fontSize = 22.sp)
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "فصل‌های داستان",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A237E)
+                        )
+                        Spacer(Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(levelColor.copy(alpha = 0.12f))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                "${chapters.size} فصل",
+                                fontSize = 11.sp,
+                                color = levelColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    chapters.forEachIndexed { index, chapter ->
+                        ChapterCard(
+                            chapter = chapter,
+                            index = index,
+                            levelColor = levelColor,
+                            speechHelper = speechHelper,
+                            isExpanded = expandedChapter == index,
+                            onToggle = {
+                                expandedChapter = if (expandedChapter == index) -1 else index
+                            }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
+                } else {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(18.dp),
+                        elevation = CardDefaults.cardElevation(3.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("📖", fontSize = 22.sp)
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    "متن داستان",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1A237E)
+                                )
+                                Spacer(Modifier.weight(1f))
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(levelColor.copy(alpha = 0.12f))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        "👆 لمس کن",
+                                        fontSize = 10.sp,
+                                        color = levelColor,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(14.dp))
+
+                            ClickableStoryText(
+                                text = story.text,
+                                accent = levelColor,
+                                fontSize = 16,
+                                lineHeight = 30
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                // ==================== نتیجه اخلاقی ====================
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    elevation = CardDefaults.cardElevation(3.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
+                                )
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("💡", fontSize = 26.sp)
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                "نتیجه اخلاقی",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFFFF8E1))
+                            .padding(18.dp)
+                    ) {
+                        Column {
+                            Text(
+                                story.moral,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFE65100),
+                                lineHeight = 24.sp
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                story.moralPersian,
+                                fontSize = 13.sp,
+                                color = Color(0xFF6D4C41),
+                                lineHeight = 22.sp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                // ==================== کارت اطلاعات ====================
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = levelColor.copy(alpha = 0.1f)),
+                    elevation = CardDefaults.cardElevation(1.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(levelColor.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(emoji, fontSize = 22.sp)
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text("سطح داستان", fontSize = 11.sp, color = Color.Gray)
+                            Text(
+                                story.level.persianName,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = levelColor
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            "${story.text.split(" ").size} کلمه",
+                            fontSize = 12.sp,
+                            color = Color.Gray,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(30.dp))
+            }
+        }
+    }
+}
+
+// ==================== کارت فصل ====================
+@Composable
+private fun ChapterCard(
+    chapter: com.example.englishteacher.data.StoryChapter,
+    index: Int,
+    levelColor: Color,
+    speechHelper: SpeechHelper,
+    isExpanded: Boolean,
+    onToggle: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(if (isExpanded) 5.dp else 3.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column {
+            // Header فصل
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onToggle() }
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(
+                                levelColor.copy(alpha = 0.12f),
+                                levelColor.copy(alpha = 0.05f)
+                            )
+                        )
+                    )
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(levelColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "${index + 1}",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        chapter.title,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
+                    Text(
+                        chapter.titlePersian,
+                        fontSize = 11.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                // دکمه پخش فصل
+                IconButton(
+                    onClick = { speechHelper.speak(chapter.text) },
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(levelColor.copy(alpha = 0.12f))
+                ) {
+                    Icon(
+                        Icons.Filled.PlayArrow,
+                        "Play",
+                        tint = levelColor,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Spacer(Modifier.width(4.dp))
+
+                Icon(
+                    if (isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    "Expand",
+                    tint = levelColor
+                )
+            }
+
+            // محتوای فصل
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // متن انگلیسی
+                    ClickableStoryText(
+                        text = chapter.text,
+                        accent = levelColor,
+                        fontSize = 15,
+                        lineHeight = 26
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+
+                    Divider(color = levelColor.copy(alpha = 0.2f))
+
+                    Spacer(Modifier.height(12.dp))
+
+                    // ترجمه فارسی
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("🇮🇷", fontSize = 14.sp)
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            "ترجمه",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = levelColor
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        chapter.persianTranslation,
+                        fontSize = 13.sp,
+                        color = Color(0xFF424242),
+                        lineHeight = 22.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun getStoryEmoji(storyId: String): String {
+    return when {
+        storyId.contains("b1") -> "🐱"
+        storyId.contains("b2") -> "🥖"
+        storyId.contains("b3") -> "👥"
+        storyId.contains("b4") -> "🌻"
+        storyId.contains("b5") -> "💰"
+        storyId.contains("b6") -> "🐕"
+        storyId.contains("b7") -> "🐦"
+        storyId.contains("b8") -> "☔"
+        storyId.contains("b9") -> "🏫"
+        storyId.contains("b10") -> "🎈"
+        storyId.contains("b11") -> "🐦‍⬛"
+        storyId.contains("b12") -> "🦊"
+        storyId.contains("b13") -> "🐜"
+        storyId.contains("b14") -> "🦁"
+        storyId.contains("b15") -> "🐢"
+        storyId.contains("b16") -> "🍇"
+        storyId.contains("b17") -> "🐕"
+        storyId.contains("b18") -> "🪓"
+        storyId.contains("b19") -> "🐸"
+        storyId.contains("b20") -> "🐺"
+        storyId.contains("b21") -> "🥚"
+        storyId.contains("b22") -> "🐻"
+        storyId.contains("b23") -> "🥛"
+        storyId.contains("b24") -> "🦴"
+        storyId.contains("b25") -> "🌾"
+        storyId.contains("b26") -> "☀️"
+        storyId.contains("b27") -> "🐭"
+        storyId.contains("b28") -> "🦢"
+        storyId.contains("b29") -> "🐷"
+        storyId.contains("b30") -> "🐔"
+        storyId.contains("b31") -> "🐻"
+        storyId.contains("b32") -> "🍪"
+        storyId.contains("b33") -> "🥕"
+        storyId.contains("b34") -> "🍲"
+        storyId.contains("b35") -> "👸"
+        storyId.contains("b36") -> "🧝"
+        storyId.contains("b37") -> "🧣"
+        storyId.contains("b38") -> "🦁"
+        storyId.contains("b39") -> "🐺"
+        storyId.contains("b40") -> "🦊"
+        storyId.contains("b41") -> "🐇"
+        storyId.contains("b42") -> "🐺"
+        storyId.contains("b43") -> "🐒"
+        storyId.contains("b44") -> "🐘"
+        storyId.contains("b45") -> "🐐"
+        storyId.contains("b46") -> "🐄"
+        storyId.contains("b47") -> "🦩"
+        storyId.contains("b48") -> "🐕"
+        storyId.contains("b49") -> "🦇"
+        storyId.contains("b50") -> "🌾"
+        storyId.contains("i1") -> "⚖️"
+        storyId.contains("i2") -> "👬"
+        storyId.contains("i3") -> "🎋"
+        storyId.contains("i4") -> "👑"
+        storyId.contains("i5") -> "🎓"
+        storyId.contains("i6") -> "🏗️"
+        storyId.contains("i7") -> "🧘"
+        storyId.contains("i8") -> "🏜️"
+        storyId.contains("i9") -> "🗺️"
+        storyId.contains("i10") -> "💎"
+        storyId.contains("i11") -> "🌉"
+        storyId.contains("i12") -> "🔔"
+        storyId.contains("i13") -> "🌳"
+        storyId.contains("i14") -> "✉️"
+        storyId.contains("i15") -> "🗼"
+        storyId.contains("i16") -> "🐺"
+        storyId.contains("i17") -> "🏺"
+        storyId.contains("i18") -> "🧩"
+        storyId.contains("i19") -> "👑"
+        storyId.contains("i20") -> "📖"
+        storyId.contains("i21") -> "🌊"
+        storyId.contains("i22") -> "👨‍👦"
+        storyId.contains("i23") -> "🏮"
+        storyId.contains("i24") -> "✂️"
+        storyId.contains("i25") -> "🧭"
+        storyId.contains("i26") -> "📷"
+        storyId.contains("i27") -> "📢"
+        storyId.contains("i28") -> "⏳"
+        storyId.contains("i29") -> "✨"
+        storyId.contains("i30") -> "📞"
+        storyId.contains("a1") -> "💡"
+        storyId.contains("a2") -> "👂"
+        storyId.contains("a3") -> "🚶"
+        storyId.contains("a4") -> "👑"
+        storyId.contains("a5") -> "🙏"
+        storyId.contains("a6") -> "⚖️"
+        storyId.contains("a7") -> "🎭"
+        storyId.contains("a8") -> "♟️"
+        storyId.contains("a9") -> "💬"
+        storyId.contains("a10") -> "📝"
+        storyId.contains("a11") -> "🧠"
+        storyId.contains("a12") -> "🧘"
+        storyId.contains("a13") -> "🛒"
+        storyId.contains("a14") -> "🏺"
+        storyId.contains("a15") -> "🌱"
+        storyId.contains("a16") -> "⏰"
+        storyId.contains("a17") -> "🪞"
+        storyId.contains("a18") -> "🎁"
+        storyId.contains("a19") -> "🚪"
+        storyId.contains("a20") -> "🕊️"
+        else -> "📖"
+    }
 }
