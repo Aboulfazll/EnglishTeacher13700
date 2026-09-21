@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Translate
@@ -50,7 +51,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun StoryDetailScreen(
     storyId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onQuizClick: (storyId: String, chapterNumber: Int) -> Unit = { _, _ -> }
 ) {
     val story = StoryBookRepository.getAllStories().firstOrNull { it.id == storyId }
     val context = LocalContext.current
@@ -163,12 +165,12 @@ fun StoryDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ==================== کاور با StoryCover ====================
+            // ==================== کاور ====================
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,6 +284,9 @@ fun StoryDetailScreen(
                                     isPlaying = true
                                     playingChapterIndex = index
                                 }
+                            },
+                            onQuizClick = {
+                                onQuizClick(storyId, chapter.number)
                             }
                         )
                         Spacer(Modifier.height(14.dp))
@@ -292,7 +297,7 @@ fun StoryDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(18.dp),
                         elevation = CardDefaults.cardElevation(3.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column(modifier = Modifier.padding(20.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -302,7 +307,7 @@ fun StoryDetailScreen(
                                     "متن داستان",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF1A237E)
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                             Spacer(Modifier.height(14.dp))
@@ -310,7 +315,7 @@ fun StoryDetailScreen(
                                 story.text,
                                 fontSize = 16.sp,
                                 lineHeight = 28.sp,
-                                color = Color(0xFF424242)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -416,7 +421,8 @@ private fun ChapterCard(
     index: Int,
     accent: Color,
     isPlaying: Boolean,
-    onPlayClick: () -> Unit
+    onPlayClick: () -> Unit,
+    onQuizClick: () -> Unit
 ) {
     var showTranslation by remember { mutableStateOf(false) }
     var showVocabulary by remember { mutableStateOf(false) }
@@ -425,7 +431,7 @@ private fun ChapterCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
 
@@ -495,7 +501,7 @@ private fun ChapterCard(
                     chapter.text,
                     fontSize = 16.sp,
                     lineHeight = 30.sp,
-                    color = Color(0xFF212121)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(Modifier.height(14.dp))
@@ -551,14 +557,14 @@ private fun ChapterCard(
                             .fillMaxWidth()
                             .padding(top = 8.dp),
                         shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFFF5F5F5)
+                        color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Text(
                             chapter.textPersian,
                             modifier = Modifier.padding(14.dp),
                             fontSize = 14.sp,
                             lineHeight = 26.sp,
-                            color = Color(0xFF616161)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -650,6 +656,34 @@ private fun ChapterCard(
                                 }
                             }
                         }
+                    }
+                }
+
+                // ==================== دکمه کوییز فصل ====================
+                if (chapter.quiz.isNotEmpty()) {
+                    Spacer(Modifier.height(14.dp))
+
+                    Button(
+                        onClick = onQuizClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = accent)
+                    ) {
+                        Icon(
+                            Icons.Filled.Quiz,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "شروع کوییز فصل ${chapter.number}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
                     }
                 }
             }
