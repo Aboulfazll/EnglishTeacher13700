@@ -1,8 +1,5 @@
 package com.example.englishteacher.data
 
-/**
- * سطح پادکست
- */
 enum class PodcastLevel(
     val displayName: String,
     val persianName: String,
@@ -14,9 +11,6 @@ enum class PodcastLevel(
     ADVANCED("Advanced", "پیشرفته", "🏆", 0xFFF12711)
 }
 
-/**
- * دسته‌بندی موضوعی پادکست
- */
 enum class PodcastCategory(
     val displayName: String,
     val persianName: String,
@@ -36,9 +30,6 @@ enum class PodcastCategory(
     TRAVEL("Travel", "سفر", "✈️")
 }
 
-/**
- * مدل پادکست
- */
 data class Podcast(
     val id: String,
     val title: String,
@@ -49,9 +40,9 @@ data class Podcast(
     val category: PodcastCategory,
     val audioUrl: String,
     val durationMinutes: Int,
-    val transcript: String = "",           // متن کامل انگلیسی
-    val transcriptPersian: String = "",    // ترجمه فارسی
-    val vocabulary: List<Word> = emptyList(), // لغات کلیدی
-    val coverUrl: String = "",             // عکس کاور
+    val transcript: String = "",
+    val transcriptPersian: String = "",
+    val vocabulary: List<Word> = emptyList(),
+    val coverUrl: String = "",
     val source: String = "VOA Learning English"
 )
