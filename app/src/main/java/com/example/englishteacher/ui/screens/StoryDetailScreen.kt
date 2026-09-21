@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +42,7 @@ import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.StoryBookRepository
 import com.example.englishteacher.data.StoryChapter
+import com.example.englishteacher.ui.components.StoryCover
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -168,21 +168,17 @@ fun StoryDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ==================== کاور ====================
+            // ==================== کاور با StoryCover ====================
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
             ) {
-                androidx.compose.foundation.Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.linearGradient(
-                                listOf(levelColor, levelColor.copy(alpha = 0.6f))
-                            )
-                        )
-                ) {}
+                StoryCover(
+                    coverUrl = story.coverUrl,
+                    title = story.title,
+                    modifier = Modifier.fillMaxSize()
+                )
 
                 Box(
                     modifier = Modifier
@@ -424,12 +420,6 @@ private fun ChapterCard(
 ) {
     var showTranslation by remember { mutableStateOf(false) }
     var showVocabulary by remember { mutableStateOf(false) }
-
-    val translationArrow by animateFloatAsState(
-        targetValue = if (showTranslation) 180f else 0f,
-        animationSpec = tween(300),
-        label = "arrow"
-    )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
