@@ -1,6 +1,14 @@
 package com.example.englishteacher.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -10,9 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,13 +36,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.englishteacher.ShareHelper
 import com.example.englishteacher.SpeechHelper
 import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.StoryBookRepository
+import com.example.englishteacher.data.StoryChapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -47,6 +58,7 @@ fun StoryDetailScreen(
     val speechHelper = remember { SpeechHelper(context) }
     var isPlaying by remember { mutableStateOf(false) }
     var isBookmarked by remember { mutableStateOf(false) }
+    var playingChapterIndex by remember { mutableIntStateOf(-1) }
 
     DisposableEffect(Unit) {
         onDispose { speechHelper.close() }
@@ -73,14 +85,14 @@ fun StoryDetailScreen(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
-        else -> Color(0xFFE91E63) // اضافه شد
+        else -> Color(0xFFE91E63)
     }
 
     val emoji = when (story.level) {
         Level.BEGINNER -> "🌱"
         Level.INTERMEDIATE -> "🚀"
         Level.ADVANCED -> "🏆"
-        else -> "📖" // اضافه شد
+        else -> "📖"
     }
 
     Scaffold(
@@ -95,14 +107,17 @@ fun StoryDetailScreen(
                             maxLines = 1
                         )
                         Text(
-                            story.titlePersian,
+                            "${story.readingMinutes} دقیقه • $emoji ${story.level.persianName}",
                             fontSize = 11.sp,
                             color = Color.White.copy(alpha = 0.85f)
                         )
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = {
+                        speechHelper.stop()
+                        onBack()
+                    }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -125,7 +140,6 @@ fun StoryDetailScreen(
                             tint = Color.White
                         )
                     }
-
                     IconButton(onClick = {
                         ShareHelper.shareStory(
                             context = context,
@@ -154,17 +168,21 @@ fun StoryDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
+            // ==================== کاور ====================
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
+                    .height(220.dp)
             ) {
-                AsyncImage(
-                    model = story.coverUrl,
-                    contentDescription = story.title,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                androidx.compose.foundation.Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.linearGradient(
+                                listOf(levelColor, levelColor.copy(alpha = 0.6f))
+                            )
+                        )
+                ) {}
 
                 Box(
                     modifier = Modifier
@@ -212,132 +230,131 @@ fun StoryDetailScreen(
                 }
             }
 
-            Column(modifier = Modifier.padding(20.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+                // ==================== کارت اطلاعات ====================
+                if (story.hasChapters) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = levelColor.copy(alpha = 0.1f)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("📖", fontSize = 28.sp)
+                            Spacer(Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    "این داستان ${story.chapters.size} فصل داره",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = levelColor
+                                )
+                                Text(
+                                    "مجموعاً ${story.totalWords} کلمه • ${story.readingMinutes} دقیقه مطالعه",
+                                    fontSize = 11.sp,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                // ==================== فصل‌ها ====================
+                if (story.hasChapters) {
+                    story.chapters.forEachIndexed { index, chapter ->
+                        ChapterCard(
+                            chapter = chapter,
+                            index = index,
+                            accent = levelColor,
+                            isPlaying = playingChapterIndex == index && isPlaying,
+                            onPlayClick = {
+                                if (playingChapterIndex == index && isPlaying) {
+                                    speechHelper.stop()
+                                    isPlaying = false
+                                    playingChapterIndex = -1
+                                } else {
+                                    speechHelper.stop()
+                                    speechHelper.speak(chapter.text)
+                                    isPlaying = true
+                                    playingChapterIndex = index
+                                }
+                            }
+                        )
+                        Spacer(Modifier.height(14.dp))
+                    }
+                } else {
+                    // داستان بدون فصل
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(18.dp),
+                        elevation = CardDefaults.cardElevation(3.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("📖", fontSize = 22.sp)
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    "متن داستان",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1A237E)
+                                )
+                            }
+                            Spacer(Modifier.height(14.dp))
+                            Text(
+                                story.text,
+                                fontSize = 16.sp,
+                                lineHeight = 28.sp,
+                                color = Color(0xFF424242)
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(14.dp))
+
+                    // دکمه پخش کل داستان
                     Button(
                         onClick = {
                             if (isPlaying) {
                                 speechHelper.stop()
+                                isPlaying = false
                             } else {
                                 speechHelper.speak(story.text)
+                                isPlaying = true
                             }
-                            isPlaying = !isPlaying
                         },
-                        modifier = Modifier.weight(1f).height(56.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = levelColor)
                     ) {
                         Icon(
                             imageVector = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
                             contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
+                            tint = Color.White
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (isPlaying) "توقف" else "پخش",
+                            if (isPlaying) "توقف" else "پخش داستان",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
-                        )
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            scope.launch {
-                                BookmarkManager.toggleStoryBookmark(context, storyId)
-                            }
-                        },
-                        modifier = Modifier.height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = levelColor)
-                    ) {
-                        Icon(
-                            imageVector = if (isBookmarked)
-                                Icons.Filled.Bookmark
-                            else
-                                Icons.Filled.BookmarkBorder,
-                            contentDescription = "Bookmark",
-                            tint = levelColor,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            ShareHelper.shareStory(
-                                context = context,
-                                title = story.title,
-                                titlePersian = story.titlePersian,
-                                text = story.text,
-                                moral = story.moral
-                            )
-                        },
-                        modifier = Modifier.height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = levelColor)
-                    ) {
-                        Icon(
-                            Icons.Filled.Share,
-                            contentDescription = "Share",
-                            tint = levelColor,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(20.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp)),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(3.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("📖", fontSize = 22.sp)
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                "متن داستان",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1A237E)
-                            )
-                            Spacer(Modifier.weight(1f))
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(levelColor.copy(alpha = 0.12f))
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    "👆 لمس کن",
-                                    fontSize = 10.sp,
-                                    color = levelColor,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(14.dp))
-
-                        ClickableStoryText(
-                            text = story.text,
-                            accent = levelColor,
-                            fontSize = 16,
-                            lineHeight = 30
                         )
                     }
                 }
 
                 Spacer(Modifier.height(16.dp))
 
+                // ==================== نتیجه اخلاقی ====================
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
@@ -390,48 +407,261 @@ fun StoryDetailScreen(
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(30.dp))
+            }
+        }
+    }
+}
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = levelColor.copy(alpha = 0.1f)),
-                    elevation = CardDefaults.cardElevation(1.dp)
+// ==================== کارت فصل ====================
+@Composable
+private fun ChapterCard(
+    chapter: StoryChapter,
+    index: Int,
+    accent: Color,
+    isPlaying: Boolean,
+    onPlayClick: () -> Unit
+) {
+    var showTranslation by remember { mutableStateOf(false) }
+    var showVocabulary by remember { mutableStateOf(false) }
+
+    val translationArrow by animateFloatAsState(
+        targetValue = if (showTranslation) 180f else 0f,
+        animationSpec = tween(300),
+        label = "arrow"
+    )
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column {
+
+            // ==================== هدر فصل ====================
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(accent, accent.copy(alpha = 0.7f))
+                        )
+                    )
+                    .padding(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "${chapter.number}",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            chapter.title,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            maxLines = 1
+                        )
+                        Text(
+                            chapter.titlePersian,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.9f),
+                            maxLines = 1
+                        )
+                    }
+                    IconButton(
+                        onClick = onPlayClick,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f))
+                    ) {
+                        Icon(
+                            imageVector = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+            }
+
+            // ==================== متن انگلیسی ====================
+            Column(modifier = Modifier.padding(18.dp)) {
+
+                Text(
+                    chapter.text,
+                    fontSize = 16.sp,
+                    lineHeight = 30.sp,
+                    color = Color(0xFF212121)
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                // ==================== دکمه نمایش ترجمه ====================
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { showTranslation = !showTranslation },
+                    color = accent.copy(alpha = 0.08f)
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(levelColor.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(emoji, fontSize = 22.sp)
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text("سطح داستان", fontSize = 11.sp, color = Color.Gray)
-                            Text(
-                                story.level.persianName,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = levelColor
-                            )
-                        }
-                        Spacer(Modifier.weight(1f))
+                        Icon(
+                            Icons.Filled.Translate,
+                            contentDescription = null,
+                            tint = accent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
                         Text(
-                            "${story.text.split(" ").size} کلمه",
-                            fontSize = 12.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.SemiBold
+                            if (showTranslation) "بستن ترجمه فارسی" else "نمایش ترجمه فارسی",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = accent,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = if (showTranslation)
+                                Icons.Filled.ExpandLess
+                            else
+                                Icons.Filled.ExpandMore,
+                            contentDescription = null,
+                            tint = accent,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
 
-                Spacer(Modifier.height(30.dp))
+                // ==================== ترجمه فارسی (پنهان) ====================
+                AnimatedVisibility(
+                    visible = showTranslation,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFFF5F5F5)
+                    ) {
+                        Text(
+                            chapter.textPersian,
+                            modifier = Modifier.padding(14.dp),
+                            fontSize = 14.sp,
+                            lineHeight = 26.sp,
+                            color = Color(0xFF616161)
+                        )
+                    }
+                }
+
+                // ==================== لغات جدید ====================
+                if (chapter.vocabulary.isNotEmpty()) {
+                    Spacer(Modifier.height(14.dp))
+
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showVocabulary = !showVocabulary },
+                        color = Color(0xFFFFF3E0)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("📚", fontSize = 18.sp)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "لغات جدید (${chapter.vocabulary.size})",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFFE65100),
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = if (showVocabulary)
+                                    Icons.Filled.ExpandLess
+                                else
+                                    Icons.Filled.ExpandMore,
+                                contentDescription = null,
+                                tint = Color(0xFFE65100),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = showVocabulary,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                        ) {
+                            chapter.vocabulary.forEach { word ->
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 3.dp),
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = Color(0xFFFFFDE7)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                word.english,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(0xFF1A237E)
+                                            )
+                                            if (word.pronunciation.isNotEmpty()) {
+                                                Text(
+                                                    "/${word.pronunciation}/",
+                                                    fontSize = 11.sp,
+                                                    color = Color.Gray
+                                                )
+                                            }
+                                        }
+                                        Text(
+                                            word.persian,
+                                            fontSize = 13.sp,
+                                            color = Color(0xFFE65100),
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
