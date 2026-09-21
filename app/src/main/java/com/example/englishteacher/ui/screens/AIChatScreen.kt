@@ -34,7 +34,6 @@ fun AIChatScreen(
     var inputText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
-    // لیست پیام‌ها
     val messages = remember {
         mutableStateListOf(
             ChatMessage(
@@ -44,7 +43,6 @@ fun AIChatScreen(
         )
     }
 
-    // اسکرول خودکار به آخر
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -89,7 +87,6 @@ fun AIChatScreen(
                 .background(Color(0xFFF5F7FA))
                 .padding(padding)
         ) {
-            // لیست پیام‌ها
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -125,7 +122,6 @@ fun AIChatScreen(
                 }
             }
 
-            // نوار ارسال پیام
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
