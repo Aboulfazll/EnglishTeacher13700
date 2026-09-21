@@ -110,6 +110,12 @@ fun AppNavHost(
                 },
                 onSpeakingClick = {
                     navController.navigate(Routes.SPEAKING_PRACTICE)
+                },
+                onAiChatClick = {
+                    navController.navigate(Routes.AI_CHAT)
+                },
+                onSettingsClick = {
+                    navController.navigate(Routes.SETTINGS)
                 }
             )
         }
@@ -243,11 +249,11 @@ fun AppNavHost(
         }
 
         composable(Routes.AI_CHAT) {
-            AIChatScreen()
+            AIChatScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.SETTINGS) {
-            SettingsScreen()
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.PODCAST) {
@@ -309,7 +315,6 @@ fun AppNavHost(
             )
         }
 
-        // 🎤 صفحه‌ی تمرین گفتار
         composable(Routes.SPEAKING_PRACTICE) {
             SpeakingPracticeScreen(
                 onBack = { navController.popBackStack() }
