@@ -1,5 +1,7 @@
 package com.example.englishteacher.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,17 +10,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.LibraryBooks
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,11 +30,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.englishteacher.data.Level
+import com.example.englishteacher.data.ProgressManager
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
@@ -47,6 +54,33 @@ fun HomeScreen(
     onAiChatClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    var completedCount by remember { mutableIntStateOf(0) }
+    var totalStars by remember { mutableIntStateOf(0) }
+    var streak by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        ProgressManager.getCompletedLessons(context).collectLatest { completedCount = it.size }
+    }
+    LaunchedEffect(Unit) {
+        ProgressManager.getTotalStars(context).collectLatest { totalStars = it }
+    }
+    LaunchedEffect(Unit) {
+        ProgressManager.getStreak(context).collectLatest { streak = it }
+    }
+
+    // انیمیشن ورود
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        visible = true
+    }
+    val headerAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(600),
+        label = "headerAlpha"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,10 +88,11 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
     ) {
 
+        // ==================== هدر پیشرفته ====================
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp)
+                .height(300.dp)
         ) {
             AsyncImage(
                 model = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800",
@@ -72,67 +107,140 @@ fun HomeScreen(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                Color(0xFF1A237E).copy(alpha = 0.2f),
-                                Color(0xFF0D1B5E).copy(alpha = 0.95f)
+                                Color(0xFF1A237E).copy(alpha = 0.3f),
+                                Color(0xFF0D1B5E).copy(alpha = 0.98f)
                             )
                         )
                     )
             )
+
+            // دکمه تنظیمات بالا سمت راست
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = onSettingsClick,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.2f))
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
 
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(24.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(
-                                listOf(Color(0xFFFFD54F), Color(0xFFFFA726))
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Filled.School,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFFFFD54F), Color(0xFFFFA726))
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.School,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = "خوش برگشتی! 👋",
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.85f)
+                        )
+                        Text(
+                            text = "English Teacher",
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = "English Teacher",
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                Spacer(Modifier.height(8.dp))
                 Text(
                     text = "Learn English, Build Your Future",
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color = Color.White.copy(alpha = 0.9f)
                 )
             }
         }
 
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
 
+            // ==================== نوار آمار سریع ====================
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-30).dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                QuickStatCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.LocalFireDepartment,
+                    value = "$streak",
+                    label = "روز",
+                    color = Color(0xFFF12711),
+                    gradient = listOf(Color(0xFFF12711), Color(0xFFF5AF19))
+                )
+                QuickStatCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.Star,
+                    value = "$totalStars",
+                    label = "امتیاز",
+                    color = Color(0xFFFFA000),
+                    gradient = listOf(Color(0xFFFFA000), Color(0xFFFFD54F))
+                )
+                QuickStatCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.School,
+                    value = "$completedCount",
+                    label = "درس",
+                    color = Color(0xFF11998E),
+                    gradient = listOf(Color(0xFF11998E), Color(0xFF38EF7D))
+                )
+            }
+
+            Spacer(Modifier.height(4.dp))
+
+            // ==================== کارت AI معلم هوشمند ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(85.dp)
-                    .clickable { onLevelTestClick() },
+                    .height(95.dp)
+                    .clickable { onAiChatClick() },
                 shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
+                elevation = CardDefaults.cardElevation(10.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                            Brush.linearGradient(
+                                listOf(
+                                    Color(0xFF1E88E5),
+                                    Color(0xFF42A5F5),
+                                    Color(0xFF64B5F6)
+                                )
                             )
                         )
                         .padding(16.dp)
@@ -140,30 +248,55 @@ fun HomeScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .size(52.dp)
+                                .size(58.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🤖", fontSize = 30.sp)
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    "معلم هوشمند",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(Color.White.copy(alpha = 0.3f))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        "AI",
+                                        fontSize = 9.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            Text(
+                                "هر سوالی داری بپرس",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
                                 .clip(CircleShape)
                                 .background(Color.White.copy(alpha = 0.25f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                Icons.Filled.Quiz,
+                                Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                "تست تعیین سطح",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "سطح خودت رو بسنج",
-                                fontSize = 11.sp,
-                                color = Color.White.copy(alpha = 0.9f)
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
@@ -172,47 +305,110 @@ fun HomeScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(85.dp)
-                    .clickable { onAchievementsClick() },
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
+            // ==================== تست تعیین سطح + دستاوردها ====================
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Box(
+                // تست تعیین سطح
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFFFFA000), Color(0xFFFFD54F))
-                            )
-                        )
-                        .padding(16.dp)
+                        .weight(1f)
+                        .height(130.dp)
+                        .clickable { onLevelTestClick() },
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(8.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.3f)),
-                            contentAlignment = Alignment.Center
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFF6A1B9A), Color(0xFFAB47BC))
+                                )
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("🏆", fontSize = 28.sp)
+                            Box(
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.25f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.Quiz,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Column {
+                                Text(
+                                    "تست سطح",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "سطحت رو بسنج",
+                                    fontSize = 10.sp,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
+                            }
                         }
-                        Spacer(Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                "دستاوردها",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                    }
+                }
+
+                // دستاوردها
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(130.dp)
+                        .clickable { onAchievementsClick() },
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFFFFA000), Color(0xFFFFD54F))
+                                )
                             )
-                            Text(
-                                "مدال‌ها و نشان‌های خودت",
-                                fontSize = 11.sp,
-                                color = Color.White.copy(alpha = 0.95f)
-                            )
+                            .padding(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.3f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("🏆", fontSize = 24.sp)
+                            }
+                            Column {
+                                Text(
+                                    "دستاوردها",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "مدال‌های تو",
+                                    fontSize = 10.sp,
+                                    color = Color.White.copy(alpha = 0.95f)
+                                )
+                            }
                         }
                     }
                 }
@@ -220,10 +416,11 @@ fun HomeScreen(
 
             Spacer(Modifier.height(14.dp))
 
+            // ==================== تمرین گفتار ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp)
+                    .height(115.dp)
                     .clickable { onSpeakingClick() },
                 shape = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(10.dp)
@@ -312,26 +509,14 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 14.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(4.dp, 22.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Color(0xFF1A237E))
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = "سطح خود را انتخاب کنید",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E)
-                )
-            }
+            // ==================== عنوان سطوح ====================
+            SectionHeader(
+                emoji = "📚",
+                title = "سطح خود را انتخاب کنید",
+                accent = Color(0xFF1A237E)
+            )
 
             LevelCard(
                 emoji = "🌱",
@@ -363,24 +548,12 @@ fun HomeScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 14.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(4.dp, 22.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Color(0xFFE91E63))
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = "بخش‌های ویژه",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E)
-                )
-            }
+            // ==================== بخش ویژه ====================
+            SectionHeader(
+                emoji = "✨",
+                title = "بخش‌های ویژه",
+                accent = Color(0xFFE91E63)
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -396,283 +569,151 @@ fun HomeScreen(
                 SpecialCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.School,
-                    title = "کتابخانه گرامر",
+                    title = "گرامر",
                     gradient = listOf(Color(0xFF00ACC1), Color(0xFF26C6DA))
                 ) { onGrammarClick() }
 
                 SpecialCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.LibraryBooks,
-                    title = "بانک لغات",
+                    title = "لغات",
                     gradient = listOf(Color(0xFF00695C), Color(0xFF26A69A))
                 ) { onVocabularyBankClick() }
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(14.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp)
-                    .clickable { onBookmarkedStoriesClick() },
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFFAD1457), Color(0xFFE91E63))
-                            )
-                        )
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.Bookmark,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                "داستان‌های ذخیره‌شده",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "داستان‌هایی که نشان کردی",
-                                fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
-            }
+            // ==================== بخش کتابخانه من ====================
+            SectionHeader(
+                emoji = "🔖",
+                title = "کتابخانه من",
+                accent = Color(0xFF00897B)
+            )
+
+            // داستان‌های ذخیره‌شده
+            LibraryItem(
+                icon = Icons.Filled.Bookmark,
+                title = "داستان‌های ذخیره‌شده",
+                subtitle = "داستان‌هایی که نشان کردی",
+                gradient = listOf(Color(0xFFAD1457), Color(0xFFE91E63)),
+                onClick = onBookmarkedStoriesClick
+            )
 
             Spacer(Modifier.height(10.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp)
-                    .clickable { onDailySentencesClick() },
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF00897B), Color(0xFF26A69A))
-                            )
-                        )
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.ChatBubble,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                "جملات روزمره",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "۲۰۰+ جمله پرکاربرد با تلفظ",
-                                fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
-            }
+            LibraryItem(
+                icon = Icons.Filled.Bookmark,
+                title = "لغات ذخیره‌شده",
+                subtitle = "کلمات مهمی که ذخیره کردی",
+                gradient = listOf(Color(0xFFFFA000), Color(0xFFFFC107)),
+                onClick = onBookmarkedWordsClick
+            )
 
             Spacer(Modifier.height(10.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp)
-                    .clickable { onBookmarkedWordsClick() },
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
+            LibraryItem(
+                icon = Icons.Filled.ChatBubble,
+                title = "جملات روزمره",
+                subtitle = "۲۰۰+ جمله پرکاربرد با تلفظ",
+                gradient = listOf(Color(0xFF00897B), Color(0xFF26A69A)),
+                onClick = onDailySentencesClick
+            )
+
+            Spacer(Modifier.height(30.dp))
+
+            // فوتر
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFFFFA000), Color(0xFFFFC107))
-                            )
-                        )
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.Bookmark,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                "لغات ذخیره‌شده",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "کلمات مهمی که ذخیره کردی",
-                                fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
+                Text(
+                    "ساخته شده با ❤️ برای یادگیری انگلیسی",
+                    fontSize = 11.sp,
+                    color = Color.Gray
+                )
             }
 
-            Spacer(Modifier.height(10.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(85.dp)
-                    .clickable { onAiChatClick() },
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF1E88E5), Color(0xFF42A5F5))
-                            )
-                        )
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("🤖", fontSize = 28.sp)
-                        }
-                        Spacer(Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                "معلم هوشمند (AI)",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "پاسخگوی سوالات انگلیسی",
-                                fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(10.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp)
-                    .clickable { onSettingsClick() },
-                shape = RoundedCornerShape(18.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF546E7A), Color(0xFF78909C))
-                            )
-                        )
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.Settings,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                "تنظیمات",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                "شخصی‌سازی اپلیکیشن",
-                                fontSize = 10.sp,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
 
+// ==================== کارت آمار سریع ====================
+@Composable
+private fun QuickStatCard(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    value: String,
+    label: String,
+    color: Color,
+    gradient: List<Color>
+) {
+    Card(
+        modifier = modifier.height(85.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Brush.verticalGradient(gradient)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    value,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    label,
+                    fontSize = 10.sp,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            }
+        }
+    }
+}
+
+// ==================== هدر بخش ====================
+@Composable
+private fun SectionHeader(
+    emoji: String,
+    title: String,
+    accent: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(bottom = 14.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(4.dp, 22.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(accent)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = "$emoji $title",
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1A237E)
+        )
+    }
+}
+
+// ==================== کارت سطح ====================
 @Composable
 private fun LevelCard(
     emoji: String,
@@ -760,6 +801,7 @@ private fun LevelCard(
     }
 }
 
+// ==================== کارت ویژه ====================
 @Composable
 private fun SpecialCard(
     modifier: Modifier = Modifier,
@@ -807,6 +849,63 @@ private fun SpecialCard(
                     color = Color.White,
                     maxLines = 1
                 )
+            }
+        }
+    }
+}
+
+// ==================== آیتم کتابخانه ====================
+@Composable
+private fun LibraryItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    gradient: List<Color>,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Brush.horizontalGradient(gradient))
+                .padding(14.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.25f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        subtitle,
+                        fontSize = 10.sp,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                }
             }
         }
     }
