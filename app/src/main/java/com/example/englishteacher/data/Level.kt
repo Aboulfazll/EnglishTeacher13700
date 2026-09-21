@@ -1,8 +1,11 @@
-
 package com.example.englishteacher.data
 
-enum class Level(val persianName: String, val bookName: String) {
-    BEGINNER("مبتدی", "Top Notch Fundamentals"),
-    INTERMEDIATE("متوسط", "Top Notch 1"),
-    ADVANCED("پیشرفته", "Top Notch 2")
+enum class Level(
+    val displayName: String,
+    val persianName: String,
+    val bookName: String
+) {
+    BEGINNER("Beginner", "مبتدی", "Top Notch Fundamentals"),
+    INTERMEDIATE("Intermediate", "متوسط", "Top Notch 1"),
+    ADVANCED("Advanced", "پیشرفته", "Top Notch 2")
 }
