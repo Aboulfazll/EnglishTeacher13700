@@ -1,712 +1,86 @@
-package com.example.englishteacher.ui.screens
+package com.example.englishteacher.data
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.example.englishteacher.ShareHelper
-import com.example.englishteacher.SpeechHelper
-import com.example.englishteacher.data.BookmarkManager
-import com.example.englishteacher.data.Level
-import com.example.englishteacher.data.ProgressManager
-import com.example.englishteacher.data.StoryBookRepository
-import com.example.englishteacher.data.StoryChapters
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+object StoryBookRepository {
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun StoryDetailScreen(
-    storyId: String,
-    onBack: () -> Unit
-) {
-    val story = StoryBookRepository.getAllStories().firstOrNull { it.id == storyId }
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val speechHelper = remember { SpeechHelper(context) }
-    var isPlaying by remember { mutableStateOf(false) }
-    var isBookmarked by remember { mutableStateOf(false) }
-    var expandedChapter by remember { mutableIntStateOf(0) }
+    fun getAllStories(): List<Story> = listOf(
 
-    DisposableEffect(Unit) {
-        onDispose { speechHelper.close() }
-    }
+        // ==================== BEGINNER ====================
+        Story(
+            id = "s_b1", title = "The Lost Cat", titlePersian = "گربه گمشده",
+            level = Level.BEGINNER,
+            text = "A little girl named Sara has a cat. The cat's name is Mimi. One day, Mimi goes out and doesn't come back. Sara is very sad. She looks everywhere. She asks her neighbors, but no one has seen Mimi. Finally, Sara finds Mimi under a big tree. She is sleeping. Sara is very happy!",
+            moral = "Never give up hope.", moralPersian = "هرگز امید خود را از دست ندهید.",
+            coverUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400"
+        ),
 
-    LaunchedEffect(storyId) {
-        ProgressManager.markStoryRead(context, storyId)
-    }
+        Story(
+            id = "s_b2", title = "The Kind Baker", titlePersian = "نانوای مهربان",
+            level = Level.BEGINNER,
+            text = "There is a bakery in a small town. The baker is a kind old man. Every morning, he gives free bread to poor children. One day, a rich man comes to the bakery. He is surprised. He asks the baker: Why do you give free bread? The baker smiles and says: Because I love to help. The rich man gives the baker a lot of money. Now the baker can help more children.",
+            moral = "Kindness is always rewarded.", moralPersian = "مهربانی همیشه پاداش داده می‌شود.",
+            coverUrl = "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400"
+        ),
 
-    LaunchedEffect(storyId) {
-        BookmarkManager.isStoryBookmarked(context, storyId).collectLatest {
-            isBookmarked = it
-        }
-    }
+        Story(
+            id = "s_b3", title = "The Three Friends", titlePersian = "سه دوست",
+            level = Level.BEGINNER,
+            text = "Three friends live in a small village. Their names are Tom, Sam, and Max. They do everything together. They play, study, and work together. One day, a big storm comes. Their houses are in danger. Tom helps Sam fix his roof. Sam helps Max clean his yard. Max helps Tom with his garden. Together, they save all three houses.",
+            moral = "Friends help each other in hard times.", moralPersian = "دوستان در سختی‌ها به هم کمک می‌کنند.",
+            coverUrl = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400"
+        ),
 
-    if (story == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("داستان پیدا نشد")
-        }
-        return
-    }
+        Story(
+            id = "s_b4", title = "The Magic Garden", titlePersian = "باغ جادویی",
+            level = Level.BEGINNER,
+            text = "A poor farmer has a small garden. He plants seeds every spring. But nothing grows. One night, a fairy comes to his garden. She says: I will help you, but you must promise to share your food. The farmer says yes. The next morning, beautiful vegetables grow in the garden. The farmer shares his food with everyone. Everyone is happy.",
+            moral = "Sharing brings happiness.", moralPersian = "بخشش شادی می‌آورد.",
+            coverUrl = "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400"
+        ),
 
-    // فصل‌های داستان
-    val chapters = remember(storyId) {
-        StoryChapters.getChaptersForStory(storyId)
-    }
+        Story(
+            id = "s_b5", title = "The Honest Boy", titlePersian = "پسر راستگو",
+            level = Level.BEGINNER,
+            text = "A boy named Ali finds a wallet on the street. There is a lot of money in it. Ali could keep the money, but he doesn't. He takes the wallet to the police. The police find the owner. The owner is a rich man. He is very happy. He gives Ali some money as a gift. Ali says: I only did what is right. Everyone praises Ali for his honesty.",
+            moral = "Honesty is the best policy.", moralPersian = "صداقت بهترین سیاست است.",
+            coverUrl = "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400"
+        ),
 
-    val levelColor = when (story.level) {
-        Level.BEGINNER -> Color(0xFF11998E)
-        Level.INTERMEDIATE -> Color(0xFF8E2DE2)
-        Level.ADVANCED -> Color(0xFFF12711)
-    }
+        Story(
+            id = "s_b6", title = "The Brave Dog", titlePersian = "سگ شجاع",
+            level = Level.BEGINNER,
+            text = "A dog named Rex lives with a family. One night, Rex hears a strange noise. He barks loudly. The family wakes up. They see a fire in the kitchen. They call the fire station. The firemen come and stop the fire. The family is safe because of Rex. Rex is a hero!",
+            moral = "Bravery saves lives.", moralPersian = "شجاعت جان‌ها را نجات می‌دهد.",
+            coverUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400"
+        ),
 
-    val emoji = when (story.level) {
-        Level.BEGINNER -> "🌱"
-        Level.INTERMEDIATE -> "🚀"
-        Level.ADVANCED -> "🏆"
-    }
+        Story(
+            id = "s_b7", title = "The Little Bird", titlePersian = "پرنده کوچک",
+            level = Level.BEGINNER,
+            text = "A little bird lives in a tree. One day, the bird falls from the tree. Her wing hurts. She cannot fly. A boy finds her. He takes her home. He gives her food and water. After one week, the bird is strong again. The boy lets her go. The bird flies away. But every morning, she comes back to sing for the boy.",
+            moral = "Kindness creates friendship.", moralPersian = "مهربانی دوستی می‌سازد.",
+            coverUrl = "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400"
+        ),
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            story.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            maxLines = 1
-                        )
-                        Text(
-                            story.titlePersian,
-                            fontSize = 11.sp,
-                            color = Color.White.copy(alpha = 0.85f)
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            "Back",
-                            tint = Color.White
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            BookmarkManager.toggleStoryBookmark(context, storyId)
-                        }
-                    }) {
-                        Icon(
-                            if (isBookmarked) Icons.Filled.Bookmark
-                            else Icons.Filled.BookmarkBorder,
-                            "Bookmark",
-                            tint = Color.White
-                        )
-                    }
-                    IconButton(onClick = {
-                        ShareHelper.shareStory(
-                            context = context,
-                            title = story.title,
-                            titlePersian = story.titlePersian,
-                            text = story.text,
-                            moral = story.moral
-                        )
-                    }) {
-                        Icon(Icons.Filled.Share, "Share", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = levelColor)
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-        ) {
+        Story(
+            id = "s_b8", title = "The Rainy Day", titlePersian = "روز بارانی",
+            level = Level.BEGINNER,
+            text = "It is raining hard. A boy named Ben is walking home. He has no umbrella. He gets very wet. An old woman sees him. She gives him her umbrella. Ben says thank you. He walks home dry. The next day, Ben buys a new umbrella. He gives it to the old woman. She smiles. They become friends.",
+            moral = "Return kindness with kindness.", moralPersian = "مهربانی را با مهربانی پاسخ دهید.",
+            coverUrl = "https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=400"
+        ),
 
-            // ==================== تصویر جلد ====================
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-            ) {
-                if (story.coverUrl.isNotEmpty()) {
-                    AsyncImage(
-                        model = story.coverUrl,
-                        contentDescription = story.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.linearGradient(
-                                    listOf(levelColor, levelColor.copy(alpha = 0.7f))
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(getStoryEmoji(story.id), fontSize = 90.sp)
-                    }
-                }
+        Story(
+            id = "s_b9", title = "My First Day at School", titlePersian = "اولین روز مدرسه من",
+            level = Level.BEGINNER,
+            text = "Today is my first day at school. I am very nervous. I don't know anyone. My mother says: Don't worry, you will make friends. In class, a girl sits next to me. Her name is Lily. She smiles at me. We eat lunch together. I am not nervous anymore. School is fun!",
+            moral = "New beginnings bring new friends.", moralPersian = "شروع‌های جدید دوستان جدید می‌آورند.",
+            coverUrl = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+        ),
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.85f))
-                            )
-                        )
-                )
-
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(20.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(levelColor)
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            "$emoji ${story.level.persianName}",
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(Modifier.height(10.dp))
-                    Text(
-                        story.title,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                    Text(
-                        story.titlePersian,
-                        fontSize = 15.sp,
-                        color = Color.White.copy(alpha = 0.9f)
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.padding(20.dp)) {
-
-                // ==================== دکمه‌های پخش ====================
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            val fullText = if (chapters.isNotEmpty()) {
-                                chapters.joinToString(" ") { it.text }
-                            } else story.text
-                            if (isPlaying) speechHelper.stop() else speechHelper.speak(fullText)
-                            isPlaying = !isPlaying
-                        },
-                        modifier = Modifier.weight(1f).height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = levelColor)
-                    ) {
-                        Icon(
-                            if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
-                            null,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            if (isPlaying) "توقف" else "پخش کامل",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            ShareHelper.shareStory(
-                                context = context,
-                                title = story.title,
-                                titlePersian = story.titlePersian,
-                                text = story.text,
-                                moral = story.moral
-                            )
-                        },
-                        modifier = Modifier.height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = levelColor)
-                    ) {
-                        Icon(Icons.Filled.Share, "Share", tint = levelColor, modifier = Modifier.size(22.dp))
-                    }
-                }
-
-                Spacer(Modifier.height(20.dp))
-
-                // ==================== فصل‌ها یا متن ساده ====================
-                if (chapters.isNotEmpty()) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("📖", fontSize = 22.sp)
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            "فصل‌های داستان",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A237E)
-                        )
-                        Spacer(Modifier.weight(1f))
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(levelColor.copy(alpha = 0.12f))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                "${chapters.size} فصل",
-                                fontSize = 11.sp,
-                                color = levelColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    chapters.forEachIndexed { index, chapter ->
-                        ChapterCard(
-                            chapter = chapter,
-                            index = index,
-                            levelColor = levelColor,
-                            speechHelper = speechHelper,
-                            isExpanded = expandedChapter == index,
-                            onToggle = {
-                                expandedChapter = if (expandedChapter == index) -1 else index
-                            }
-                        )
-                        Spacer(Modifier.height(10.dp))
-                    }
-                } else {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp),
-                        elevation = CardDefaults.cardElevation(3.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
-                    ) {
-                        Column(modifier = Modifier.padding(20.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("📖", fontSize = 22.sp)
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    "متن داستان",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF1A237E)
-                                )
-                                Spacer(Modifier.weight(1f))
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(levelColor.copy(alpha = 0.12f))
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                ) {
-                                    Text(
-                                        "👆 لمس کن",
-                                        fontSize = 10.sp,
-                                        color = levelColor,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(14.dp))
-
-                            ClickableStoryText(
-                                text = story.text,
-                                accent = levelColor,
-                                fontSize = 16,
-                                lineHeight = 30
-                            )
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                // ==================== نتیجه اخلاقی ====================
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(3.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
-                                )
-                            )
-                            .padding(16.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("💡", fontSize = 26.sp)
-                            Spacer(Modifier.width(10.dp))
-                            Text(
-                                "نتیجه اخلاقی",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFFFF8E1))
-                            .padding(18.dp)
-                    ) {
-                        Column {
-                            Text(
-                                story.moral,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFFE65100),
-                                lineHeight = 24.sp
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                story.moralPersian,
-                                fontSize = 13.sp,
-                                color = Color(0xFF6D4C41),
-                                lineHeight = 22.sp
-                            )
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                // ==================== کارت اطلاعات ====================
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = levelColor.copy(alpha = 0.1f)),
-                    elevation = CardDefaults.cardElevation(1.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(levelColor.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(emoji, fontSize = 22.sp)
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text("سطح داستان", fontSize = 11.sp, color = Color.Gray)
-                            Text(
-                                story.level.persianName,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = levelColor
-                            )
-                        }
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            "${story.text.split(" ").size} کلمه",
-                            fontSize = 12.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(30.dp))
-            }
-        }
-    }
-}
-
-// ==================== کارت فصل ====================
-@Composable
-private fun ChapterCard(
-    chapter: com.example.englishteacher.data.StoryChapter,
-    index: Int,
-    levelColor: Color,
-    speechHelper: SpeechHelper,
-    isExpanded: Boolean,
-    onToggle: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(if (isExpanded) 5.dp else 3.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column {
-            // Header فصل
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onToggle() }
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(
-                                levelColor.copy(alpha = 0.12f),
-                                levelColor.copy(alpha = 0.05f)
-                            )
-                        )
-                    )
-                    .padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(levelColor),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "${index + 1}",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        chapter.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A237E)
-                    )
-                    Text(
-                        chapter.titlePersian,
-                        fontSize = 11.sp,
-                        color = Color.Gray
-                    )
-                }
-
-                // دکمه پخش فصل
-                IconButton(
-                    onClick = { speechHelper.speak(chapter.text) },
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(levelColor.copy(alpha = 0.12f))
-                ) {
-                    Icon(
-                        Icons.Filled.PlayArrow,
-                        "Play",
-                        tint = levelColor,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Spacer(Modifier.width(4.dp))
-
-                Icon(
-                    if (isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                    "Expand",
-                    tint = levelColor
-                )
-            }
-
-            // محتوای فصل
-            AnimatedVisibility(
-                visible = isExpanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // متن انگلیسی
-                    ClickableStoryText(
-                        text = chapter.text,
-                        accent = levelColor,
-                        fontSize = 15,
-                        lineHeight = 26
-                    )
-
-                    Spacer(Modifier.height(12.dp))
-
-                    Divider(color = levelColor.copy(alpha = 0.2f))
-
-                    Spacer(Modifier.height(12.dp))
-
-                    // ترجمه فارسی
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🇮🇷", fontSize = 14.sp)
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            "ترجمه",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = levelColor
-                        )
-                    }
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        chapter.persianTranslation,
-                        fontSize = 13.sp,
-                        color = Color(0xFF424242),
-                        lineHeight = 22.sp
-                    )
-                }
-            }
-        }
-    }
-}
-
-private fun getStoryEmoji(storyId: String): String {
-    return when {
-        storyId.contains("b1") -> "🐱"
-        storyId.contains("b2") -> "🥖"
-        storyId.contains("b3") -> "👥"
-        storyId.contains("b4") -> "🌻"
-        storyId.contains("b5") -> "💰"
-        storyId.contains("b6") -> "🐕"
-        storyId.contains("b7") -> "🐦"
-        storyId.contains("b8") -> "☔"
-        storyId.contains("b9") -> "🏫"
-        storyId.contains("b10") -> "🎈"
-        storyId.contains("b11") -> "🐦‍⬛"
-        storyId.contains("b12") -> "🦊"
-        storyId.contains("b13") -> "🐜"
-        storyId.contains("b14") -> "🦁"
-        storyId.contains("b15") -> "🐢"
-        storyId.contains("b16") -> "🍇"
-        storyId.contains("b17") -> "🐕"
-        storyId.contains("b18") -> "🪓"
-        storyId.contains("b19") -> "🐸"
-        storyId.contains("b20") -> "🐺"
-        storyId.contains("b21") -> "🥚"
-        storyId.contains("b22") -> "🐻"
-        storyId.contains("b23") -> "🥛"
-        storyId.contains("b24") -> "🦴"
-        storyId.contains("b25") -> "🌾"
-        storyId.contains("b26") -> "☀️"
-        storyId.contains("b27") -> "🐭"
-        storyId.contains("b28") -> "🦢"
-        storyId.contains("b29") -> "🐷"
-        storyId.contains("b30") -> "🐔"
-        storyId.contains("b31") -> "🐻"
-        storyId.contains("b32") -> "🍪"
-        storyId.contains("b33") -> "🥕"
-        storyId.contains("b34") -> "🍲"
-        storyId.contains("b35") -> "👸"
-        storyId.contains("b36") -> "🧝"
-        storyId.contains("b37") -> "🧣"
-        storyId.contains("b38") -> "🦁"
-        storyId.contains("b39") -> "🐺"
-        storyId.contains("b40") -> "🦊"
-        storyId.contains("b41") -> "🐇"
-        storyId.contains("b42") -> "🐺"
-        storyId.contains("b43") -> "🐒"
-        storyId.contains("b44") -> "🐘"
-        storyId.contains("b45") -> "🐐"
-        storyId.contains("b46") -> "🐄"
-        storyId.contains("b47") -> "🦩"
-        storyId.contains("b48") -> "🐕"
-        storyId.contains("b49") -> "🦇"
-        storyId.contains("b50") -> "🌾"
-        storyId.contains("i1") -> "⚖️"
-        storyId.contains("i2") -> "👬"
-        storyId.contains("i3") -> "🎋"
-        storyId.contains("i4") -> "👑"
-        storyId.contains("i5") -> "🎓"
-        storyId.contains("i6") -> "🏗️"
-        storyId.contains("i7") -> "🧘"
-        storyId.contains("i8") -> "🏜️"
-        storyId.contains("i9") -> "🗺️"
-        storyId.contains("i10") -> "💎"
-        storyId.contains("i11") -> "🌉"
-        storyId.contains("i12") -> "🔔"
-        storyId.contains("i13") -> "🌳"
-        storyId.contains("i14") -> "✉️"
-        storyId.contains("i15") -> "🗼"
-        storyId.contains("i16") -> "🐺"
-        storyId.contains("i17") -> "🏺"
-        storyId.contains("i18") -> "🧩"
-        storyId.contains("i19") -> "👑"
-        storyId.contains("i20") -> "📖"
-        storyId.contains("i21") -> "🌊"
-        storyId.contains("i22") -> "👨‍👦"
-        storyId.contains("i23") -> "🏮"
-        storyId.contains("i24") -> "✂️"
-        storyId.contains("i25") -> "🧭"
-        storyId.contains("i26") -> "📷"
-        storyId.contains("i27") -> "📢"
-        storyId.contains("i28") -> "⏳"
-        storyId.contains("i29") -> "✨"
-        storyId.contains("i30") -> "📞"
-        storyId.contains("a1") -> "💡"
-        storyId.contains("a2") -> "👂"
-        storyId.contains("a3") -> "🚶"
-        storyId.contains("a4") -> "👑"
-        storyId.contains("a5") -> "🙏"
-        storyId.contains("a6") -> "⚖️"
-        storyId.contains("a7") -> "🎭"
-        storyId.contains("a8") -> "♟️"
-        storyId.contains("a9") -> "💬"
-        storyId.contains("a10") -> "📝"
-        storyId.contains("a11") -> "🧠"
-        storyId.contains("a12") -> "🧘"
-        storyId.contains("a13") -> "🛒"
-        storyId.contains("a14") -> "🏺"
-        storyId.contains("a15") -> "🌱"
-        storyId.contains("a16") -> "⏰"
-        storyId.contains("a17") -> "🪞"
-        storyId.contains("a18") -> "🎁"
-        storyId.contains("a19") -> "🚪"
-        storyId.contains("a20") -> "🕊️"
-        else -> "📖"
-    }
-}
+        Story(
+            id = "s_b10", title = "The Red Balloon", titlePersian = "بادکنک قرمز",
+            level = Level.BEGINNER,
+            text = "A little girl has a red balloon. She loves it very much. One day, the wind takes the balloon away. The girl cries. A boy sees her. He has a blue balloon. He gives it to the girl. She smiles and says thank you. Now the girl has a blue balloon and a new friend.",
+            moral = "A small gift can bring big joy.", moralPersian = "هدیه کوچک شادی بزرگ می‌آورد.",
+            coverUrl = "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400"
+        ),
