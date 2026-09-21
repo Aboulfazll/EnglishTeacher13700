@@ -30,19 +30,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.englishteacher.data.BookmarkManager
 import com.example.englishteacher.data.Level
 import com.example.englishteacher.data.ProgressManager
 import com.example.englishteacher.data.Story
 import com.example.englishteacher.data.StoryBookRepository
+import com.example.englishteacher.ui.components.StoryCover
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -415,7 +414,7 @@ private fun FeaturedStoryCard(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
-        else -> Color(0xFFE91E63) // اضافه شد تا خطای exhaustive برطرف شود
+        else -> Color(0xFFE91E63)
     }
 
     var pressed by remember { mutableStateOf(false) }
@@ -441,11 +440,10 @@ private fun FeaturedStoryCard(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = story.coverUrl,
-                contentDescription = story.title,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+            StoryCover(
+                coverUrl = story.coverUrl,
+                title = story.title,
+                modifier = Modifier.fillMaxSize()
             )
 
             Box(
@@ -625,7 +623,7 @@ private fun StoryBookCard(
         Level.BEGINNER -> Color(0xFF11998E)
         Level.INTERMEDIATE -> Color(0xFF8E2DE2)
         Level.ADVANCED -> Color(0xFFF12711)
-        else -> Color(0xFFE91E63) // اضافه شد تا خطای exhaustive برطرف شود
+        else -> Color(0xFFE91E63)
     }
 
     var pressed by remember { mutableStateOf(false) }
@@ -656,11 +654,10 @@ private fun StoryBookCard(
                     .fillMaxWidth()
                     .height(140.dp)
             ) {
-                AsyncImage(
-                    model = story.coverUrl,
-                    contentDescription = story.title,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                StoryCover(
+                    coverUrl = story.coverUrl,
+                    title = story.title,
+                    modifier = Modifier.fillMaxSize()
                 )
 
                 Box(
