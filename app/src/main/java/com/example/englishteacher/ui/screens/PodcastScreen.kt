@@ -27,18 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.englishteacher.data.Podcast
 import com.example.englishteacher.data.PodcastCategory
 import com.example.englishteacher.data.PodcastLevel
 import com.example.englishteacher.data.PodcastRepository
+import com.example.englishteacher.ui.components.StoryCover
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -519,33 +518,17 @@ private fun PodcastCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // کاور
+            // کاور با StoryCover
             Box(
                 modifier = Modifier
                     .size(90.dp)
                     .clip(RoundedCornerShape(14.dp))
             ) {
-                if (podcast.coverUrl.isNotEmpty()) {
-                    AsyncImage(
-                        model = podcast.coverUrl,
-                        contentDescription = podcast.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.linearGradient(
-                                    listOf(levelColor, levelColor.copy(alpha = 0.6f))
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(podcast.level.emoji, fontSize = 36.sp)
-                    }
-                }
+                StoryCover(
+                    coverUrl = podcast.coverUrl,
+                    title = podcast.title,
+                    modifier = Modifier.fillMaxSize()
+                )
 
                 // دکمه Play روی کاور
                 Box(
