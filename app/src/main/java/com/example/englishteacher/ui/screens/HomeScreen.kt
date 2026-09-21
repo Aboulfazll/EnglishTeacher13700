@@ -44,6 +44,7 @@ fun HomeScreen(
     onBookmarkedStoriesClick: () -> Unit = {},
     onAchievementsClick: () -> Unit = {},
     onSpeakingClick: () -> Unit = {},
+    onAiChatClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
     Column(
@@ -53,7 +54,6 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
     ) {
 
-        // ==================== بنر ====================
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,7 +119,6 @@ fun HomeScreen(
 
         Column(modifier = Modifier.padding(20.dp)) {
 
-            // ==================== تست تعیین سطح ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -173,7 +172,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // ==================== دستاوردها ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -222,7 +220,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // ==================== تمرین گفتار ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -317,7 +314,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ==================== عنوان سطوح ====================
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 14.dp)
@@ -367,7 +363,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ==================== بخش ویژه ====================
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 14.dp)
@@ -415,7 +410,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // ==================== داستان‌های ذخیره‌شده ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -469,7 +463,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // ==================== جملات روزمره ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -523,7 +516,6 @@ fun HomeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // ==================== لغات ذخیره‌شده ====================
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -577,7 +569,54 @@ fun HomeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // ==================== تنظیمات ====================
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(85.dp)
+                    .clickable { onAiChatClick() },
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF1E88E5), Color(0xFF42A5F5))
+                            )
+                        )
+                        .padding(14.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(52.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🤖", fontSize = 28.sp)
+                        }
+                        Spacer(Modifier.width(14.dp))
+                        Column {
+                            Text(
+                                "معلم هوشمند (AI)",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                "پاسخگوی سوالات انگلیسی",
+                                fontSize = 10.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
