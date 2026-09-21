@@ -1,6 +1,17 @@
 package com.example.englishteacher.data
 
 /**
+ * یک سوال کوییز پایان فصل
+ */
+data class ChapterQuizQuestion(
+    val question: String,
+    val questionPersian: String,
+    val options: List<String>,
+    val correctIndex: Int,
+    val explanation: String = ""
+)
+
+/**
  * مدل فصل داستان
  */
 data class StoryChapter(
@@ -10,7 +21,8 @@ data class StoryChapter(
     val text: String,
     val textPersian: String,
     val vocabulary: List<Word> = emptyList(),
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    val quiz: List<ChapterQuizQuestion> = emptyList()
 )
 
 /**
