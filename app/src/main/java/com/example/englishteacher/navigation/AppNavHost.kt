@@ -12,6 +12,7 @@ import com.example.englishteacher.ui.screens.AchievementsScreen
 import com.example.englishteacher.ui.screens.AIChatScreen
 import com.example.englishteacher.ui.screens.BookmarkedStoriesScreen
 import com.example.englishteacher.ui.screens.BookmarkedWordsScreen
+import com.example.englishteacher.ui.screens.ChapterQuizScreen
 import com.example.englishteacher.ui.screens.DailyQuizScreen
 import com.example.englishteacher.ui.screens.DailySentencesScreen
 import com.example.englishteacher.ui.screens.FlashcardScreen
@@ -46,6 +47,7 @@ object Routes {
     const val GRAMMAR_QUIZ = "grammar_quiz"
     const val STORY_BOOK = "story_book"
     const val STORY_DETAIL = "story_detail/{storyId}"
+    const val CHAPTER_QUIZ = "chapter_quiz/{storyId}/{chapterNumber}"
     const val VOCABULARY_BANK = "vocabulary_bank"
     const val LEVEL_TEST = "level_test"
     const val PROFILE = "profile"
@@ -63,6 +65,7 @@ object Routes {
     fun lessonDetail(lessonId: String) = "lesson/$lessonId"
     fun podcastPlayer(url: String, title: String) = "podcast_player/$url/$title"
     fun storyDetail(storyId: String) = "story_detail/$storyId"
+    fun chapterQuiz(storyId: String, chapterNumber: Int) = "chapter_quiz/$storyId/$chapterNumber"
     fun groupQuiz(level: Level, groupIndex: Int) = "group_quiz/${level.name}/$groupIndex"
     fun flashcard(mode: String) = "flashcard/$mode"
     fun readingMode(lessonId: String = "", categoryId: String = "") =
@@ -229,6 +232,25 @@ fun AppNavHost(
             val storyId = entry.arguments?.getString("storyId") ?: ""
             StoryDetailScreen(
                 storyId = storyId,
+                onBack = { navController.popBackStack() },
+                onQuizClick = { sId, chapterNum ->
+                    navController.navigate(Routes.chapterQuiz(sId, chapterNum))
+                }
+            )
+        }
+
+        composable(
+            route = Routes.CHAPTER_QUIZ,
+            arguments = listOf(
+                navArgument("storyId") { type = NavType.StringType },
+                navArgument("chapterNumber") { type = NavType.IntType }
+            )
+        ) { entry ->
+            val storyId = entry.arguments?.getString("storyId") ?: ""
+            val chapterNumber = entry.arguments?.getInt("chapterNumber") ?: 1
+            ChapterQuizScreen(
+                storyId = storyId,
+                chapterNumber = chapterNumber,
                 onBack = { navController.popBackStack() }
             )
         }
