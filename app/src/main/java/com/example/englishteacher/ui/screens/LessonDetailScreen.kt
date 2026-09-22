@@ -6,7 +6,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,7 +28,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -342,7 +340,13 @@ private fun GrammarTab(title: String, explanation: String, examples: List<String
                             }
                             Spacer(Modifier.width(12.dp))
                             Box(modifier = Modifier.weight(1f)) {
-                                ClickableStoryText(example, accent, 14, 22, false)
+                                ClickableStoryText(
+                                    text = example,
+                                    accent = accent,
+                                    fontSize = 14,
+                                    lineHeight = 22,
+                                    showHint = false
+                                )
                             }
                         }
                     }
@@ -470,12 +474,10 @@ private fun ConversationTab(
     var currentlyPlayingIndex by remember { mutableIntStateOf(-1) }
     var practiceMode by remember { mutableStateOf(false) }
 
-    // فیلتر کردن خطوط
     val filteredLines = conversation.lines.filter { line ->
         showOnlySpeaker == null || line.speaker == showOnlySpeaker
     }
 
-    // اعمال سرعت پخش
     LaunchedEffect(ttsSpeed) {
         speechHelper.setSpeed(ttsSpeed)
     }
@@ -486,7 +488,7 @@ private fun ConversationTab(
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
-        // ============ هدر مکالمه ============
+        // هدر مکالمه
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -518,7 +520,6 @@ private fun ConversationTab(
                         }
                     }
                     Spacer(Modifier.height(12.dp))
-                    // آمار مکالمه
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         ConversationStatChip("📊 ${conversation.lines.size} جمله")
                         ConversationStatChip("👥 ${conversation.lines.map { it.speaker }.distinct().size} گوینده")
@@ -529,7 +530,7 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(16.dp))
 
-        // ============ پنل تنظیمات ============
+        // پنل تنظیمات
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -541,7 +542,6 @@ private fun ConversationTab(
                     color = Color(0xFF1A237E))
                 Spacer(Modifier.height(12.dp))
 
-                // ردیف ۱: کنترل سرعت
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("🎙️ سرعت:", fontSize = 12.sp, color = Color.Gray)
                     Spacer(Modifier.width(8.dp))
@@ -561,7 +561,6 @@ private fun ConversationTab(
 
                 Spacer(Modifier.height(8.dp))
 
-                // ردیف ۲: کنترل نمایش ترجمه و فیلتر گوینده
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = if (showTranslation) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
@@ -581,7 +580,6 @@ private fun ConversationTab(
 
                 Spacer(Modifier.height(8.dp))
 
-                // ردیف ۳: فیلتر گوینده
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("👥 گوینده:", fontSize = 12.sp, color = Color.Gray)
                     Spacer(Modifier.width(8.dp))
@@ -612,9 +610,8 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(12.dp))
 
-        // ============ دکمه‌های عملیات ============
+        // دکمه‌های عملیات
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            // دکمه پخش کل مکالمه
             Button(
                 onClick = {
                     if (isPlayingAll) {
@@ -648,7 +645,6 @@ private fun ConversationTab(
                 )
             }
 
-            // دکمه حالت تمرین
             OutlinedButton(
                 onClick = { practiceMode = !practiceMode },
                 modifier = Modifier.height(52.dp),
@@ -668,7 +664,6 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(16.dp))
 
-        // ============ راهنمای حالت تمرین ============
         AnimatedVisibility(visible = practiceMode) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
@@ -689,7 +684,6 @@ private fun ConversationTab(
             }
         }
 
-        // ============ راهنمای کلیک ============
         if (!practiceMode) {
             Box(
                 modifier = Modifier
@@ -708,7 +702,7 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(16.dp))
 
-        // ============ حباب‌های مکالمه ============
+        // حباب‌های مکالمه
         filteredLines.forEachIndexed { index, line ->
             val originalIndex = conversation.lines.indexOf(line)
             val isA = line.speaker == "A"
@@ -716,162 +710,151 @@ private fun ConversationTab(
             val avatarEmoji = if (isA) "👤" else "👥"
             val isCurrentPlaying = currentlyPlayingIndex == originalIndex
 
-            AnimatedVisibility(visible = true) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                        .animateContentSize(),
-                    horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    .animateContentSize(),
+                horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
+            ) {
+                Column(
+                    horizontalAlignment = if (isA) Alignment.Start else Alignment.End,
+                    modifier = Modifier.widthIn(max = 340.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = if (isA) Alignment.Start else Alignment.End,
-                        modifier = Modifier.widthIn(max = 340.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     ) {
-                        // نام گوینده + شماره خط
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clip(CircleShape)
-                                    .background(bubbleAccent.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("${originalIndex + 1}", fontSize = 10.sp,
-                                    color = bubbleAccent, fontWeight = FontWeight.Bold)
-                            }
-                            Spacer(Modifier.width(6.dp))
-                            if (isA) {
-                                Text(avatarEmoji, fontSize = 12.sp)
-                                Spacer(Modifier.width(4.dp))
-                            }
-                            Text(line.speaker, fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold, color = bubbleAccent)
-                            if (!isA) {
-                                Spacer(Modifier.width(4.dp))
-                                Text(avatarEmoji, fontSize = 12.sp)
-                            }
-                        }
-
-                        // حباب پیام
-                        Card(
+                        Box(
                             modifier = Modifier
-                                .alpha(if (isCurrentPlaying) 1f else 1f),
-                            shape = RoundedCornerShape(
-                                topStart = 20.dp, topEnd = 20.dp,
-                                bottomStart = if (isA) 6.dp else 20.dp,
-                                bottomEnd = if (isA) 20.dp else 6.dp
-                            ),
-                            colors = CardDefaults.cardColors(
-                                containerColor = when {
-                                    isCurrentPlaying -> bubbleAccent.copy(alpha = 0.25f)
-                                    isA -> accent.copy(alpha = 0.12f)
-                                    else -> Color(0xFFF3E5F5)
-                                }
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                if (isCurrentPlaying) 8.dp else 2.dp
-                            )
+                                .size(20.dp)
+                                .clip(CircleShape)
+                                .background(bubbleAccent.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Column(modifier = Modifier.padding(14.dp)) {
-                                // متن انگلیسی یا placeholder در حالت تمرین
-                                if (practiceMode && isCurrentPlaying) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(Color.Black.copy(alpha = 0.05f))
-                                            .clickable { currentlyPlayingIndex = originalIndex }
-                                            .padding(12.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text("👆 برای نمایش متن بزن", fontSize = 12.sp,
-                                            color = Color.Gray, fontWeight = FontWeight.SemiBold)
-                                    }
-                                } else {
-                                    ClickableStoryText(
-                                        text = line.english,
-                                        accent = bubbleAccent,
-                                        fontSize = 15,
-                                        lineHeight = 22,
-                                        showHint = false,
-                                        baseColor = Color(0xFF1A237E)
+                            Text("${originalIndex + 1}", fontSize = 10.sp,
+                                color = bubbleAccent, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(Modifier.width(6.dp))
+                        if (isA) {
+                            Text(avatarEmoji, fontSize = 12.sp)
+                            Spacer(Modifier.width(4.dp))
+                        }
+                        Text(line.speaker, fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold, color = bubbleAccent)
+                        if (!isA) {
+                            Spacer(Modifier.width(4.dp))
+                            Text(avatarEmoji, fontSize = 12.sp)
+                        }
+                    }
+
+                    Card(
+                        shape = RoundedCornerShape(
+                            topStart = 20.dp, topEnd = 20.dp,
+                            bottomStart = if (isA) 6.dp else 20.dp,
+                            bottomEnd = if (isA) 20.dp else 6.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = when {
+                                isCurrentPlaying -> bubbleAccent.copy(alpha = 0.25f)
+                                isA -> accent.copy(alpha = 0.12f)
+                                else -> Color(0xFFF3E5F5)
+                            }
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            if (isCurrentPlaying) 8.dp else 2.dp
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            if (practiceMode && isCurrentPlaying) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.Black.copy(alpha = 0.05f))
+                                        .clickable { currentlyPlayingIndex = originalIndex }
+                                        .padding(12.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("👆 برای نمایش متن بزن", fontSize = 12.sp,
+                                        color = Color.Gray, fontWeight = FontWeight.SemiBold)
+                                }
+                            } else {
+                                ClickableStoryText(
+                                    text = line.english,
+                                    accent = bubbleAccent,
+                                    fontSize = 15,
+                                    lineHeight = 22,
+                                    showHint = false,
+                                    baseColor = Color(0xFF1A237E)
+                                )
+                            }
+
+                            AnimatedVisibility(visible = showTranslation && !practiceMode) {
+                                Column {
+                                    Spacer(Modifier.height(10.dp))
+                                    Divider(color = bubbleAccent.copy(alpha = 0.2f))
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        line.persian,
+                                        fontSize = 13.sp,
+                                        color = Color(0xFF616161),
+                                        lineHeight = 20.sp
+                                    )
+                                }
+                            }
+
+                            Spacer(Modifier.height(10.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                        val clip = ClipData.newPlainText("text", "${line.english}\n${line.persian}")
+                                        clipboard.setPrimaryClip(clip)
+                                        Toast.makeText(context, "کپی شد ✓", Toast.LENGTH_SHORT).show()
+                                    },
+                                    modifier = Modifier.size(30.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Filled.ContentCopy,
+                                        "Copy",
+                                        tint = bubbleAccent.copy(alpha = 0.6f),
+                                        modifier = Modifier.size(15.dp)
                                     )
                                 }
 
-                                // ترجمه (قابل مخفی کردن)
-                                AnimatedVisibility(visible = showTranslation && !practiceMode) {
-                                    Column {
-                                        Spacer(Modifier.height(10.dp))
-                                        Divider(color = bubbleAccent.copy(alpha = 0.2f))
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            line.persian,
-                                            fontSize = 13.sp,
-                                            color = Color(0xFF616161),
-                                            lineHeight = 20.sp
-                                        )
-                                    }
-                                }
+                                Spacer(Modifier.width(4.dp))
 
-                                Spacer(Modifier.height(10.dp))
-
-                                // دکمه‌های عملیات
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // دکمه کپی
-                                    IconButton(
-                                        onClick = {
-                                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                            val clip = ClipData.newPlainText("text", "${line.english}\n${line.persian}")
-                                            clipboard.setPrimaryClip(clip)
-                                            Toast.makeText(context, "کپی شد ✓", Toast.LENGTH_SHORT).show()
-                                        },
-                                        modifier = Modifier.size(30.dp)
-                                    ) {
-                                        Icon(
-                                            Icons.Filled.ContentCopy,
-                                            "Copy",
-                                            tint = bubbleAccent.copy(alpha = 0.6f),
-                                            modifier = Modifier.size(15.dp)
-                                        )
-                                    }
-
-                                    Spacer(Modifier.width(4.dp))
-
-                                    // دکمه پخش
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(bubbleAccent.copy(alpha = 0.15f))
-                                            .clickable {
-                                                speechHelper.setSpeed(ttsSpeed)
-                                                speechHelper.speak(line.english)
-                                                currentlyPlayingIndex = originalIndex
-                                            }
-                                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                Icons.AutoMirrored.Filled.VolumeUp,
-                                                "Play",
-                                                tint = bubbleAccent,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                            Spacer(Modifier.width(4.dp))
-                                            Text(
-                                                "پخش",
-                                                fontSize = 11.sp,
-                                                color = bubbleAccent,
-                                                fontWeight = FontWeight.Bold
-                                            )
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(bubbleAccent.copy(alpha = 0.15f))
+                                        .clickable {
+                                            speechHelper.setSpeed(ttsSpeed)
+                                            speechHelper.speak(line.english)
+                                            currentlyPlayingIndex = originalIndex
                                         }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.VolumeUp,
+                                            "Play",
+                                            tint = bubbleAccent,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(Modifier.width(4.dp))
+                                        Text(
+                                            "پخش",
+                                            fontSize = 11.sp,
+                                            color = bubbleAccent,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
@@ -883,7 +866,6 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(20.dp))
 
-        // ============ خلاصه یادگیری ============
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -952,7 +934,12 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
             Box(modifier = Modifier.padding(20.dp)) {
-                ClickableStoryText(text = text, accent = accent, fontSize = 16, lineHeight = 28)
+                ClickableStoryText(
+                    text = text,
+                    accent = accent,
+                    fontSize = 16,
+                    lineHeight = 28
+                )
             }
         }
         Spacer(Modifier.height(20.dp))
