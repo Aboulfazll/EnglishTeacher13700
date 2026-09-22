@@ -1,7 +1,6 @@
 package com.example.englishteacher
 
 import android.content.Context
-import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import java.util.Locale
 
@@ -30,15 +29,13 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
 
     fun speak(text: String) {
         if (isReady && text.isNotBlank()) {
-            // 🔑 استفاده از Bundle برای اعمال قطعی سرعت و زیر و بمی
-            val params = Bundle()
-            params.putFloat(TextToSpeech.Engine.KEY_PARAM_RATE, currentSpeed)
-            params.putFloat(TextToSpeech.Engine.KEY_PARAM_PITCH, currentPitch)
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, null)
+            // 🔑 قبل از هر speak، سرعت و زیر و بمی رو دوباره اعمال کن
+            tts?.setSpeechRate(currentSpeed)
+            tts?.setPitch(currentPitch)
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
         }
     }
 
-    // برای StoryDetail, ReadingMode, LessonDetail
     fun stop() {
         tts?.stop()
     }
@@ -56,7 +53,6 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
         tts?.setLanguage(locale)
     }
 
-    // برای SettingsScreen و SpeakingPracticeScreen
     fun setVoiceGender(gender: String) {
         val pitch = if (gender.lowercase() == "male") 0.8f else 1.2f
         currentPitch = pitch
@@ -65,7 +61,6 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
         }
     }
 
-    // برای SettingsScreen و SpeakingPracticeScreen
     fun setSpeedAndPitch(speed: Float, pitch: Float) {
         currentSpeed = speed
         currentPitch = pitch
