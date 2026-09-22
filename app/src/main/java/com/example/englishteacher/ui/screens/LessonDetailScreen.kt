@@ -270,7 +270,6 @@ private fun SpellingTab(spellingList: List<SpellingExercise>, speechHelper: Spee
     }
 }
 
-// ==================== 📝 گرامر پیشرفته ====================
 @Composable
 private fun GrammarTab(title: String, explanation: String, examples: List<String>, accent: Color) {
     var expandedSection by remember { mutableStateOf(0) }
@@ -458,6 +457,7 @@ private fun GrammarSection(
         }
     }
 }
+
 // ==================== 💬 مکالمه فوق‌پیشرفته ====================
 @Composable
 private fun ConversationTab(
@@ -478,17 +478,12 @@ private fun ConversationTab(
         showOnlySpeaker == null || line.speaker == showOnlySpeaker
     }
 
-    LaunchedEffect(ttsSpeed) {
-        speechHelper.setSpeed(ttsSpeed)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
-        // هدر مکالمه
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -530,7 +525,6 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(16.dp))
 
-        // پنل تنظیمات
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -548,7 +542,10 @@ private fun ConversationTab(
                     listOf(0.75f to "آهسته", 1.0f to "معمولی", 1.25f to "سریع").forEach { (speed, label) ->
                         FilterChip(
                             selected = ttsSpeed == speed,
-                            onClick = { ttsSpeed = speed },
+                            onClick = {
+                                ttsSpeed = speed
+                                speechHelper.setSpeed(speed)
+                            },
                             label = { Text(label, fontSize = 10.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = accent,
@@ -610,7 +607,6 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(12.dp))
 
-        // دکمه‌های عملیات
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = {
@@ -620,6 +616,7 @@ private fun ConversationTab(
                         currentlyPlayingIndex = -1
                     } else {
                         val fullText = filteredLines.joinToString(". ") { it.english }
+                        speechHelper.setSpeed(ttsSpeed)
                         speechHelper.speak(fullText)
                         isPlayingAll = true
                     }
@@ -702,7 +699,6 @@ private fun ConversationTab(
 
         Spacer(Modifier.height(16.dp))
 
-        // حباب‌های مکالمه
         filteredLines.forEachIndexed { index, line ->
             val originalIndex = conversation.lines.indexOf(line)
             val isA = line.speaker == "A"
@@ -970,7 +966,6 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
     }
 }
 
-// ==================== 🧠 امتحان فوق‌پیشرفته ====================
 @Composable
 private fun QuizTab(
     quiz: List<QuizQuestion>,
@@ -990,7 +985,6 @@ private fun QuizTab(
     var streak by remember { mutableIntStateOf(0) }
     var bestStreak by remember { mutableIntStateOf(0) }
 
-    // ⏱️ تایمر ۳۰ ثانیه‌ای
     LaunchedEffect(currentQuestion, showResult, timerEnabled) {
         if (timerEnabled && !showResult && selectedOption == null) {
             timeLeft = 30
@@ -1006,7 +1000,6 @@ private fun QuizTab(
         }
     }
 
-    // ============ 🎉 صفحه نتیجه ============
     if (showResult) {
         val percentage = if (quiz.isNotEmpty()) (score.toFloat() / quiz.size * 100).toInt() else 0
         val stars = when {
@@ -1042,8 +1035,6 @@ private fun QuizTab(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(10.dp))
-
-            // کارت نتیجه اصلی
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -1068,8 +1059,6 @@ private fun QuizTab(
                             color = Color.White
                         )
                         Spacer(Modifier.height(20.dp))
-
-                        // ستاره‌ها
                         Row {
                             repeat(3) { i ->
                                 Text(
@@ -1078,10 +1067,7 @@ private fun QuizTab(
                                 )
                             }
                         }
-
                         Spacer(Modifier.height(20.dp))
-
-                        // امتیاز دایره‌ای
                         Box(
                             modifier = Modifier
                                 .size(140.dp)
@@ -1109,7 +1095,6 @@ private fun QuizTab(
 
             Spacer(Modifier.height(16.dp))
 
-            // آمار
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -1139,7 +1124,6 @@ private fun QuizTab(
 
             Spacer(Modifier.height(20.dp))
 
-            // خلاصه اشتباهات
             if (wrongAnswers.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -1234,7 +1218,6 @@ private fun QuizTab(
                 Spacer(Modifier.height(20.dp))
             }
 
-            // ذخیره پیشرفت
             LaunchedEffect(Unit) {
                 scope.launch {
                     ProgressManager.markLessonCompleted(context, lessonId)
@@ -1243,7 +1226,6 @@ private fun QuizTab(
                 }
             }
 
-            // دکمه‌ها
             Button(
                 onClick = {
                     currentQuestion = 0
@@ -1284,7 +1266,6 @@ private fun QuizTab(
         return
     }
 
-    // ============ حالت خالی ============
     if (quiz.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("کوییز موجود نیست")
@@ -1301,7 +1282,6 @@ private fun QuizTab(
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
-        // ============ هدر ============
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(18.dp),
@@ -1347,7 +1327,6 @@ private fun QuizTab(
                         }
                     }
 
-                    // تایمر دایره‌ای
                     if (timerEnabled && selectedOption == null) {
                         val timerColor = when {
                             timeLeft > 20 -> Color(0xFF4CAF50)
@@ -1390,7 +1369,6 @@ private fun QuizTab(
                     }
                 }
 
-                // نوار پیشرفت
                 LinearProgressIndicator(
                     progress = { progress },
                     modifier = Modifier.fillMaxWidth().height(6.dp),
@@ -1402,7 +1380,6 @@ private fun QuizTab(
 
         Spacer(Modifier.height(20.dp))
 
-        // ============ کارت سوال ============
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -1453,7 +1430,6 @@ private fun QuizTab(
 
         Spacer(Modifier.height(20.dp))
 
-        // ============ گزینه‌ها ============
         q.options.forEachIndexed { index, option ->
             val isSelected = selectedOption == index
             val isCorrect = index == q.correctIndex
@@ -1496,7 +1472,6 @@ private fun QuizTab(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // حرف گزینه
                     Box(
                         modifier = Modifier
                             .size(38.dp)
@@ -1532,7 +1507,6 @@ private fun QuizTab(
             }
         }
 
-        // پیام زمان تمام شده
         if (selectedOption == -1) {
             Spacer(Modifier.height(12.dp))
             Card(
@@ -1565,7 +1539,6 @@ private fun QuizTab(
 
         Spacer(Modifier.height(24.dp))
 
-        // ============ دکمه بعدی ============
         if (selectedOption != null) {
             Button(
                 onClick = {
@@ -1633,7 +1606,6 @@ private fun QuizStatCard(
     }
 }
 
-// ==================== 🗣️ تمرین گفتار ====================
 @Composable
 private fun LessonSpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
     LazyColumn(
