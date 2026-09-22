@@ -42,6 +42,7 @@ import com.example.englishteacher.data.QuizQuestion
 import com.example.englishteacher.data.SpellingExercise
 import com.example.englishteacher.data.Word
 import com.example.englishteacher.data.ProgressManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -457,7 +458,6 @@ private fun GrammarSection(
         }
     }
 }
-
 // ==================== 💬 مکالمه فوق‌پیشرفته ====================
 @Composable
 private fun ConversationTab(
@@ -970,6 +970,7 @@ private fun StoryTab(title: String, text: String, speechHelper: SpeechHelper, ac
     }
 }
 
+// ==================== 🧠 امتحان فوق‌پیشرفته ====================
 @Composable
 private fun QuizTab(
     quiz: List<QuizQuestion>,
@@ -983,154 +984,588 @@ private fun QuizTab(
     var selectedOption by remember { mutableStateOf<Int?>(null) }
     var score by remember { mutableIntStateOf(0) }
     var showResult by remember { mutableStateOf(false) }
+    var wrongAnswers by remember { mutableStateOf(mutableListOf<Int>()) }
+    var timeLeft by remember { mutableIntStateOf(30) }
+    var timerEnabled by remember { mutableStateOf(true) }
+    var streak by remember { mutableIntStateOf(0) }
+    var bestStreak by remember { mutableIntStateOf(0) }
 
+    // ⏱️ تایمر ۳۰ ثانیه‌ای
+    LaunchedEffect(currentQuestion, showResult, timerEnabled) {
+        if (timerEnabled && !showResult && selectedOption == null) {
+            timeLeft = 30
+            while (timeLeft > 0 && selectedOption == null) {
+                delay(1000)
+                timeLeft--
+            }
+            if (selectedOption == null && timeLeft == 0) {
+                selectedOption = -1
+                wrongAnswers.add(currentQuestion)
+                streak = 0
+            }
+        }
+    }
+
+    // ============ 🎉 صفحه نتیجه ============
     if (showResult) {
-        Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val percentage = if (quiz.isNotEmpty()) (score.toFloat() / quiz.size * 100).toInt() else 0
+        val stars = when {
+            percentage >= 90 -> 3
+            percentage >= 70 -> 2
+            percentage >= 50 -> 1
+            else -> 0
+        }
+        val resultColor = when {
+            percentage >= 90 -> Color(0xFF11998E)
+            percentage >= 70 -> Color(0xFFFF9800)
+            percentage >= 50 -> Color(0xFFFFA726)
+            else -> Color(0xFFE53935)
+        }
+        val resultMessage = when {
+            percentage >= 90 -> "عالی! فوق‌العاده!"
+            percentage >= 70 -> "خوب بود!"
+            percentage >= 50 -> "قابل قبول"
+            else -> "نیاز به تمرین بیشتر"
+        }
+        val resultEmoji = when {
+            percentage >= 90 -> "🏆"
+            percentage >= 70 -> "🎯"
+            percentage >= 50 -> "👍"
+            else -> "💪"
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(10.dp))
+
+            // کارت نتیجه اصلی
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                elevation = CardDefaults.cardElevation(12.dp)
+            ) {
                 Box(
                     modifier = Modifier
-                        .size(120.dp).clip(CircleShape)
-                        .background(Brush.linearGradient(
-                            if (score == quiz.size) listOf(Color(0xFF11998E), Color(0xFF38EF7D))
-                            else if (score >= quiz.size / 2) listOf(Color(0xFFFFA726), Color(0xFFFFD54F))
-                            else listOf(Color(0xFFEF5350), Color(0xFFE57373))
-                        )),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .background(Brush.verticalGradient(listOf(resultColor, resultColor.copy(alpha = 0.75f))))
+                        .padding(28.dp)
                 ) {
-                    Text(
-                        when {
-                            score == quiz.size -> "🏆"
-                            score >= quiz.size / 2 -> "👍"
-                            else -> "💪"
-                        }, fontSize = 56.sp
-                    )
-                }
-                Spacer(Modifier.height(24.dp))
-                Text(
-                    text = when {
-                        score == quiz.size -> "عالی! کامل!"
-                        score >= quiz.size / 2 -> "خوب بود!"
-                        else -> "نیاز به تمرین بیشتر"
-                    },
-                    fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E)
-                )
-                Spacer(Modifier.height(12.dp))
-                Text("امتیاز شما", fontSize = 14.sp, color = Color.Gray)
-                Text("$score از ${quiz.size}", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = accent)
-                Spacer(Modifier.height(30.dp))
-                LaunchedEffect(Unit) {
-                    scope.launch {
-                        ProgressManager.markLessonCompleted(context, lessonId)
-                        ProgressManager.saveQuizScore(context, lessonId, score)
-                        ProgressManager.addStars(context, score * 10)
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(resultEmoji, fontSize = 76.sp)
+                        Spacer(Modifier.height(10.dp))
+                        Text(
+                            resultMessage,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Spacer(Modifier.height(20.dp))
+
+                        // ستاره‌ها
+                        Row {
+                            repeat(3) { i ->
+                                Text(
+                                    if (i < stars) "⭐" else "☆",
+                                    fontSize = 42.sp
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(20.dp))
+
+                        // امتیاز دایره‌ای
+                        Box(
+                            modifier = Modifier
+                                .size(140.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "$percentage%",
+                                    fontSize = 40.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "$score از ${quiz.size}",
+                                    fontSize = 13.sp,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
+                            }
+                        }
                     }
                 }
-                Button(
-                    onClick = {
-                        currentQuestion = 0
-                        selectedOption = null
-                        score = 0
-                        showResult = false
-                    },
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = accent)
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // آمار
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                QuizStatCard(
+                    emoji = "✅",
+                    value = "$score",
+                    label = "درست",
+                    color = Color(0xFF43A047),
+                    modifier = Modifier.weight(1f)
+                )
+                QuizStatCard(
+                    emoji = "❌",
+                    value = "${wrongAnswers.size}",
+                    label = "اشتباه",
+                    color = Color(0xFFE53935),
+                    modifier = Modifier.weight(1f)
+                )
+                QuizStatCard(
+                    emoji = "🔥",
+                    value = "$bestStreak",
+                    label = "رکورد",
+                    color = Color(0xFFFF6F00),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            // خلاصه اشتباهات
+            if (wrongAnswers.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Text("تلاش مجدد", color = Color.White, fontWeight = FontWeight.Bold)
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFFEBEE)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("📋", fontSize = 18.sp)
+                            }
+                            Spacer(Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    "مرور اشتباهات",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFC62828)
+                                )
+                                Text(
+                                    "${wrongAnswers.size} سوال نیاز به مرور دارد",
+                                    fontSize = 11.sp,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+                        Divider(color = Color.LightGray.copy(alpha = 0.3f))
+                        Spacer(Modifier.height(8.dp))
+
+                        wrongAnswers.forEach { idx ->
+                            if (idx < quiz.size) {
+                                val q = quiz[idx]
+                                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                    Row(verticalAlignment = Alignment.Top) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(22.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFFFEBEE)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                "${idx + 1}",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(0xFFC62828)
+                                            )
+                                        }
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            q.question,
+                                            fontSize = 13.sp,
+                                            color = Color(0xFF424242),
+                                            fontWeight = FontWeight.SemiBold,
+                                            lineHeight = 20.sp
+                                        )
+                                    }
+                                    Spacer(Modifier.height(6.dp))
+                                    Row(
+                                        modifier = Modifier.padding(start = 30.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text("✅", fontSize = 12.sp)
+                                        Spacer(Modifier.width(4.dp))
+                                        Text(
+                                            q.options[q.correctIndex],
+                                            fontSize = 12.sp,
+                                            color = Color(0xFF2E7D32),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                if (idx != wrongAnswers.last()) {
+                                    Divider(
+                                        modifier = Modifier.padding(vertical = 4.dp),
+                                        color = Color.LightGray.copy(alpha = 0.2f)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
-                Spacer(Modifier.height(12.dp))
-                OutlinedButton(
-                    onClick = onFinish,
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text("بازگشت به دروس", color = accent, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(20.dp))
+            }
+
+            // ذخیره پیشرفت
+            LaunchedEffect(Unit) {
+                scope.launch {
+                    ProgressManager.markLessonCompleted(context, lessonId)
+                    ProgressManager.saveQuizScore(context, lessonId, score)
+                    ProgressManager.addStars(context, score * 10)
                 }
             }
+
+            // دکمه‌ها
+            Button(
+                onClick = {
+                    currentQuestion = 0
+                    selectedOption = null
+                    score = 0
+                    showResult = false
+                    wrongAnswers = mutableListOf()
+                    streak = 0
+                    bestStreak = 0
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = accent),
+                elevation = ButtonDefaults.buttonElevation(6.dp)
+            ) {
+                Text(
+                    "🔄 تلاش مجدد",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = onFinish,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    "🏠 بازگشت به دروس",
+                    color = accent,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            Spacer(Modifier.height(20.dp))
         }
         return
     }
 
+    // ============ حالت خالی ============
     if (quiz.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("کوییز موجود نیست") }
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("کوییز موجود نیست")
+        }
         return
     }
 
     val q = quiz[currentQuestion]
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("سوال ${currentQuestion + 1} از ${quiz.size}", fontSize = 13.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
-            Text("امتیاز: $score", fontSize = 13.sp, color = accent, fontWeight = FontWeight.Bold)
-        }
-        Spacer(Modifier.height(8.dp))
-        LinearProgressIndicator(
-            progress = { (currentQuestion + 1).toFloat() / quiz.size },
-            modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
-            color = accent, trackColor = accent.copy(alpha = 0.15f)
-        )
-        Spacer(Modifier.height(24.dp))
+    val progress = (currentQuestion + 1).toFloat() / quiz.size
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp)
+    ) {
+        // ============ هدر ============
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(3.dp)
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(accent.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🧠", fontSize = 20.sp)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                "سوال ${currentQuestion + 1} از ${quiz.size}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF1A237E)
+                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("امتیاز: $score", fontSize = 11.sp, color = Color.Gray)
+                                if (streak >= 2) {
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(
+                                        "🔥 $streak",
+                                        fontSize = 11.sp,
+                                        color = Color(0xFFFF6F00),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // تایمر دایره‌ای
+                    if (timerEnabled && selectedOption == null) {
+                        val timerColor = when {
+                            timeLeft > 20 -> Color(0xFF4CAF50)
+                            timeLeft > 10 -> Color(0xFFFF9800)
+                            else -> Color(0xFFE53935)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(54.dp)
+                                .clip(CircleShape)
+                                .background(timerColor.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "$timeLeft",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = timerColor
+                                )
+                                Text("ثانیه", fontSize = 8.sp, color = Color.Gray)
+                            }
+                        }
+                    } else if (selectedOption != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(54.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (selectedOption == q.correctIndex) Color(0xFF4CAF50).copy(alpha = 0.15f)
+                                    else Color(0xFFE53935).copy(alpha = 0.15f)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                if (selectedOption == q.correctIndex) "✅" else "❌",
+                                fontSize = 26.sp
+                            )
+                        }
+                    }
+                }
+
+                // نوار پیشرفت
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth().height(6.dp),
+                    color = accent,
+                    trackColor = accent.copy(alpha = 0.15f)
+                )
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        // ============ کارت سوال ============
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(6.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.08f), Color.White)))
-                    .padding(20.dp)
+                    .background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.1f), Color.White)))
+                    .padding(22.dp)
             ) {
-                Text(q.question, fontSize = 17.sp, fontWeight = FontWeight.Bold, lineHeight = 26.sp, color = Color(0xFF1A237E))
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(26.dp)
+                                .clip(CircleShape)
+                                .background(accent),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "?",
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            "کدام گزینه درست است؟",
+                            fontSize = 11.sp,
+                            color = accent,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(Modifier.height(14.dp))
+                    Text(
+                        q.question,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 28.sp,
+                        color = Color(0xFF1A237E)
+                    )
+                }
             }
         }
+
         Spacer(Modifier.height(20.dp))
+
+        // ============ گزینه‌ها ============
         q.options.forEachIndexed { index, option ->
             val isSelected = selectedOption == index
             val isCorrect = index == q.correctIndex
-            val showFeedback = selectedOption != null
-            val bgColor = when {
-                !showFeedback -> Color.White
-                isCorrect -> Color(0xFFC8E6C9)
-                isSelected -> Color(0xFFFFCDD2)
-                else -> Color.White
+            val showFeedback = selectedOption != null && selectedOption != -1
+
+            val (bgColor, borderColor, letterColor) = when {
+                !showFeedback -> Triple(Color.White, Color(0xFFE0E0E0), accent)
+                isCorrect -> Triple(Color(0xFFE8F5E9), Color(0xFF43A047), Color(0xFF43A047))
+                isSelected && !isCorrect -> Triple(Color(0xFFFFEBEE), Color(0xFFE53935), Color(0xFFE53935))
+                else -> Triple(Color.White.copy(alpha = 0.6f), Color(0xFFE0E0E0), Color.Gray)
             }
-            val borderColor = when {
-                !showFeedback -> Color.Transparent
-                isCorrect -> Color(0xFF43A047)
-                isSelected -> Color(0xFFD32F2F)
-                else -> Color.Transparent
-            }
+
             Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    .animateContentSize(),
+                shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = bgColor),
-                border = androidx.compose.foundation.BorderStroke(2.dp, borderColor),
-                elevation = CardDefaults.cardElevation(if (isSelected) 4.dp else 2.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    if (isSelected || (showFeedback && isCorrect)) 2.5.dp else 1.5.dp,
+                    borderColor
+                ),
+                elevation = CardDefaults.cardElevation(if (isSelected) 6.dp else 2.dp),
                 onClick = {
                     if (selectedOption == null) {
                         selectedOption = index
-                        if (isCorrect) score++
+                        if (isCorrect) {
+                            score++
+                            streak++
+                            if (streak > bestStreak) bestStreak = streak
+                        } else {
+                            wrongAnswers.add(currentQuestion)
+                            streak = 0
+                        }
                     }
                 }
             ) {
-                Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = {
-                            if (selectedOption == null) {
-                                selectedOption = index
-                                if (isCorrect) score++
-                            }
-                        },
-                        colors = RadioButtonDefaults.colors(selectedColor = accent)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // حرف گزینه
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(letterColor.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (showFeedback && (isCorrect || isSelected)) {
+                            Text(
+                                if (isCorrect) "✓" else "✗",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = letterColor
+                            )
+                        } else {
+                            Text(
+                                listOf("A", "B", "C", "D")[index],
+                                color = letterColor,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    Spacer(Modifier.width(14.dp))
+                    Text(
+                        option,
+                        fontSize = 15.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = Color(0xFF333333),
+                        modifier = Modifier.weight(1f)
                     )
-                    Spacer(Modifier.width(8.dp))
-                    Text(option, fontSize = 15.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
                 }
             }
         }
+
+        // پیام زمان تمام شده
+        if (selectedOption == -1) {
+            Spacer(Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("⏰", fontSize = 24.sp)
+                    Spacer(Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            "زمان تمام شد!",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE65100)
+                        )
+                        Text(
+                            "پاسخ درست: ${q.options[q.correctIndex]}",
+                            fontSize = 12.sp,
+                            color = Color(0xFF5D4037)
+                        )
+                    }
+                }
+            }
+        }
+
         Spacer(Modifier.height(24.dp))
+
+        // ============ دکمه بعدی ============
         if (selectedOption != null) {
             Button(
                 onClick = {
@@ -1141,20 +1576,64 @@ private fun QuizTab(
                         showResult = true
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(58.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = accent)
+                colors = ButtonDefaults.buttonColors(containerColor = accent),
+                elevation = ButtonDefaults.buttonElevation(8.dp)
             ) {
                 Text(
-                    if (currentQuestion < quiz.size - 1) "سوال بعدی →" else "دیدن نتیجه 🎉",
-                    color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp
+                    if (currentQuestion < quiz.size - 1) "سوال بعدی ←" else "دیدن نتیجه 🎉",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 )
             }
         }
+
         Spacer(Modifier.height(20.dp))
     }
 }
 
+@Composable
+private fun QuizStatCard(
+    emoji: String,
+    value: String,
+    label: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(3.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(emoji, fontSize = 20.sp)
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                value,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(label, fontSize = 11.sp, color = Color.Gray)
+        }
+    }
+}
+
+// ==================== 🗣️ تمرین گفتار ====================
 @Composable
 private fun LessonSpeakingTab(words: List<Word>, speechHelper: SpeechHelper, accent: Color) {
     LazyColumn(
