@@ -260,69 +260,313 @@ private fun SpellingTab(spellingList: List<SpellingExercise>, speechHelper: Spee
     }
 }
 
+// ==================== 📝 گرامر پیشرفته ====================
 @Composable
 private fun GrammarTab(title: String, explanation: String, examples: List<String>, accent: Color) {
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(4.dp, 26.dp).clip(RoundedCornerShape(2.dp)).background(accent))
-            Spacer(Modifier.width(10.dp))
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
-        }
-        Spacer(Modifier.height(16.dp))
+    var expandedSection by remember { mutableStateOf(0) }
+    var showChecklist by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp)
+    ) {
+        // هدر گرامر
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(3.dp)
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(6.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.08f), accent.copy(alpha = 0.15f))))
-                    .padding(16.dp)
+                    .background(
+                        Brush.linearGradient(
+                            listOf(accent, accent.copy(alpha = 0.7f))
+                        )
+                    )
+                    .padding(20.dp)
             ) {
-                Text(explanation, fontSize = 14.sp, lineHeight = 24.sp, color = Color(0xFF424242))
-            }
-        }
-        Spacer(Modifier.height(20.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("✏️ مثال‌ها:", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = accent)
-            Spacer(Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(accent.copy(alpha = 0.12f))
-                    .padding(horizontal = 8.dp, vertical = 3.dp)
-            ) {
-                Text("👆 لمس کن", fontSize = 10.sp, color = accent, fontWeight = FontWeight.SemiBold)
-            }
-        }
-        Spacer(Modifier.height(10.dp))
-        examples.forEachIndexed { index, example ->
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(1.dp)
-            ) {
-                Row(modifier = Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.Top) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
-                        modifier = Modifier.size(24.dp).clip(CircleShape).background(accent.copy(alpha = 0.15f)),
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("${index + 1}", color = accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("📝", fontSize = 28.sp)
                     }
-                    Spacer(Modifier.width(10.dp))
-                    Box(modifier = Modifier.weight(1f)) {
-                        ClickableStoryText(text = example, accent = accent, fontSize = 14, lineHeight = 22, showHint = false)
+                    Spacer(Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "درس گرامر",
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            title,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
                     }
                 }
             }
         }
+
         Spacer(Modifier.height(20.dp))
+
+        // بخش ۱: توضیحات
+        GrammarSection(
+            number = 1,
+            title = "توضیحات",
+            icon = "💡",
+            isExpanded = expandedSection == 0,
+            accent = accent,
+            onToggle = { expandedSection = if (expandedSection == 0) -1 else 0 }
+        ) {
+            Text(
+                explanation,
+                fontSize = 14.sp,
+                lineHeight = 26.sp,
+                color = Color(0xFF424242)
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        // بخش ۲: مثال‌ها
+        GrammarSection(
+            number = 2,
+            title = "مثال‌ها (${examples.size})",
+            icon = "✏️",
+            isExpanded = expandedSection == 1,
+            accent = accent,
+            onToggle = { expandedSection = if (expandedSection == 1) -1 else 1 }
+        ) {
+            Column {
+                Text(
+                    "👆 روی هر مثال بزن تا تلفظش رو بشنوی",
+                    fontSize = 11.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+                examples.forEachIndexed { index, example ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FF)),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(1.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(14.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(26.dp)
+                                    .clip(CircleShape)
+                                    .background(accent.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "${index + 1}",
+                                    color = accent,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Box(modifier = Modifier.weight(1f)) {
+                                ClickableStoryText(
+                                    text = example,
+                                    accent = accent,
+                                    fontSize = 14,
+                                    lineHeight = 22,
+                                    showHint = false
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        // بخش ۳: نکات مهم
+        GrammarSection(
+            number = 3,
+            title = "نکات مهم",
+            icon = "⚠️",
+            isExpanded = expandedSection == 2,
+            accent = accent,
+            onToggle = { expandedSection = if (expandedSection == 2) -1 else 2 }
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFFFF3E0)
+                )
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("📌", fontSize = 18.sp)
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "قبل از ادامه، این رو یادت باشه:",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE65100)
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "• به ساختار جمله دقت کن\n• ترتیب کلمات رو تمرین کن\n• مثال‌ها رو با صدای بلند تکرار کن\n• هر روز فقط ۱۰ دقیقه این گرامر رو مرور کن",
+                        fontSize = 13.sp,
+                        lineHeight = 22.sp,
+                        color = Color(0xFF5D4037)
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        // دکمه چک‌لیست
+        Button(
+            onClick = { showChecklist = !showChecklist },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = accent)
+        ) {
+            Text(
+                if (showChecklist) "بستن چک‌لیست" else "🧠 چک‌لیست یادگیری",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+        }
+
+        if (showChecklist) {
+            Spacer(Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(3.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "🎯 چک‌لیست یادگیری",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    listOf(
+                        "ساختار اصلی رو می‌فهمم",
+                        "می‌تونم مثال بسازم",
+                        "اشتباهات رایج رو می‌شناسم",
+                        "می‌تونم تو مکالمه استفاده کنم"
+                    ).forEach { item ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(CircleShape)
+                                    .background(accent.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("✓", color = accent, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Spacer(Modifier.width(10.dp))
+                            Text(item, fontSize = 13.sp, color = Color(0xFF424242))
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(30.dp))
     }
 }
 
+@Composable
+private fun GrammarSection(
+    number: Int,
+    title: String,
+    icon: String,
+    isExpanded: Boolean,
+    accent: Color,
+    onToggle: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(3.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onToggle() }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(accent.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(icon, fontSize = 20.sp)
+                }
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "بخش $number",
+                        fontSize = 10.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        title,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
+                }
+                Text(
+                    if (isExpanded) "▲" else "▼",
+                    fontSize = 14.sp,
+                    color = accent,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            if (isExpanded) {
+                Divider(color = Color.LightGray.copy(alpha = 0.3f))
+                Box(modifier = Modifier.padding(16.dp)) {
+                    content()
+                }
+            }
+        }
+    }
+}
+
+// ==================== 💬 مکالمه پیشرفته ====================
 @Composable
 private fun ConversationTab(
     conversation: Conversation,
@@ -330,110 +574,315 @@ private fun ConversationTab(
     accent: Color,
     onStartReading: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        Text("💬 ${conversation.title}", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
-        Text(conversation.titlePersian, fontSize = 13.sp, color = Color.Gray)
+    var isAutoPlaying by remember { mutableStateOf(false) }
 
-        Spacer(Modifier.height(14.dp))
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp)
+    ) {
+        // هدر مکالمه
         Card(
-            modifier = Modifier.fillMaxWidth().clickable { onStartReading() },
-            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.horizontalGradient(listOf(accent, accent.copy(alpha = 0.7f))))
-                    .padding(16.dp)
+                    .background(
+                        Brush.linearGradient(
+                            listOf(accent, accent.copy(alpha = 0.7f))
+                        )
+                    )
+                    .padding(20.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
-                        modifier = Modifier.size(48.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.25f)),
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.25f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Filled.Headphones, null, tint = Color.White, modifier = Modifier.size(26.dp))
+                        Text("💬", fontSize = 28.sp)
                     }
                     Spacer(Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("🎧 حالت خوانش", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("جمله‌به‌جمله گوش کن و یاد بگیر", fontSize = 11.sp, color = Color.White.copy(alpha = 0.9f))
-                    }
-                    Box(
-                        modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.25f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("→", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(accent.copy(alpha = 0.12f))
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text("👆 روی هر کلمه بزن تا معنی‌اش رو ببینی", fontSize = 10.sp, color = accent, fontWeight = FontWeight.SemiBold)
-        }
-        Spacer(Modifier.height(16.dp))
-
-        conversation.lines.forEach { line ->
-            val isA = line.speaker == "A"
-            val bubbleAccent = if (isA) accent else Color(0xFF7B1FA2)
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
-            ) {
-                Column(horizontalAlignment = if (isA) Alignment.Start else Alignment.End) {
-                    Text(line.speaker, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = bubbleAccent)
-                    Spacer(Modifier.height(4.dp))
-                    Card(
-                        modifier = Modifier.widthIn(max = 300.dp),
-                        shape = RoundedCornerShape(
-                            topStart = 18.dp, topEnd = 18.dp,
-                            bottomStart = if (isA) 4.dp else 18.dp,
-                            bottomEnd = if (isA) 18.dp else 4.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isA) accent.copy(alpha = 0.12f) else Color(0xFFF3E5F5)
-                        ),
-                        elevation = CardDefaults.cardElevation(1.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            ClickableStoryText(
-                                text = line.english,
-                                accent = bubbleAccent,
-                                fontSize = 14,
-                                lineHeight = 20,
-                                showHint = false,
-                                baseColor = Color(0xFF1A237E)
+                        Text(
+                            conversation.title,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            conversation.titlePersian,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.White.copy(alpha = 0.25f))
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                "${conversation.lines.size} جمله",
+                                fontSize = 10.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
                             )
-                            Spacer(Modifier.height(4.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Spacer(Modifier.weight(1f))
-                                IconButton(
-                                    onClick = { speechHelper.speak(line.english) },
-                                    modifier = Modifier.size(30.dp)
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.VolumeUp,
-                                        "Play",
-                                        tint = bubbleAccent,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(4.dp))
-                            Text(line.persian, fontSize = 12.sp, color = Color.Gray, lineHeight = 18.sp)
                         }
                     }
                 }
             }
         }
+
+        Spacer(Modifier.height(16.dp))
+
+        // دکمه حالت خوانش
+        Card(
+            modifier = Modifier.fillMaxWidth().clickable { onStartReading() },
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(4.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(CircleShape)
+                        .background(accent.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Filled.Headphones, null, tint = accent, modifier = Modifier.size(24.dp))
+                }
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "🎧 حالت خوانش تعاملی",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
+                    Text(
+                        "جمله‌به‌جمله گوش کن و تکرار کن",
+                        fontSize = 11.sp,
+                        color = Color.Gray
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(accent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("→", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // دکمه پخش کل مکالمه
+        Button(
+            onClick = {
+                if (isAutoPlaying) {
+                    speechHelper.stop()
+                    isAutoPlaying = false
+                } else {
+                    val fullText = conversation.lines.joinToString(". ") { it.english }
+                    speechHelper.speak(fullText)
+                    isAutoPlaying = true
+                }
+            },
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isAutoPlaying) Color(0xFFE91E63) else accent
+            )
+        ) {
+            Icon(
+                imageVector = if (isAutoPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(Modifier.width(10.dp))
+            Text(
+                if (isAutoPlaying) "توقف پخش مکالمه" else "پخش کل مکالمه",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        // هشدار
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(accent.copy(alpha = 0.1f))
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("👆", fontSize = 14.sp)
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    "روی هر جمله بزن تا تلفظش رو بشنوی",
+                    fontSize = 11.sp,
+                    color = accent,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // حباب‌های مکالمه
+        conversation.lines.forEachIndexed { index, line ->
+            val isA = line.speaker == "A"
+            val bubbleAccent = if (isA) accent else Color(0xFF7B1FA2)
+            val avatarEmoji = if (isA) "👤" else "👥"
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp),
+                horizontalArrangement = if (isA) Arrangement.Start else Arrangement.End
+            ) {
+                Column(
+                    horizontalAlignment = if (isA) Alignment.Start else Alignment.End,
+                    modifier = Modifier.widthIn(max = 320.dp)
+                ) {
+                    // نام گوینده
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    ) {
+                        if (isA) {
+                            Text(avatarEmoji, fontSize = 12.sp)
+                            Spacer(Modifier.width(4.dp))
+                        }
+                        Text(
+                            line.speaker,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = bubbleAccent
+                        )
+                        if (!isA) {
+                            Spacer(Modifier.width(4.dp))
+                            Text(avatarEmoji, fontSize = 12.sp)
+                        }
+                    }
+
+                    // حباب پیام
+                    Card(
+                        shape = RoundedCornerShape(
+                            topStart = 20.dp, topEnd = 20.dp,
+                            bottomStart = if (isA) 6.dp else 20.dp,
+                            bottomEnd = if (isA) 20.dp else 6.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isA) accent.copy(alpha = 0.12f) else Color(0xFFF3E5F5)
+                        ),
+                        elevation = CardDefaults.cardElevation(2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            // متن انگلیسی
+                            ClickableStoryText(
+                                text = line.english,
+                                accent = bubbleAccent,
+                                fontSize = 15,
+                                lineHeight = 22,
+                                showHint = false,
+                                baseColor = Color(0xFF1A237E)
+                            )
+                            Spacer(Modifier.height(10.dp))
+                            Divider(color = bubbleAccent.copy(alpha = 0.2f))
+                            Spacer(Modifier.height(8.dp))
+                            // ترجمه
+                            Text(
+                                line.persian,
+                                fontSize = 13.sp,
+                                color = Color(0xFF616161),
+                                lineHeight = 20.sp
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            // دکمه پخش
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(bubbleAccent.copy(alpha = 0.15f))
+                                        .clickable {
+                                            speechHelper.speak(line.english)
+                                        }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.VolumeUp,
+                                            "Play",
+                                            tint = bubbleAccent,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(Modifier.width(4.dp))
+                                        Text(
+                                            "پخش",
+                                            fontSize = 11.sp,
+                                            color = bubbleAccent,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        // خلاصه مکالمه
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("💡", fontSize = 18.sp)
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "نکته یادگیری",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2E7D32)
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "این مکالمه رو با صدای بلند ۳ بار بخون و بعد بدون نگاه کردن به متن، سعی کن بازگو کنی. این روش به حافظه‌ی شنیداری و گفتاری کمک می‌کنه.",
+                    fontSize = 12.sp,
+                    lineHeight = 20.sp,
+                    color = Color(0xFF424242)
+                )
+            }
+        }
+
         Spacer(Modifier.height(20.dp))
     }
 }
