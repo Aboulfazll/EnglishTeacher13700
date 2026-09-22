@@ -1,6 +1,7 @@
 package com.example.englishteacher
 
 import android.content.Context
+import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import java.util.Locale
 
@@ -8,6 +9,7 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var isReady = false
     private var currentSpeed = 0.9f
+    private var currentPitch = 1.0f
     private var isUK = false
 
     init {
@@ -21,25 +23,31 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
             if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
                 isReady = true
                 tts?.setSpeechRate(currentSpeed)
-                tts?.setPitch(1.0f)
+                tts?.setPitch(currentPitch)
             }
         }
     }
 
     fun speak(text: String) {
         if (isReady && text.isNotBlank()) {
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+            // 🔑 استفاده از Bundle برای اعمال قطعی سرعت و زیر و بمی
+            val params = Bundle()
+            params.putFloat(TextToSpeech.Engine.KEY_PARAM_RATE, currentSpeed)
+            params.putFloat(TextToSpeech.Engine.KEY_PARAM_PITCH, currentPitch)
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, null)
         }
     }
 
-    // 👇 جدید - برای StoryDetail, ReadingMode, LessonDetail
+    // برای StoryDetail, ReadingMode, LessonDetail
     fun stop() {
         tts?.stop()
     }
 
     fun setSpeed(speed: Float) {
         currentSpeed = speed
-        tts?.setSpeechRate(speed)
+        if (isReady) {
+            tts?.setSpeechRate(speed)
+        }
     }
 
     fun setAccent(uk: Boolean) {
@@ -48,17 +56,23 @@ class SpeechHelper(context: Context) : TextToSpeech.OnInitListener {
         tts?.setLanguage(locale)
     }
 
-    // 👇 جدید - برای SettingsScreen و SpeakingPracticeScreen
+    // برای SettingsScreen و SpeakingPracticeScreen
     fun setVoiceGender(gender: String) {
         val pitch = if (gender.lowercase() == "male") 0.8f else 1.2f
-        tts?.setPitch(pitch)
+        currentPitch = pitch
+        if (isReady) {
+            tts?.setPitch(pitch)
+        }
     }
 
-    // 👇 جدید - برای SettingsScreen و SpeakingPracticeScreen
+    // برای SettingsScreen و SpeakingPracticeScreen
     fun setSpeedAndPitch(speed: Float, pitch: Float) {
         currentSpeed = speed
-        tts?.setSpeechRate(speed)
-        tts?.setPitch(pitch)
+        currentPitch = pitch
+        if (isReady) {
+            tts?.setSpeechRate(speed)
+            tts?.setPitch(pitch)
+        }
     }
 
     fun close() {
