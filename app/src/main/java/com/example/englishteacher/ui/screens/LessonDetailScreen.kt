@@ -721,4 +721,4 @@ private fun LessonSpeakingTab(words: List<Word>, speechHelper: SpeechHelper, acc
             }
         }
     }
-}
+}کم
